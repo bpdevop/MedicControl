@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Medic Control</string>
+
+    <!--GLOBAL RESOURCES-->
+    <string name="global_message_invalid_password">Password must be >= 4 characters</string>
+
+    <!--LOGIN ACTIVITY RESOURCES-->
+    <string name="login_message_user">User</string>
+    <string name="login_message_password">Password</string>
 </resources>

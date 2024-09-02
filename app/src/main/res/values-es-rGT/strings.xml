@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Medic Control</string>
+
+    <!--GLOBAL RESOURCES-->
+    <string name="global_message_invalid_password">Contraseña debe ser >= 4 caracteres</string>
+
+    <!--LOGIN ACTIVITY RESOURCES-->
+    <string name="login_message_user">Usuario</string>
+    <string name="login_message_password">Contraseña</string>
+</resources>

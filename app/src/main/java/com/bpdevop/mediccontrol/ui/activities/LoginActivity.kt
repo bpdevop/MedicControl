@@ -14,7 +14,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.bpdevop.mediccontrol.MainActivity
 import com.bpdevop.mediccontrol.ui.screens.ForgotPasswordScreen
 import com.bpdevop.mediccontrol.ui.screens.LoginScreen
 import com.bpdevop.mediccontrol.ui.screens.SignUpScreen

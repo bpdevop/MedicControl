@@ -40,6 +40,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     packaging {
         resources {
@@ -59,12 +60,13 @@ dependencies {
 
     //Hilt
     implementation(libs.bundles.hilt)
-    //implementation(libs.androidx.benchmark.common)
     kapt(libs.hilt.compiler)
 
     // Import the BoM for the Firebase platform
     implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)
+
+    implementation(libs.coil.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

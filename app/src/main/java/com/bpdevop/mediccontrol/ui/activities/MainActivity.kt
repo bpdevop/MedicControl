@@ -1,4 +1,4 @@
-package com.bpdevop.mediccontrol
+package com.bpdevop.mediccontrol.ui.activities
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.bpdevop.mediccontrol.ui.components.MainAppScaffold
 import com.bpdevop.mediccontrol.ui.theme.MedicControlTheme
 import com.bpdevop.mediccontrol.ui.viewmodels.UserSessionViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -42,18 +43,13 @@ class MainActivity : ComponentActivity() {
                 val currentUser = FirebaseAuth.getInstance().currentUser
 
                 if (isUserAuthenticated && currentUser?.isEmailVerified == true) {
-                    MainScreen()
+                    MainAppScaffold()
                 } else {
                     VerifyEmailScreen()
                 }
             }
         }
     }
-}
-
-@Composable
-fun MainScreen() {
-    Text(text = "main screen")
 }
 
 @Composable
@@ -68,20 +64,19 @@ fun VerifyEmailScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Already verified?", style = MaterialTheme.typography.titleLarge)
-        Text(text = "If not, please also check the spam folder.", style = MaterialTheme.typography.bodyLarge)
+        Text(text = "Correo no verificado", style = MaterialTheme.typography.titleLarge)
+        Text(text = "Por favor, revisa tu correo electrónico. También revisa la carpeta de spam.", style = MaterialTheme.typography.bodyLarge)
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = {
             currentUser?.reload()?.addOnCompleteListener {
                 if (it.isSuccessful) {
-                    // Verificar si el correo ya fue verificado
                     userSessionViewModel.checkUserAuthentication()
                 }
             }
         }) {
-            Text(text = "Check Verification")
+            Text(text = "Verificar nuevamente")
         }
     }
 }

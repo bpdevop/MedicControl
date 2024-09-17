@@ -5,7 +5,43 @@
     <!--GLOBAL RESOURCES-->
     <string name="global_message_invalid_password">Contraseña debe ser >= 4 caracteres</string>
 
+    <!--MENU RESOURCES-->
+    <string name="menu_patients">Pacientes</string>
+    <string name="menu_agenda">Agenda</string>
+    <string name="menu_profile">Perfil</string>
+    <string name="menu_clinic_data">Datos de la Clínica</string>
+    <string name="menu_settings">Configuraciones</string>
+    <string name="menu_about">Acerca de</string>
+    <string name="menu_more">Más</string>
+
     <!--LOGIN ACTIVITY RESOURCES-->
     <string name="login_message_user">Usuario</string>
     <string name="login_message_password">Contraseña</string>
+
+    <!--PATIENT SCREEN RESOURCES-->
+    <string name="patients_screen_title">Lista de Pacientes</string>
+    <string name="patients_screen_no_patients_message">No hay pacientes registrados</string>
+    <string name="patients_screen_loading">Cargando pacientes…</string>
+    <string name="patients_screen_error_loading">Error al cargar los pacientes</string>
+    <string name="patients_screen_patient_item_name">Nombre del paciente</string>
+    <string name="patients_screen_patient_item_phone">Teléfono</string>
+    <string name="patients_screen_no_phone">Teléfono no disponible</string>
+    <string name="patients_screen_fab_add_patient">Agregar paciente</string>
+
+    <!--ADD PATIENT SCREEN RESOURCES-->
+    <string name="add_patient_photo_desc">Foto del paciente</string>
+    <string name="add_patient_take_photo">Tomar una foto</string>
+    <string name="add_patient_choose_photo">Elegir de la galería</string>
+    <string name="add_patient_remove_photo">Eliminar foto</string>
+    <string name="add_patient_name">Nombre</string>
+    <string name="add_patient_phone">Número de teléfono</string>
+    <string name="add_patient_email">Correo electrónico</string>
+    <string name="add_patient_address">Dirección</string>
+    <string name="add_patient_notes">Notas</string>
+    <string name="add_patient_birthdate">Fecha de nacimiento</string>
+    <string name="add_patient_gender">Género</string>
+    <string name="add_patient_male">Masculino</string>
+    <string name="add_patient_female">Femenino</string>
+    <string name="add_patient_blood_type">Tipo de sangre</string>
+    <string name="add_patient_action_add">Agregar paciente</string>
 </resources>

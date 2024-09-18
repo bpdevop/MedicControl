@@ -1,5 +1,6 @@
 package com.bpdevop.mediccontrol.ui.screens
 
+import android.Manifest
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.widget.Toast
@@ -86,6 +87,8 @@ fun AddPatientScreen(
     var rhFactor by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
+    var cameraUri by remember { mutableStateOf<Uri>(Uri.EMPTY) }
+
 
     var showBloodTypeMenu by remember { mutableStateOf(false) }
     var showRHMenu by remember { mutableStateOf(false) }
@@ -105,23 +108,21 @@ fun AddPatientScreen(
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
-        if (success && photoUri != null) {
-            // La imagen capturada se muestra en el Image
+        if (success) {
+            cameraUri.let {
+                photoUri = it
+            }
         }
     }
 
-    // Solicitud de permisos de cámara
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            // Permiso concedido, lanza la cámara
             val photoFile = createImageFile()
-            val uri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFile)
-            photoUri = uri
-            cameraLauncher.launch(uri)
+            cameraUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFile)
+            cameraLauncher.launch(cameraUri)
         } else {
-            // Muestra un mensaje de que el permiso fue denegado
             Toast.makeText(context, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show()
         }
     }
@@ -170,16 +171,13 @@ fun AddPatientScreen(
                     text = { Text(stringResource(R.string.add_patient_take_photo)) },
                     onClick = {
                         val permissionCheckResult =
-                            ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA)
+                            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
                         if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
-                            // Permiso concedido, lanza la cámara
                             val photoFile = createImageFile()
-                            val uri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFile)
-                            photoUri = uri
-                            cameraLauncher.launch(uri)
+                            cameraUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFile)
+                            cameraLauncher.launch(cameraUri)
                         } else {
-                            // Solicita permiso de cámara
-                            permissionLauncher.launch(android.Manifest.permission.CAMERA)
+                            permissionLauncher.launch(Manifest.permission.CAMERA)
                         }
                         showImageOptions = false
                     }

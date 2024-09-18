@@ -1,5 +1,6 @@
 package com.bpdevop.mediccontrol.ui.screens
 
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -50,6 +51,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
@@ -62,7 +64,6 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,11 +72,9 @@ fun AddPatientScreen(
     onPatientAdded: () -> Unit,
 ) {
     val context = LocalContext.current
-    val cacheDir = context.cacheDir
-
+    val cacheDir = context.externalCacheDir // Cambiado para usar externalCacheDir
     val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
 
-    // State variables
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -84,7 +83,7 @@ fun AddPatientScreen(
     var birthDate by remember { mutableStateOf<Date?>(null) }
     var showDatePicker by remember { mutableStateOf(false) }
     var bloodType by remember { mutableStateOf("") }
-    var rhFactor by remember { mutableStateOf("+") }
+    var rhFactor by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -95,29 +94,49 @@ fun AddPatientScreen(
 
     val addPatientState by viewModel.addPatientState.collectAsState()
 
-    // Camera and gallery launchers
+    // Crear archivo temporal para la imagen
+    val createImageFile: () -> File = {
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val imageFileName = "JPEG_${timeStamp}_"
+        File.createTempFile(imageFileName, ".jpg", cacheDir)
+    }
+
+    // Lanzador para la cámara
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
         if (success && photoUri != null) {
-            // La imagen seleccionada se almacena temporalmente en photoUri
+            // La imagen capturada se muestra en el Image
         }
     }
 
+    // Solicitud de permisos de cámara
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            // Permiso concedido, lanza la cámara
+            val photoFile = createImageFile()
+            val uri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFile)
+            photoUri = uri
+            cameraLauncher.launch(uri)
+        } else {
+            // Muestra un mensaje de que el permiso fue denegado
+            Toast.makeText(context, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Lanzador para la galería
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        uri?.let {
-            photoUri = it // Almacenar temporalmente la imagen seleccionada de la galería
-        }
+        uri?.let { photoUri = it }
     }
 
-    // Toast para mostrar errores
     val showErrorToast: (String) -> Unit = { message ->
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-    // Manejar el estado de agregar paciente
     if (addPatientState is UiState.Success) {
         LaunchedEffect(Unit) {
             onPatientAdded()
@@ -125,14 +144,12 @@ fun AddPatientScreen(
         }
     }
 
-    // Contenido principal
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-        // Imagen del paciente (ya seleccionada o placeholder)
         Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
             Image(
                 painter = rememberAsyncImagePainter(
@@ -145,7 +162,6 @@ fun AddPatientScreen(
                     .clickable { showImageOptions = true }
             )
 
-            // Menú contextual con opciones para cambiar o eliminar la imagen
             DropdownMenu(
                 expanded = showImageOptions,
                 onDismissRequest = { showImageOptions = false }
@@ -153,10 +169,18 @@ fun AddPatientScreen(
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.add_patient_take_photo)) },
                     onClick = {
-                        val photoFile = File(cacheDir, "patient_photo_${UUID.randomUUID()}.jpg")
-                        val uri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFile)
-                        photoUri = uri
-                        cameraLauncher.launch(uri)
+                        val permissionCheckResult =
+                            ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA)
+                        if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                            // Permiso concedido, lanza la cámara
+                            val photoFile = createImageFile()
+                            val uri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFile)
+                            photoUri = uri
+                            cameraLauncher.launch(uri)
+                        } else {
+                            // Solicita permiso de cámara
+                            permissionLauncher.launch(android.Manifest.permission.CAMERA)
+                        }
                         showImageOptions = false
                     }
                 )
@@ -179,7 +203,6 @@ fun AddPatientScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Input de nombre
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
@@ -190,7 +213,6 @@ fun AddPatientScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Input de fecha de nacimiento
         OutlinedTextField(
             value = birthDate?.let { dateFormat.format(it) } ?: "",
             onValueChange = {},
@@ -198,10 +220,9 @@ fun AddPatientScreen(
             label = { Text(stringResource(R.string.add_patient_birthdate)) },
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { showDatePicker = true }  // Mostrar DatePicker
+                .clickable { showDatePicker = true }
         )
 
-        // Muestra el DatePickerModal
         if (showDatePicker) {
             DatePickerModal(
                 onDateSelected = { selectedDateMillis ->
@@ -218,7 +239,6 @@ fun AddPatientScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Género (RadioButton para "Masculino" y "Femenino")
         Text(text = stringResource(R.string.add_patient_gender), modifier = Modifier.padding(vertical = 8.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -239,77 +259,77 @@ fun AddPatientScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Selección de tipo de sangre y RH
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            ExposedDropdownMenuBox(
-                expanded = showBloodTypeMenu,
-                onExpandedChange = { showBloodTypeMenu = it }
-            ) {
-                OutlinedTextField(
-                    value = bloodType,
-                    onValueChange = { },
-                    readOnly = true,
-                    label = { Text(stringResource(R.string.add_patient_blood_type)) },
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = showBloodTypeMenu)
-                    },
-                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                    modifier = Modifier
-                        .menuAnchor(type = MenuAnchorType.PrimaryEditable, enabled = true)
-                        .weight(1f)
-                )
-
-                ExposedDropdownMenu(
+            Column(modifier = Modifier.weight(0.7f)) {
+                ExposedDropdownMenuBox(
                     expanded = showBloodTypeMenu,
-                    onDismissRequest = { showBloodTypeMenu = false }
+                    onExpandedChange = { showBloodTypeMenu = it }
                 ) {
-                    val bloodTypes = listOf("A", "B", "O", "AB")
-                    bloodTypes.forEach { type ->
-                        DropdownMenuItem(
-                            text = { Text(type) },
-                            onClick = {
-                                bloodType = type
-                                showBloodTypeMenu = false
-                            }
-                        )
+                    OutlinedTextField(
+                        value = bloodType,
+                        onValueChange = { },
+                        readOnly = true,
+                        label = { Text(stringResource(R.string.add_patient_blood_type)) },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = showBloodTypeMenu)
+                        },
+                        colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                        modifier = Modifier
+                            .menuAnchor(type = MenuAnchorType.PrimaryEditable, enabled = true)
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = showBloodTypeMenu,
+                        onDismissRequest = { showBloodTypeMenu = false }
+                    ) {
+                        val bloodTypes = listOf("A", "B", "O", "AB")
+                        bloodTypes.forEach { type ->
+                            DropdownMenuItem(
+                                text = { Text(type) },
+                                onClick = {
+                                    bloodType = type
+                                    showBloodTypeMenu = false
+                                }
+                            )
+                        }
                     }
                 }
             }
 
-            // Lista desplegable para RH
-            ExposedDropdownMenuBox(
-                expanded = showRHMenu,
-                onExpandedChange = { showRHMenu = it }
-            ) {
-                OutlinedTextField(
-                    value = rhFactor,
-                    onValueChange = { },
-                    readOnly = true,
-                    label = { Text(stringResource(R.string.add_patient_rh_factor)) },
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = showRHMenu)
-                    },
-                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                    modifier = Modifier
-                        .menuAnchor(type = MenuAnchorType.PrimaryEditable, enabled = true)
-                        .weight(0.5f)
-                )
-
-                ExposedDropdownMenu(
+            Column(modifier = Modifier.weight(0.3f)) {
+                ExposedDropdownMenuBox(
                     expanded = showRHMenu,
-                    onDismissRequest = { showRHMenu = false }
+                    onExpandedChange = { showRHMenu = it }
                 ) {
-                    listOf("+", "-").forEach { type ->
-                        DropdownMenuItem(
-                            text = { Text(type) },
-                            onClick = {
-                                rhFactor = type
-                                showRHMenu = false
-                            }
-                        )
+                    OutlinedTextField(
+                        value = rhFactor,
+                        onValueChange = { },
+                        readOnly = true,
+                        label = { Text(stringResource(R.string.add_patient_rh_factor)) },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = showRHMenu)
+                        },
+                        colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                        modifier = Modifier
+                            .menuAnchor(type = MenuAnchorType.PrimaryEditable, enabled = true)
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = showRHMenu,
+                        onDismissRequest = { showRHMenu = false }
+                    ) {
+                        listOf("+", "-").forEach { type ->
+                            DropdownMenuItem(
+                                text = { Text(type) },
+                                onClick = {
+                                    rhFactor = type
+                                    showRHMenu = false
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -317,7 +337,6 @@ fun AddPatientScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Input de teléfono
         OutlinedTextField(
             value = phone,
             onValueChange = { phone = it },
@@ -325,13 +344,12 @@ fun AddPatientScreen(
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Phone // Para teclado numérico de teléfono
+                keyboardType = KeyboardType.Phone
             )
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Input de dirección
         OutlinedTextField(
             value = address,
             onValueChange = { address = it },
@@ -342,7 +360,6 @@ fun AddPatientScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Input de email
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -350,26 +367,24 @@ fun AddPatientScreen(
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = androidx.compose.ui.text.input.KeyboardType.Email // Para teclado de correo
+                keyboardType = KeyboardType.Email
             )
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Input de notas (Estilo textarea)
         OutlinedTextField(
             value = notes,
             onValueChange = { notes = it },
             label = { Text(stringResource(R.string.add_patient_notes)) },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(100.dp), // Define la altura del textarea
-            maxLines = 4 // Mostrar varias filas
+                .height(100.dp),
+            maxLines = 4
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Botón para agregar paciente
         Button(
             onClick = {
                 loading = true
@@ -382,11 +397,10 @@ fun AddPatientScreen(
                     notes = notes.ifEmpty { null },
                     birthDate = birthDate,
                     bloodType = bloodType.ifEmpty { null },
-                    rhFactor = rhFactor == "+",
+                    rhFactor = rhFactor.takeIf { it.isNotEmpty() }?.let { it == "+" },
                     gender = gender
                 )
 
-                // Llamar al ViewModel con el objeto paciente y la Uri de la foto (si existe)
                 viewModel.addPatient(patient, photoUri)
             },
             modifier = Modifier.fillMaxWidth()
@@ -398,7 +412,6 @@ fun AddPatientScreen(
             }
         }
 
-        // Manejo del estado de carga y errores
         when (addPatientState) {
             is UiState.Error -> LaunchedEffect(Unit) {
                 showErrorToast((addPatientState as UiState.Error).message)
@@ -425,12 +438,12 @@ fun DatePickerModal(
                 onDateSelected(datePickerState.selectedDateMillis)
                 onDismiss()
             }) {
-                Text("OK")
+                Text(stringResource(id = android.R.string.ok))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(id = android.R.string.cancel))
             }
         }
     ) {

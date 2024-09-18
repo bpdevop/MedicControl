@@ -58,7 +58,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.bpdevop.mediccontrol.BuildConfig
 import com.bpdevop.mediccontrol.R
+import com.bpdevop.mediccontrol.core.extensions.createImageFile
 import com.bpdevop.mediccontrol.core.utils.UiState
+import com.bpdevop.mediccontrol.core.utils.deleteImageFile
 import com.bpdevop.mediccontrol.data.model.Patient
 import com.bpdevop.mediccontrol.ui.viewmodels.PatientsViewModel
 import java.io.File
@@ -73,7 +75,6 @@ fun AddPatientScreen(
     onPatientAdded: () -> Unit,
 ) {
     val context = LocalContext.current
-    val cacheDir = context.externalCacheDir // Cambiado para usar externalCacheDir
     val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
 
     var name by remember { mutableStateOf("") }
@@ -88,7 +89,7 @@ fun AddPatientScreen(
     var gender by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
     var cameraUri by remember { mutableStateOf<Uri>(Uri.EMPTY) }
-
+    var photoFile: File? = null
 
     var showBloodTypeMenu by remember { mutableStateOf(false) }
     var showRHMenu by remember { mutableStateOf(false) }
@@ -97,37 +98,22 @@ fun AddPatientScreen(
 
     val addPatientState by viewModel.addPatientState.collectAsState()
 
-    // Crear archivo temporal para la imagen
-    val createImageFile: () -> File = {
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val imageFileName = "JPEG_${timeStamp}_"
-        File.createTempFile(imageFileName, ".jpg", cacheDir)
-    }
-
-    // Lanzador para la cámara
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
-    ) { success ->
-        if (success) {
-            cameraUri.let {
-                photoUri = it
-            }
-        }
-    }
+    ) { success -> if (success) cameraUri.let { photoUri = it } }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            val photoFile = createImageFile()
-            cameraUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFile)
+            photoFile = context.createImageFile()
+            cameraUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFile!!)
             cameraLauncher.launch(cameraUri)
         } else {
             Toast.makeText(context, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show()
         }
     }
 
-    // Lanzador para la galería
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -141,6 +127,7 @@ fun AddPatientScreen(
     if (addPatientState is UiState.Success) {
         LaunchedEffect(Unit) {
             onPatientAdded()
+            deleteImageFile(photoFile)
             viewModel.resetAddPatientState()
         }
     }
@@ -173,8 +160,8 @@ fun AddPatientScreen(
                         val permissionCheckResult =
                             ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
                         if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
-                            val photoFile = createImageFile()
-                            cameraUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFile)
+                            photoFile = context.createImageFile()
+                            cameraUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFile!!)
                             cameraLauncher.launch(cameraUri)
                         } else {
                             permissionLauncher.launch(Manifest.permission.CAMERA)
@@ -192,6 +179,7 @@ fun AddPatientScreen(
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.add_patient_remove_photo)) },
                     onClick = {
+                        deleteImageFile(photoFile)
                         photoUri = null
                         showImageOptions = false
                     }

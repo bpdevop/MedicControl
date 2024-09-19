@@ -23,8 +23,12 @@ class PatientsViewModel @Inject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing
 
+    private val _patientDetailState = MutableStateFlow<UiState<Patient>>(UiState.Idle)
+    val patientDetailState: StateFlow<UiState<Patient>> = _patientDetailState
+
     private val _addPatientState = MutableStateFlow<UiState<String>>(UiState.Idle)
     val addPatientState: StateFlow<UiState<String>> = _addPatientState
+
 
     fun refreshPatients() {
         viewModelScope.launch {
@@ -34,6 +38,15 @@ class PatientsViewModel @Inject constructor(
             _isRefreshing.value = false
         }
     }
+
+    fun loadPatientDetail(patientId: String) {
+        viewModelScope.launch {
+            _patientDetailState.value = UiState.Loading
+            val result = repository.getPatientById(patientId)
+            _patientDetailState.value = result
+        }
+    }
+
 
     fun addPatient(patient: Patient, photoUri: Uri?) {
         viewModelScope.launch {

@@ -29,6 +29,16 @@ class PatientsRepository @Inject constructor(
         }
     } ?: UiState.Error("Error: no se pudo obtener el ID del doctor")
 
+    suspend fun getPatientById(patientId: String): UiState<Patient> {
+        return runCatching {
+            val documentSnapshot = firestore.collection("patients").document(patientId).get().await()
+            val patient = documentSnapshot.toObject(Patient::class.java)
+            patient?.let { UiState.Success(it) } ?: UiState.Error("Paciente no encontrado")
+        }.getOrElse {
+            UiState.Error(it.message ?: "Error al obtener los detalles del paciente")
+        }
+    }
+
     suspend fun addPatient(patient: Patient, photoUri: Uri?): UiState<String> = authRepository.getCurrentUserId()?.let { doctorId ->
         runCatching {
             var photoUrl: String? = null

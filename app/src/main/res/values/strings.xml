@@ -44,4 +44,22 @@
     <string name="add_patient_blood_type">Blood type</string>
     <string name="add_patient_rh_factor" translatable="false">RH</string>
     <string name="add_patient_action_add">Add patient</string>
+
+    <!-- PATIENT DETAIL SCREEN RESOURCES -->
+    <string name="patient_detail_photo_desc">Patient photo</string>
+    <string name="patient_detail_name">Name</string>
+    <string name="patient_detail_phone">Phone number</string>
+    <string name="patient_detail_email">Email</string>
+    <string name="patient_detail_address">Address</string>
+    <string name="patient_detail_notes">Notes</string>
+    <string name="patient_detail_birthdate">Birth date</string>
+    <string name="patient_detail_gender">Gender</string>
+    <string name="patient_detail_male">Male</string>
+    <string name="patient_detail_female">Female</string>
+    <string name="patient_detail_blood_type">Blood type</string>
+    <string name="patient_detail_rh_factor" translatable="false">RH</string>
+    <string name="patient_detail_edit_action">Edit patient</string>
+    <string name="patient_detail_default_message">No details available</string>
+    <string name="patient_detail_loading">Loading patient details…</string>
+
 </resources>

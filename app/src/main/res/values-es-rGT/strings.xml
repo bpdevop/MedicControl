@@ -44,4 +44,22 @@
     <string name="add_patient_female">Femenino</string>
     <string name="add_patient_blood_type">Tipo de sangre</string>
     <string name="add_patient_action_add">Agregar paciente</string>
+
+    <!-- RECURSOS DE PANTALLA DETALLE DE PACIENTE -->
+    <string name="patient_detail_photo_desc">Foto del paciente</string>
+    <string name="patient_detail_name">Nombre</string>
+    <string name="patient_detail_phone">Número de teléfono</string>
+    <string name="patient_detail_email">Correo electrónico</string>
+    <string name="patient_detail_address">Dirección</string>
+    <string name="patient_detail_notes">Notas</string>
+    <string name="patient_detail_birthdate">Fecha de nacimiento</string>
+    <string name="patient_detail_gender">Género</string>
+    <string name="patient_detail_male">Masculino</string>
+    <string name="patient_detail_female">Femenino</string>
+    <string name="patient_detail_blood_type">Tipo de sangre</string>
+    <string name="patient_detail_rh_factor" translatable="false">RH</string>
+    <string name="patient_detail_edit_action">Editar paciente</string>
+    <string name="patient_detail_default_message">No hay detalles disponibles</string>
+    <string name="patient_detail_loading">Cargando detalles del paciente…</string>
+
 </resources>

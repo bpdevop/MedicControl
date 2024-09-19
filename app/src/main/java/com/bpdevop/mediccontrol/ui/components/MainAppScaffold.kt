@@ -20,6 +20,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,11 +28,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.bpdevop.mediccontrol.ui.navigation.AppNavGraph
+import com.bpdevop.mediccontrol.ui.navigation.NavigationItem
+import com.bpdevop.mediccontrol.ui.navigation.Screen
 import com.bpdevop.mediccontrol.ui.viewmodels.MainViewModel
 import kotlinx.coroutines.launch
 
@@ -49,7 +53,12 @@ fun MainAppScaffold() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    val (showBackArrow, topBarTitle) = rememberTopBarState(currentRoute)
+    val (showBackArrow, topBarTitle) = rememberTopBarState(currentRoute, selectedItem)
+
+    LaunchedEffect(navBackStackEntry) {
+        val currentMenuItem = mainViewModel.getMenuItemByRoute(currentRoute)
+        mainViewModel.selectItem(currentMenuItem ?: return@LaunchedEffect)
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -78,8 +87,7 @@ fun MainAppScaffold() {
         ) { innerPadding ->
             AppNavGraph(
                 navController = navController,
-                modifier = Modifier.padding(innerPadding),
-                startDestination = "patients"
+                modifier = Modifier.padding(innerPadding)
             )
         }
     }
@@ -87,24 +95,29 @@ fun MainAppScaffold() {
 
 
 @Composable
-fun rememberTopBarState(currentRoute: String?): Pair<Boolean, String> {
-    // Determina si la flecha de volver atrás debe ser visible
+fun rememberTopBarState(currentRoute: String?, selectedItem: NavigationItem?): Pair<Boolean, String> {
     val showBackArrow = when (currentRoute) {
-        "patients", "agenda" -> false  // Pantallas principales, no necesitan flecha de "volver"
-        else -> true  // Otras pantallas necesitan flecha de "volver"
+        Screen.Patients.route,
+        Screen.Agenda.route,
+        Screen.Profile.route,
+        -> false
+
+        else -> true
     }
 
-    // Determina el título que se debe mostrar en el TopBar
-    val topBarTitle = when (currentRoute) {
-        "patients" -> "Pacientes"
-        "agenda" -> "Agenda"
-        "profile" -> "Perfil del Médico"
-        "clinicData" -> "Datos de la Clínica"
-        "printingConfig" -> "Configuración de Impresión"
-        "exportData" -> "Exportaciones"
-        "appSettings" -> "Configuración de la App"
-        else -> "MedicControl"  // Título por defecto para pantallas desconocidas
+    val topBarTitle = when {
+        currentRoute == Screen.Patients.route -> stringResource(id = Screen.Patients.titleResId)
+        currentRoute == Screen.AddPatient.route -> stringResource(id = Screen.AddPatient.titleResId)
+        currentRoute?.startsWith(Screen.PatientDetail.route) == true -> stringResource(id = Screen.PatientDetail.titleResId)
+        currentRoute == Screen.Agenda.route -> stringResource(id = Screen.Agenda.titleResId)
+        currentRoute == Screen.Profile.route -> stringResource(id = Screen.Profile.titleResId)
+        // currentRoute == Screen.ClinicData.route -> stringResource(id = Screen.ClinicData.titleResId)
+        // currentRoute == Screen.PrintingConfig.route -> stringResource(id = Screen.PrintingConfig.titleResId)
+        // currentRoute == Screen.ExportData.route -> stringResource(id = Screen.ExportData.titleResId)
+        // currentRoute == Screen.AppSettings.route -> stringResource(id = Screen.AppSettings.titleResId)
+        else -> selectedItem?.let { stringResource(id = it.titleResId) } ?: ""
     }
+
 
     return showBackArrow to topBarTitle
 }

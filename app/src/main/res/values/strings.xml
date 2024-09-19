@@ -6,6 +6,8 @@
 
     <!--MENU RESOURCES-->
     <string name="menu_patients">Patients</string>
+    <string name="menu_add_patient">Add Patient</string>
+    <string name="menu_patient_detail">Patient Details</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_clinic_data">Clinic Data</string>

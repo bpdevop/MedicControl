@@ -3,8 +3,10 @@ package com.bpdevop.mediccontrol.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.bpdevop.mediccontrol.ui.screens.AddPatientScreen
 import com.bpdevop.mediccontrol.ui.screens.AgendaScreen
 import com.bpdevop.mediccontrol.ui.screens.PatientDetailScreen
@@ -15,26 +17,29 @@ import com.bpdevop.mediccontrol.ui.screens.ProfileScreen
 fun AppNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = "patients",
+    startDestination: Screen = Screen.Patients,
 ) {
     NavHost(
         navController = navController,
-        startDestination = startDestination,
+        startDestination = startDestination.route,
         modifier = modifier
     ) {
         // Pantalla de pacientes
-        composable("patients") {
+        composable(Screen.Patients.route) {
             PatientsScreen(
                 onPatientClick = { patientId ->
-                    navController.navigate("patient_detail/$patientId")
+                    navController.navigate(Screen.PatientDetail.withArgs(patientId))
                 },
                 onAddPatientClick = {
-                    navController.navigate("add_patient")
+                    navController.navigate(Screen.AddPatient.route)
                 }
             )
         }
 
-        composable("patient_detail/{patientId}") { backStackEntry ->
+        composable(
+            route = "${Screen.PatientDetail.route}/{patientId}",
+            arguments = listOf(navArgument("patientId") { type = NavType.StringType })
+        ) { backStackEntry ->
             val patientId = backStackEntry.arguments?.getString("patientId")
             patientId?.let {
                 PatientDetailScreen(
@@ -49,8 +54,7 @@ fun AppNavGraph(
             }
         }
 
-        // Pantalla para agregar un nuevo paciente
-        composable("add_patient") {
+        composable(Screen.AddPatient.route) {
             AddPatientScreen(
                 onPatientAdded = {
                     navController.popBackStack()
@@ -58,17 +62,12 @@ fun AppNavGraph(
             )
         }
 
-
-        // Pantalla de la agenda del médico
-        composable("agenda") {
+        composable(Screen.Agenda.route) {
             AgendaScreen(navController)
         }
 
-        // Pantalla del perfil del médico
-        composable("profile") {
+        composable(Screen.Profile.route) {
             ProfileScreen(navController)
         }
-
-        // Agrega más pantallas según sea necesario
     }
 }

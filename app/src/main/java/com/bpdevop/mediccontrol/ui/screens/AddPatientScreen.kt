@@ -24,8 +24,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,8 +33,6 @@ import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -59,14 +55,14 @@ import coil.compose.rememberAsyncImagePainter
 import com.bpdevop.mediccontrol.BuildConfig
 import com.bpdevop.mediccontrol.R
 import com.bpdevop.mediccontrol.core.extensions.createImageFile
+import com.bpdevop.mediccontrol.core.extensions.formatToString
 import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.core.utils.deleteImageFile
 import com.bpdevop.mediccontrol.data.model.Patient
+import com.bpdevop.mediccontrol.ui.components.DatePickerModal
 import com.bpdevop.mediccontrol.ui.viewmodels.PatientsViewModel
 import java.io.File
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,7 +71,6 @@ fun AddPatientScreen(
     onPatientAdded: () -> Unit,
 ) {
     val context = LocalContext.current
-    val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
 
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
@@ -200,7 +195,7 @@ fun AddPatientScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = birthDate?.let { dateFormat.format(it) } ?: "",
+            value = birthDate?.formatToString() ?: "",
             onValueChange = {},
             enabled = false,
             label = { Text(stringResource(R.string.add_patient_birthdate)) },
@@ -406,33 +401,5 @@ fun AddPatientScreen(
 
             else -> Unit
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DatePickerModal(
-    onDateSelected: (Long?) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val datePickerState = rememberDatePickerState()
-
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
-                onDismiss()
-            }) {
-                Text(stringResource(id = android.R.string.ok))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(id = android.R.string.cancel))
-            }
-        }
-    ) {
-        DatePicker(state = datePickerState)
     }
 }

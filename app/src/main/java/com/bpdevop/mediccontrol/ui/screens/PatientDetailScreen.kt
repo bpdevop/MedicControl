@@ -24,8 +24,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -39,7 +41,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -51,9 +52,11 @@ import coil.compose.rememberAsyncImagePainter
 import com.bpdevop.mediccontrol.BuildConfig
 import com.bpdevop.mediccontrol.R
 import com.bpdevop.mediccontrol.core.extensions.createImageFile
+import com.bpdevop.mediccontrol.core.extensions.formatToString
 import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.core.utils.deleteImageFile
 import com.bpdevop.mediccontrol.data.model.Patient
+import com.bpdevop.mediccontrol.ui.components.DatePickerModal
 import com.bpdevop.mediccontrol.ui.viewmodels.PatientsViewModel
 import java.io.File
 import java.util.Date
@@ -81,18 +84,33 @@ fun PatientDetailScreen(
     var photoFile: File? = null
     var showImageOptions by remember { mutableStateOf(false) }
     var isEditing by remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
 
-    // Estado del detalle del paciente
     val patientDetailState by viewModel.patientDetailState.collectAsState()
+    val updatePatientState by viewModel.updatePatientState.collectAsState()
+    val deletePatientState by viewModel.deletePatientState.collectAsState()
 
-    // Cargar el detalle del paciente
     LaunchedEffect(patientId) {
         viewModel.loadPatientDetail(patientId)
     }
 
+    LaunchedEffect(updatePatientState) {
+        if (updatePatientState is UiState.Success) {
+            onPatientUpdated()
+            deleteImageFile(photoFile)
+            viewModel.resetUpdatePatientState()
+        }
+    }
+
+    LaunchedEffect(deletePatientState) {
+        if (deletePatientState is UiState.Success) {
+            onPatientDeleted()
+            viewModel.resetDeletePatientState()
+        }
+    }
+
     val cameraPermissionDeniedMessage = stringResource(R.string.detail_patient_permission_denied)
 
-    // Lanzador de cámara
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
@@ -113,7 +131,6 @@ fun PatientDetailScreen(
         }
     }
 
-    // Lanzador de galería
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -124,7 +141,6 @@ fun PatientDetailScreen(
         is UiState.Success -> {
             val patient = (patientDetailState as UiState.Success<Patient>).data
 
-            // Cargar los datos en los estados solo si no estamos en modo edición
             if (!isEditing) {
                 name = patient.name
                 phone = patient.phone ?: ""
@@ -147,7 +163,6 @@ fun PatientDetailScreen(
         else -> Unit
     }
 
-    // UI del detalle del paciente
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -218,13 +233,24 @@ fun PatientDetailScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = birthDate?.toString() ?: "",
+            value = birthDate?.formatToString() ?: "",
             onValueChange = {},
             enabled = false,
             label = { Text(stringResource(R.string.detail_patient_birthdate)) },
             modifier = Modifier
                 .fillMaxWidth()
+                .clickable { if (isEditing) showDatePicker = true }
         )
+
+        if (showDatePicker) {
+            DatePickerModal(
+                onDateSelected = { selectedDateMillis ->
+                    birthDate = selectedDateMillis?.let { Date(it) }
+                    showDatePicker = false
+                },
+                onDismiss = { showDatePicker = false }
+            )
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -326,18 +352,21 @@ fun PatientDetailScreen(
                         ),
                         photoUri
                     )
-                    onPatientUpdated()
                 }
                 isEditing = !isEditing
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = updatePatientState !is UiState.Loading
         ) {
-            Text(text = if (isEditing) stringResource(R.string.detail_patient_action_save) else stringResource(R.string.detail_patient_action_edit))
+            if (updatePatientState is UiState.Loading) {
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary)
+            } else {
+                Text(text = if (isEditing) stringResource(R.string.detail_patient_action_save) else stringResource(R.string.detail_patient_action_edit))
+            }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Botón de eliminar
         Button(
             onClick = {
                 viewModel.deletePatient(
@@ -347,12 +376,16 @@ fun PatientDetailScreen(
                         doctorId = doctorId
                     )
                 )
-                onPatientDeleted()
             },
-            colors = ButtonDefaults.buttonColors(Color.Red),
-            modifier = Modifier.fillMaxWidth()
+            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error),
+            modifier = Modifier.fillMaxWidth(),
+            enabled = deletePatientState !is UiState.Loading
         ) {
-            Text(text = stringResource(R.string.detail_patient_action_delete))
+            if (deletePatientState is UiState.Loading) {
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onError)
+            } else {
+                Text(text = stringResource(R.string.detail_patient_action_delete))
+            }
         }
     }
 }

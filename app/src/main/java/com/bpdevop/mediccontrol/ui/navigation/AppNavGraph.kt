@@ -34,10 +34,19 @@ fun AppNavGraph(
             )
         }
 
-        // Pantalla de detalle del paciente
         composable("patient_detail/{patientId}") { backStackEntry ->
             val patientId = backStackEntry.arguments?.getString("patientId")
-            patientId?.let { PatientDetailScreen(patientId = it) }
+            patientId?.let {
+                PatientDetailScreen(
+                    patientId = it,
+                    onPatientUpdated = {
+                        navController.popBackStack()
+                    },
+                    onPatientDeleted = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
 
         // Pantalla para agregar un nuevo paciente

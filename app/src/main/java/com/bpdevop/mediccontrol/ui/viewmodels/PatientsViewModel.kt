@@ -29,6 +29,11 @@ class PatientsViewModel @Inject constructor(
     private val _addPatientState = MutableStateFlow<UiState<String>>(UiState.Idle)
     val addPatientState: StateFlow<UiState<String>> = _addPatientState
 
+    private val _updatePatientState = MutableStateFlow<UiState<String>>(UiState.Idle)
+    val updatePatientState: StateFlow<UiState<String>> = _updatePatientState
+
+    private val _deletePatientState = MutableStateFlow<UiState<String>>(UiState.Idle)
+    val deletePatientState: StateFlow<UiState<String>> = _deletePatientState
 
     fun refreshPatients() {
         viewModelScope.launch {
@@ -47,7 +52,6 @@ class PatientsViewModel @Inject constructor(
         }
     }
 
-
     fun addPatient(patient: Patient, photoUri: Uri?) {
         viewModelScope.launch {
             _addPatientState.value = UiState.Loading
@@ -56,7 +60,31 @@ class PatientsViewModel @Inject constructor(
         }
     }
 
+    fun updatePatient(patient: Patient, newPhotoUri: Uri?) {
+        viewModelScope.launch {
+            _updatePatientState.value = UiState.Loading
+            val result = repository.updatePatient(patient, newPhotoUri)
+            _updatePatientState.value = result
+        }
+    }
+
+    fun deletePatient(patient: Patient) {
+        viewModelScope.launch {
+            _deletePatientState.value = UiState.Loading
+            val result = repository.deletePatient(patient)
+            _deletePatientState.value = result
+        }
+    }
+
     fun resetAddPatientState() {
         _addPatientState.value = UiState.Idle
+    }
+
+    fun resetUpdatePatientState() {
+        _updatePatientState.value = UiState.Idle
+    }
+
+    fun resetDeletePatientState() {
+        _deletePatientState.value = UiState.Idle
     }
 }

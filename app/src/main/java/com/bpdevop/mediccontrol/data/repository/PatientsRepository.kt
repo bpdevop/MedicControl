@@ -60,4 +60,62 @@ class PatientsRepository @Inject constructor(
             UiState.Error(e.message ?: "Error al agregar el paciente")
         }
     } ?: UiState.Error("Error: no se pudo obtener el ID del doctor")
+
+    // Método optimizado para actualizar un paciente
+    suspend fun updatePatient(patient: Patient, newPhotoUri: Uri?): UiState<String> =
+        authRepository.getCurrentUserId()?.let { doctorId ->
+            runCatching {
+                val documentRef = firestore.collection("patients").document(patient.id)
+                val updatedPatient = handlePhotoUpdate(patient, newPhotoUri, doctorId)
+
+                // Actualizar los datos del paciente en Firestore
+                documentRef.set(updatedPatient).await()
+                UiState.Success("Paciente actualizado correctamente")
+            }.getOrElse { e ->
+                UiState.Error(e.message ?: "Error al actualizar el paciente")
+            }
+        } ?: UiState.Error("Error: no se pudo obtener el ID del doctor")
+
+    // Método optimizado para eliminar un paciente
+    suspend fun deletePatient(patient: Patient): UiState<String> =
+        authRepository.getCurrentUserId()?.let {
+            runCatching {
+                // Eliminar imagen de Firebase Storage si existe
+                patient.photoUrl?.let { photoUrl ->
+                    firebaseStorage.getReferenceFromUrl(photoUrl).delete().await()
+                }
+
+                // Eliminar los datos del paciente en Firestore
+                firestore.collection("patients").document(patient.id).delete().await()
+                UiState.Success("Paciente eliminado correctamente")
+            }.getOrElse { e ->
+                UiState.Error(e.message ?: "Error al eliminar el paciente")
+            }
+        } ?: UiState.Error("Error: no se pudo obtener el ID del doctor")
+
+    // Función auxiliar para manejar la actualización/eliminación de la imagen del paciente
+    private suspend fun handlePhotoUpdate(patient: Patient, newPhotoUri: Uri?, doctorId: String): Patient {
+        return when {
+            // Subir nueva imagen y eliminar la anterior si es necesario
+            newPhotoUri != null -> {
+                patient.photoUrl?.let { firebaseStorage.getReferenceFromUrl(it).delete().await() }
+                val newPhotoUrl = uploadNewPhoto(newPhotoUri, doctorId)
+                patient.copy(photoUrl = newPhotoUrl)
+            }
+            // Eliminar la imagen si se ha removido en la interfaz
+            newPhotoUri == null && patient.photoUrl != null -> {
+                firebaseStorage.getReferenceFromUrl(patient.photoUrl).delete().await()
+                patient.copy(photoUrl = null)
+            }
+
+            else -> patient // No se hizo cambio en la imagen
+        }
+    }
+
+    // Función auxiliar para subir una nueva imagen a Firebase Storage
+    private suspend fun uploadNewPhoto(photoUri: Uri, doctorId: String): String {
+        val storageRef = firebaseStorage.reference.child("patients_photos/$doctorId/${UUID.randomUUID()}")
+        storageRef.putFile(photoUri).await()
+        return storageRef.downloadUrl.await().toString()
+    }
 }

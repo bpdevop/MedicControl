@@ -45,21 +45,26 @@
     <string name="add_patient_blood_type">Tipo de sangre</string>
     <string name="add_patient_action_add">Agregar paciente</string>
 
-    <!-- RECURSOS DE PANTALLA DETALLE DE PACIENTE -->
-    <string name="patient_detail_photo_desc">Foto del paciente</string>
-    <string name="patient_detail_name">Nombre</string>
-    <string name="patient_detail_phone">Número de teléfono</string>
-    <string name="patient_detail_email">Correo electrónico</string>
-    <string name="patient_detail_address">Dirección</string>
-    <string name="patient_detail_notes">Notas</string>
-    <string name="patient_detail_birthdate">Fecha de nacimiento</string>
-    <string name="patient_detail_gender">Género</string>
-    <string name="patient_detail_male">Masculino</string>
-    <string name="patient_detail_female">Femenino</string>
-    <string name="patient_detail_blood_type">Tipo de sangre</string>
-    <string name="patient_detail_rh_factor" translatable="false">RH</string>
-    <string name="patient_detail_edit_action">Editar paciente</string>
-    <string name="patient_detail_default_message">No hay detalles disponibles</string>
-    <string name="patient_detail_loading">Cargando detalles del paciente…</string>
+    <!--PATIENT DETAIL SCREEN RESOURCES-->
+    <string name="detail_patient_photo_desc">Foto del paciente</string>
+    <string name="detail_patient_take_photo">Tomar una foto</string>
+    <string name="detail_patient_choose_photo">Elegir de la galería</string>
+    <string name="detail_patient_remove_photo">Eliminar foto</string>
+    <string name="detail_patient_name">Nombre</string>
+    <string name="detail_patient_phone">Número de teléfono</string>
+    <string name="detail_patient_email">Correo electrónico</string>
+    <string name="detail_patient_address">Dirección</string>
+    <string name="detail_patient_notes">Notas</string>
+    <string name="detail_patient_birthdate">Fecha de nacimiento</string>
+    <string name="detail_patient_gender">Género</string>
+    <string name="detail_patient_male">Masculino</string>
+    <string name="detail_patient_female">Femenino</string>
+    <string name="detail_patient_blood_type">Tipo de sangre</string>
+    <string name="detail_patient_rh_factor" translatable="false">RH</string>
+    <string name="detail_patient_action_edit">Editar paciente</string>
+    <string name="detail_patient_action_save">Guardar cambios</string>
+    <string name="detail_patient_action_delete">Eliminar paciente</string>
+    <string name="detail_patient_permission_denied">Permiso de cámara denegado</string>
+
 
 </resources>

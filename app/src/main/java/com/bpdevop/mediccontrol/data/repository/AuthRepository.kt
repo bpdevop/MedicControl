@@ -1,25 +1,65 @@
 package com.bpdevop.mediccontrol.data.repository
 
+import android.net.Uri
 import com.bpdevop.mediccontrol.core.utils.UiState
+import com.bpdevop.mediccontrol.data.model.DoctorProfile
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
+import java.util.UUID
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
-    private val firebaseAuth: FirebaseAuth
-) {
-    suspend fun signUp(email: String, password: String): UiState<FirebaseUser?> {
+    private val firebaseAuth: FirebaseAuth,
+    private val firestore: FirebaseFirestore,
+    private val firebaseStorage: FirebaseStorage,
+
+    ) {
+
+    suspend fun signUp(email: String, password: String, name: String, registrationNumber: String, phoneNumber: String, photoUri: Uri?): UiState<FirebaseUser?> {
         return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
             result.user?.let { user ->
                 user.sendEmailVerification().await()
+
+                val photoUrl = photoUri?.let { uploadProfilePhoto(user.uid, it) }
+
+                val doctorProfile = DoctorProfile(
+                    id = user.uid,
+                    name = name,
+                    email = email,
+                    registrationNumber = registrationNumber,
+                    phoneNumber = phoneNumber,
+                    photoUrl = photoUrl
+                )
+                firestore.collection("doctors").document(user.uid).set(doctorProfile).await()
+
                 UiState.Success(user)
             } ?: UiState.Error("No se pudo crear la cuenta")
         } catch (e: Exception) {
             UiState.Error(e.message ?: "Error desconocido")
+        }
+    }
+
+    private suspend fun uploadProfilePhoto(doctorId: String, photoUri: Uri): String {
+        val storageRef = firebaseStorage.reference.child("doctors_photos/$doctorId/${UUID.randomUUID()}")
+        storageRef.putFile(photoUri).await() // Subir la imagen
+        return storageRef.downloadUrl.await().toString() // Retornar la URL de descarga
+    }
+
+    // Obtener el perfil del médico de Firestore
+    suspend fun getDoctorProfile(): UiState<DoctorProfile?> {
+        val doctorId = getCurrentUserId() ?: return UiState.Error("No se ha iniciado sesión")
+        return try {
+            val document = firestore.collection("doctors").document(doctorId).get().await()
+            val doctorProfile = document.toObject(DoctorProfile::class.java)
+            UiState.Success(doctorProfile)
+        } catch (e: Exception) {
+            UiState.Error(e.message ?: "Error al obtener el perfil del médico")
         }
     }
 

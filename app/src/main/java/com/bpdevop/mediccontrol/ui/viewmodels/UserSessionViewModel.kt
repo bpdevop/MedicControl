@@ -15,34 +15,48 @@ import javax.inject.Inject
 class UserSessionViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
 ) : ViewModel() {
-
-    private val _isUserAuthenticated = MutableStateFlow(false)
-    val isUserAuthenticated: StateFlow<Boolean> get() = _isUserAuthenticated
-
     private val _currentUser = MutableStateFlow<FirebaseUser?>(null)
     val currentUser: StateFlow<FirebaseUser?> get() = _currentUser
 
     private val _navigationState = MutableStateFlow<NavigationState>(NavigationState.Loading)
     val navigationState: StateFlow<NavigationState> = _navigationState.asStateFlow()
 
+    private val _isEmailVerified = MutableStateFlow(true)
+    val isEmailVerified: StateFlow<Boolean> get() = _isEmailVerified
+
     init {
         checkUserAuthentication()
     }
 
     fun checkUserAuthentication() {
-        viewModelScope.launch {
-            val currentUser = firebaseAuth.currentUser
-            if (currentUser != null) {
-                _navigationState.value = NavigationState.MainScreen
-            } else {
-                _navigationState.value = NavigationState.LoginScreen
+        val currentUser = firebaseAuth.currentUser
+
+        if (currentUser != null) {
+            _navigationState.value = NavigationState.MainScreen
+        } else {
+            _navigationState.value = NavigationState.LoginScreen
+        }
+    }
+
+    fun checkEmailVerification() {
+        val currentUser = firebaseAuth.currentUser
+        _currentUser.value = currentUser
+
+        if (currentUser != null) {
+            viewModelScope.launch {
+                currentUser.reload().addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        _isEmailVerified.value = currentUser.isEmailVerified
+                    }
+                }
             }
+        } else {
+            _isEmailVerified.value = false
         }
     }
 
     fun signOut() {
         firebaseAuth.signOut()
-        _isUserAuthenticated.value = false
         _currentUser.value = null
     }
 

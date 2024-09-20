@@ -4,6 +4,11 @@
 
     <!--GLOBAL RESOURCES-->
     <string name="global_message_invalid_password">Contraseña debe ser >= 4 caracteres</string>
+    <string name="global_image_picker_take_photo">Tomar Foto</string>
+    <string name="global_image_picker_choose_from_gallery">Elegir de la Galería</string>
+    <string name="global_image_picker_remove_photo">Eliminar Foto</string>
+    <string name="global_permission_denied">Permiso denegado</string>
+    <string name="global_image_picker_content_description">Imagen seleccionada</string>
 
     <!--MENU RESOURCES-->
     <string name="menu_patients">Pacientes</string>
@@ -48,10 +53,6 @@
     <string name="add_patient_action_add">Agregar paciente</string>
 
     <!--PATIENT DETAIL SCREEN RESOURCES-->
-    <string name="detail_patient_photo_desc">Foto del paciente</string>
-    <string name="detail_patient_take_photo">Tomar una foto</string>
-    <string name="detail_patient_choose_photo">Elegir de la galería</string>
-    <string name="detail_patient_remove_photo">Eliminar foto</string>
     <string name="detail_patient_name">Nombre</string>
     <string name="detail_patient_phone">Número de teléfono</string>
     <string name="detail_patient_email">Correo electrónico</string>
@@ -66,7 +67,4 @@
     <string name="detail_patient_action_edit">Editar paciente</string>
     <string name="detail_patient_action_save">Guardar cambios</string>
     <string name="detail_patient_action_delete">Eliminar paciente</string>
-    <string name="detail_patient_permission_denied">Permiso de cámara denegado</string>
-
-
 </resources>

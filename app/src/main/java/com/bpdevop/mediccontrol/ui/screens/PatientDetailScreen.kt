@@ -1,15 +1,9 @@
 package com.bpdevop.mediccontrol.ui.screens
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,16 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
@@ -40,23 +30,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.rememberAsyncImagePainter
-import com.bpdevop.mediccontrol.BuildConfig
 import com.bpdevop.mediccontrol.R
-import com.bpdevop.mediccontrol.core.extensions.createImageFile
 import com.bpdevop.mediccontrol.core.extensions.formatToString
 import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.core.utils.deleteImageFile
 import com.bpdevop.mediccontrol.data.model.Patient
 import com.bpdevop.mediccontrol.ui.components.DatePickerModal
+import com.bpdevop.mediccontrol.ui.components.ImagePickerComponent
 import com.bpdevop.mediccontrol.ui.viewmodels.PatientsViewModel
 import java.io.File
 import java.util.Date
@@ -80,9 +65,8 @@ fun PatientDetailScreen(
     var gender by remember { mutableStateOf("") }
     var doctorId by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
-    var cameraUri by remember { mutableStateOf<Uri>(Uri.EMPTY) }
+
     var photoFile: File? = null
-    var showImageOptions by remember { mutableStateOf(false) }
     var isEditing by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
 
@@ -97,7 +81,7 @@ fun PatientDetailScreen(
     LaunchedEffect(updatePatientState) {
         if (updatePatientState is UiState.Success) {
             onPatientUpdated()
-            deleteImageFile(photoFile)
+            photoFile?.let { deleteImageFile(it) }
             viewModel.resetUpdatePatientState()
         }
     }
@@ -107,34 +91,6 @@ fun PatientDetailScreen(
             onPatientDeleted()
             viewModel.resetDeletePatientState()
         }
-    }
-
-    val cameraPermissionDeniedMessage = stringResource(R.string.detail_patient_permission_denied)
-
-    val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicture()
-    ) { success ->
-        if (success) {
-            cameraUri.let { photoUri = it }
-        }
-    }
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            photoFile = context.createImageFile()
-            cameraUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFile!!)
-            cameraLauncher.launch(cameraUri)
-        } else {
-            Toast.makeText(context, cameraPermissionDeniedMessage, Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    val galleryLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let { photoUri = it }
     }
 
     when (patientDetailState) {
@@ -169,55 +125,19 @@ fun PatientDetailScreen(
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-        Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            Image(
-                painter = rememberAsyncImagePainter(
-                    model = photoUri ?: R.drawable.ic_person_placeholder
-                ),
-                contentDescription = stringResource(R.string.detail_patient_photo_desc),
-                modifier = Modifier
-                    .size(128.dp)
-                    .clip(CircleShape)
-                    .clickable { if (isEditing) showImageOptions = true }
-            )
-
-            DropdownMenu(
-                expanded = showImageOptions,
-                onDismissRequest = { showImageOptions = false }
-            ) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.detail_patient_take_photo)) },
-                    onClick = {
-                        val permissionCheckResult = ContextCompat.checkSelfPermission(
-                            context, Manifest.permission.CAMERA
-                        )
-                        if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
-                            photoFile = context.createImageFile()
-                            cameraUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFile!!)
-                            cameraLauncher.launch(cameraUri)
-                        } else {
-                            permissionLauncher.launch(Manifest.permission.CAMERA)
-                        }
-                        showImageOptions = false
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.detail_patient_choose_photo)) },
-                    onClick = {
-                        galleryLauncher.launch("image/*")
-                        showImageOptions = false
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.detail_patient_remove_photo)) },
-                    onClick = {
-                        deleteImageFile(photoFile)
-                        photoUri = null
-                        showImageOptions = false
-                    }
-                )
-            }
-        }
+        ImagePickerComponent(
+            imageUri = photoUri,
+            onImagePicked = { newUri, file ->
+                photoUri = newUri
+                photoFile = file
+            },
+            onImageRemoved = { file ->
+                file?.let { deleteImageFile(it) }
+                photoUri = null
+                photoFile = null
+            },
+            isEditing = isEditing
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 

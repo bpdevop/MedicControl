@@ -1,13 +1,6 @@
 package com.bpdevop.mediccontrol.ui.screens
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,12 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -34,21 +23,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.rememberAsyncImagePainter
-import com.bpdevop.mediccontrol.BuildConfig
-import com.bpdevop.mediccontrol.R
-import com.bpdevop.mediccontrol.core.extensions.createImageFile
 import com.bpdevop.mediccontrol.core.utils.UiState
+import com.bpdevop.mediccontrol.core.utils.deleteImageFile
 import com.bpdevop.mediccontrol.ui.components.EmailField
+import com.bpdevop.mediccontrol.ui.components.ImagePickerComponent
 import com.bpdevop.mediccontrol.ui.components.MessageDialog
 import com.bpdevop.mediccontrol.ui.components.PasswordField
 import com.bpdevop.mediccontrol.ui.viewmodels.AuthViewModel
@@ -72,7 +55,6 @@ fun SignUpScreen(
     var confirmPassword by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
     var photoFile: File? = null
-    var showImageOptions by remember { mutableStateOf(false) }
     var isEmailValid by remember { mutableStateOf(false) }
     var isPasswordValid by remember { mutableStateOf(false) }
     var isConfirmPasswordValid by remember { mutableStateOf(false) }
@@ -84,27 +66,6 @@ fun SignUpScreen(
 
     val uiState by authViewModel.uiState.collectAsState()
 
-    val context = LocalContext.current
-    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-        if (success) {
-            photoFile?.let { photoUri = Uri.fromFile(it) }
-        }
-    }
-
-    val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        uri?.let { photoUri = it }
-    }
-
-    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-        if (isGranted) {
-            photoFile = context.createImageFile()
-            cameraLauncher.launch(FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFile!!))
-        } else {
-            Toast.makeText(context, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    // Manejador del botón de registro
     fun onSignUpClick() {
         if (isEmailValid && isPasswordValid && isConfirmPasswordValid && isNameValid && isRegistrationNumberValid && isPhoneNumberValid) {
             if (password == confirmPassword) {
@@ -127,52 +88,18 @@ fun SignUpScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-// Botón para seleccionar la imagen
-        Box(
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        ) {
-            Image(
-                painter = rememberAsyncImagePainter(photoUri ?: R.drawable.ic_person_placeholder),
-                contentDescription = "Foto de Perfil",
-                modifier = Modifier
-                    .size(128.dp)
-                    .clip(CircleShape)
-                    .clickable { showImageOptions = true }
-            )
-
-            DropdownMenu(
-                expanded = showImageOptions,
-                onDismissRequest = { showImageOptions = false }
-            ) {
-                DropdownMenuItem(
-                    text = { Text("Tomar Foto") },
-                    onClick = {
-                        val permissionCheckResult = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                        if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
-                            photoFile = context.createImageFile()
-                            cameraLauncher.launch(FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFile!!))
-                        } else {
-                            permissionLauncher.launch(Manifest.permission.CAMERA)
-                        }
-                        showImageOptions = false
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("Elegir de la Galería") },
-                    onClick = {
-                        galleryLauncher.launch("image/*")
-                        showImageOptions = false
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("Eliminar Foto") },
-                    onClick = {
-                        photoUri = null
-                        showImageOptions = false
-                    }
-                )
+        ImagePickerComponent(
+            imageUri = photoUri,
+            onImagePicked = { uri, file ->
+                photoUri = uri
+                photoFile = file
+            },
+            onImageRemoved = { file ->
+                file?.let { deleteImageFile(it) }
+                photoUri = null
+                photoFile = null
             }
-        }
+        )
 
         // Nombre del médico
         OutlinedTextField(
@@ -315,6 +242,7 @@ fun SignUpScreen(
         is UiState.Success -> {
             dialogMessage = "Registro exitoso. Por favor, verifica tu correo electrónico."
             showDialog = true
+            photoFile?.let { deleteImageFile(it) }
         }
 
         is UiState.Error -> {

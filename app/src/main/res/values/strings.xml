@@ -3,6 +3,12 @@
 
     <!--GLOBAL RESOURCES-->
     <string name="global_message_invalid_password">Password must be >= 4 characters</string>
+    <string name="global_image_picker_take_photo">Take Photo</string>
+    <string name="global_image_picker_choose_from_gallery">Choose from Gallery</string>
+    <string name="global_image_picker_remove_photo">Remove Photo</string>
+    <string name="global_permission_denied">Permission Denied</string>
+    <string name="global_image_picker_content_description">Selected Image</string>
+
 
     <!--MENU RESOURCES-->
     <string name="menu_patients">Patients</string>
@@ -48,10 +54,6 @@
     <string name="add_patient_action_add">Add patient</string>
 
     <!--PATIENT DETAIL SCREEN RESOURCES-->
-    <string name="detail_patient_photo_desc">Patient photo</string>
-    <string name="detail_patient_take_photo">Take a photo</string>
-    <string name="detail_patient_choose_photo">Choose from gallery</string>
-    <string name="detail_patient_remove_photo">Remove photo</string>
     <string name="detail_patient_name">Name</string>
     <string name="detail_patient_phone">Phone number</string>
     <string name="detail_patient_email">Email</string>
@@ -66,7 +68,4 @@
     <string name="detail_patient_action_edit">Edit patient</string>
     <string name="detail_patient_action_save">Save changes</string>
     <string name="detail_patient_action_delete">Delete patient</string>
-    <string name="detail_patient_permission_denied">Camera permission denied</string>
-
-
 </resources>

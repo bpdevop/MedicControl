@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name">Medic Control</string>
 
+    <!--ACTIONS RESOURCES-->
+    <string name="action_logout">Logout</string>
+
     <!--GLOBAL RESOURCES-->
+    <string name="global_message_logout">Are you sure to logout?</string>
     <string name="global_message_invalid_password">Password must be >= 4 characters</string>
     <string name="global_image_picker_take_photo">Take Photo</string>
     <string name="global_image_picker_choose_from_gallery">Choose from Gallery</string>

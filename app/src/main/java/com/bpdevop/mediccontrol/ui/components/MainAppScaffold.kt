@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
@@ -16,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
@@ -28,15 +30,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.bpdevop.mediccontrol.R
+import com.bpdevop.mediccontrol.core.extensions.navigateToLoginActivity
 import com.bpdevop.mediccontrol.ui.navigation.AppNavGraph
 import com.bpdevop.mediccontrol.ui.navigation.NavigationItem
 import com.bpdevop.mediccontrol.ui.navigation.Screen
 import com.bpdevop.mediccontrol.ui.viewmodels.MainViewModel
+import com.bpdevop.mediccontrol.ui.viewmodels.UserSessionViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -45,10 +51,13 @@ fun MainAppScaffold() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val mainViewModel: MainViewModel = hiltViewModel()
+    val sessionViewModel: UserSessionViewModel = hiltViewModel()
 
     val selectedItem by mainViewModel.selectedItem.collectAsState()
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -59,6 +68,16 @@ fun MainAppScaffold() {
         val currentMenuItem = mainViewModel.getMenuItemByRoute(currentRoute)
         mainViewModel.selectItem(currentMenuItem ?: return@LaunchedEffect)
     }
+
+    HandleLogoutDialog(
+        showLogoutDialog = showLogoutDialog,
+        onLogout = {
+            sessionViewModel.signOut()
+            context.navigateToLoginActivity()
+            showLogoutDialog = false
+        },
+        onDismissLogoutDialog = { showLogoutDialog = false }
+    )
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -93,14 +112,13 @@ fun MainAppScaffold() {
     }
 }
 
-
 @Composable
-fun rememberTopBarState(currentRoute: String?, selectedItem: NavigationItem?): Pair<Boolean, String> {
+fun rememberTopBarState(currentRoute: String?, selectedItem: NavigationItem?): Pair<Boolean?, String> {
     val showBackArrow = when (currentRoute) {
+        null -> null
         Screen.Patients.route,
         Screen.Agenda.route,
-        Screen.Profile.route,
-        -> false
+        Screen.Profile.route -> false
 
         else -> true
     }
@@ -111,21 +129,18 @@ fun rememberTopBarState(currentRoute: String?, selectedItem: NavigationItem?): P
         currentRoute?.startsWith(Screen.PatientDetail.route) == true -> stringResource(id = Screen.PatientDetail.titleResId)
         currentRoute == Screen.Agenda.route -> stringResource(id = Screen.Agenda.titleResId)
         currentRoute == Screen.Profile.route -> stringResource(id = Screen.Profile.titleResId)
-        // currentRoute == Screen.ClinicData.route -> stringResource(id = Screen.ClinicData.titleResId)
-        // currentRoute == Screen.PrintingConfig.route -> stringResource(id = Screen.PrintingConfig.titleResId)
-        // currentRoute == Screen.ExportData.route -> stringResource(id = Screen.ExportData.titleResId)
-        // currentRoute == Screen.AppSettings.route -> stringResource(id = Screen.AppSettings.titleResId)
         else -> selectedItem?.let { stringResource(id = it.titleResId) } ?: ""
     }
-
 
     return showBackArrow to topBarTitle
 }
 
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
-    showBackArrow: Boolean,
+    showBackArrow: Boolean?,
     topBarTitle: String,
     onBackClick: () -> Unit,
     onMenuClick: () -> Unit,
@@ -137,33 +152,29 @@ fun TopBar(
     TopAppBar(
         title = { Text(text = topBarTitle) },
         navigationIcon = {
-            // Mostrar la flecha de "volver atrás" o el ícono de menú
-            if (showBackArrow) {
-                IconButton(onClick = onBackClick) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver atrás")
-                }
-            } else {
-                IconButton(onClick = onMenuClick) {
-                    Icon(Icons.Filled.Menu, contentDescription = "Abrir menú")
-                }
+            val (icon, description, onClickAction) = when (showBackArrow) {
+                true -> Triple(Icons.AutoMirrored.Filled.ArrowBack, "Back", onBackClick)
+                false, null -> Triple(Icons.Default.Menu, "Menu", onMenuClick)
+            }
+
+            IconButton(onClick = onClickAction) {
+                Icon(icon, contentDescription = description)
             }
         },
         actions = {
-            // Icono de opciones adicionales (tres puntos)
             IconButton(onClick = onMenuToggle) {
-                Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Más opciones")
+                Icon(imageVector = Icons.Default.MoreVert, contentDescription = "More")
             }
 
-            // Menú desplegable de opciones adicionales
             DropdownMenu(
                 expanded = showMenu,
                 onDismissRequest = onMenuToggle
             ) {
                 DropdownMenuItem(
-                    text = { Text("Cerrar sesión") },
+                    text = { Text(stringResource(id = R.string.action_logout)) },
                     onClick = {
-                        onMenuToggle() // Cerrar el menú
-                        onLogoutClick() // Lógica de cerrar sesión
+                        onMenuToggle()
+                        onLogoutClick()
                     }
                 )
             }
@@ -173,6 +184,27 @@ fun TopBar(
             titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
         )
     )
+}
+
+@Composable
+private fun HandleLogoutDialog(showLogoutDialog: Boolean, onLogout: () -> Unit, onDismissLogoutDialog: () -> Unit) {
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = onDismissLogoutDialog,
+            title = { Text(stringResource(id = R.string.action_logout)) },
+            text = { Text(stringResource(id = R.string.global_message_logout)) },
+            confirmButton = {
+                TextButton(onClick = onLogout) {
+                    Text(stringResource(id = android.R.string.ok))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismissLogoutDialog) {
+                    Text(stringResource(id = android.R.string.cancel))
+                }
+            }
+        )
+    }
 }
 
 private suspend fun navigateToItem(navController: NavHostController, route: String, drawerState: DrawerState) {

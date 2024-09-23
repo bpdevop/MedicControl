@@ -2,7 +2,11 @@
 <resources>
     <string name="app_name">Medic Control</string>
 
+    <!--ACTIONS RESOURCES-->
+    <string name="action_logout">Cerrar sesión</string>
+
     <!--GLOBAL RESOURCES-->
+    <string name="global_message_logout">¿Está seguro de cerrar sesión?</string>
     <string name="global_message_invalid_password">Contraseña debe ser >= 4 caracteres</string>
     <string name="global_image_picker_take_photo">Tomar Foto</string>
     <string name="global_image_picker_choose_from_gallery">Elegir de la Galería</string>

@@ -1,8 +1,5 @@
 package com.bpdevop.mediccontrol.ui.activities
 
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,6 +14,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.bpdevop.mediccontrol.core.extensions.navigateToMainActivity
 import com.bpdevop.mediccontrol.ui.screens.ForgotPasswordScreen
 import com.bpdevop.mediccontrol.ui.screens.LoginScreen
 import com.bpdevop.mediccontrol.ui.screens.SignUpScreen
@@ -102,16 +100,6 @@ class LoginActivity : ComponentActivity() {
             )
         }
     }
-
-
-}
-
-fun Context.navigateToMainActivity() {
-    val intent = Intent(this, MainActivity::class.java).apply {
-        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-    }
-    startActivity(intent)
-    (this as? Activity)?.finish()
 }
 
 private sealed class Screen {

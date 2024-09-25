@@ -73,6 +73,7 @@ fun PatientsScreen(
                     val patients = state.data
                     if (patients.isEmpty()) EmptyPatientsScreen() else PatientsList(patients, onPatientClick)
                 }
+
                 is UiState.Error -> ErrorPatientsScreen(state.message)
                 else -> Unit
             }
@@ -80,7 +81,9 @@ fun PatientsScreen(
 
         FloatingActionButton(
             onClick = onAddPatientClick,
-            modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp)
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
         ) {
             Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.patients_screen_fab_add_patient))
         }
@@ -132,11 +135,17 @@ fun PatientsList(patients: List<Patient>, onPatientClick: (String) -> Unit) {
 @Composable
 fun HeaderLetter(letter: Char) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 8.dp, bottom = 8.dp).height(40.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
+            .height(40.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
-            modifier = Modifier.size(40.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -151,13 +160,21 @@ fun HeaderLetter(letter: Char) {
 
 @Composable
 fun PatientItem(patient: Patient, onClick: (String) -> Unit) {
+    val painter = rememberAsyncImagePainter(model = patient.photoUrl ?: R.drawable.ic_person_placeholder)
+
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp).clickable { onClick(patient.id) }
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clickable { onClick(patient.id) }
     ) {
         Image(
-            painter = rememberAsyncImagePainter(model = patient.photoUrl ?: R.drawable.ic_person_placeholder),
+            painter = painter,
             contentDescription = null,
-            modifier = Modifier.size(40.dp).clip(CircleShape).background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)),
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)),
             contentScale = ContentScale.Crop
         )
         Spacer(modifier = Modifier.width(16.dp))

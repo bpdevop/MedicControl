@@ -72,4 +72,22 @@
     <string name="detail_patient_action_edit">Edit patient</string>
     <string name="detail_patient_action_save">Save changes</string>
     <string name="detail_patient_action_delete">Delete patient</string>
+
+    <!--PATIENT OPTIONS SCREEN RESOURCES-->
+    <string name="patient_option_medical_history">Medical History</string>
+    <string name="patient_option_medical_visit">Medical Visit</string>
+    <string name="patient_option_vaccinations">Vaccinations</string>
+    <string name="patient_option_allergies">Allergies</string>
+    <string name="patient_option_blood_pressure">Blood Pressure</string>
+    <string name="patient_option_glucose">Glucose</string>
+    <string name="patient_option_oxygen_saturation">Oxygen Saturation</string>
+    <string name="patient_option_tests">Tests</string>
+    <string name="patient_option_prescriptions">Prescriptions</string>
+    <string name="patient_option_labs">Labs</string>
+    <string name="patient_option_radiology">Radiology</string>
+    <string name="patient_option_pathology">Pathology</string>
+    <string name="patient_option_surgery">Surgery</string>
+    <string name="patient_option_notes">Notes</string>
+    <string name="patient_option_appointments">Appointments</string>
+    <string name="patient_option_exports">Exports</string>
 </resources>

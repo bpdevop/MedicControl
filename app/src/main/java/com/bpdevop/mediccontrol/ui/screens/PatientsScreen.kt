@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,6 +53,7 @@ fun PatientsScreen(
     viewModel: PatientsViewModel = hiltViewModel(),
     onPatientClick: (String) -> Unit,
     onAddPatientClick: () -> Unit,
+    onDetailClick: (String) -> Unit,
 ) {
     val patientsState by viewModel.patientsState.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
@@ -71,7 +73,7 @@ fun PatientsScreen(
                 is UiState.Loading -> LoadingPatientsScreen()
                 is UiState.Success -> {
                     val patients = state.data
-                    if (patients.isEmpty()) EmptyPatientsScreen() else PatientsList(patients, onPatientClick)
+                    if (patients.isEmpty()) EmptyPatientsScreen() else PatientsList(patients, onPatientClick, onDetailClick)
                 }
 
                 is UiState.Error -> ErrorPatientsScreen(state.message)
@@ -121,13 +123,17 @@ fun ErrorPatientsScreen(errorMessage: String?) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PatientsList(patients: List<Patient>, onPatientClick: (String) -> Unit) {
+fun PatientsList(
+    patients: List<Patient>,
+    onPatientClick: (String) -> Unit,
+    onDetailClick: (String) -> Unit,
+) {
     val groupedPatients = patients.sortedBy { it.name }.groupBy { it.name.firstOrNull()?.uppercaseChar() ?: '#' }
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         groupedPatients.forEach { (initial, patientsForInitial) ->
             stickyHeader { HeaderLetter(letter = initial) }
-            items(patientsForInitial) { patient -> PatientItem(patient, onPatientClick) }
+            items(patientsForInitial) { patient -> PatientItem(patient, onPatientClick, onDetailClick) }
         }
     }
 }
@@ -159,14 +165,15 @@ fun HeaderLetter(letter: Char) {
 }
 
 @Composable
-fun PatientItem(patient: Patient, onClick: (String) -> Unit) {
+fun PatientItem(patient: Patient, onClick: (String) -> Unit, onDetailClick: (String) -> Unit) {
     val painter = rememberAsyncImagePainter(model = patient.photoUrl ?: R.drawable.ic_person_placeholder)
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable { onClick(patient.id) }
+            .clickable { onClick(patient.id) },
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             painter = painter,
@@ -178,9 +185,17 @@ fun PatientItem(patient: Patient, onClick: (String) -> Unit) {
             contentScale = ContentScale.Crop
         )
         Spacer(modifier = Modifier.width(16.dp))
-        Column {
+        Column(modifier = Modifier.weight(1f)) {
             Text(text = patient.name, style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(bottom = 4.dp))
             Text(text = patient.phone ?: stringResource(R.string.patients_screen_no_phone), style = MaterialTheme.typography.bodyMedium)
         }
+        Icon(
+            imageVector = Icons.Default.Info,
+            contentDescription = null,
+            modifier = Modifier
+                .size(24.dp)
+                .clickable { onDetailClick(patient.id) },
+            tint = MaterialTheme.colorScheme.primary
+        )
     }
 }

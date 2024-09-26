@@ -71,4 +71,22 @@
     <string name="detail_patient_action_edit">Editar paciente</string>
     <string name="detail_patient_action_save">Guardar cambios</string>
     <string name="detail_patient_action_delete">Eliminar paciente</string>
+
+    <!--PATIENT OPTIONS SCREEN RESOURCES-->
+    <string name="patient_option_medical_history">Historial médico</string>
+    <string name="patient_option_medical_visit">Visita médica</string>
+    <string name="patient_option_vaccinations">Vacunas</string>
+    <string name="patient_option_allergies">Alergias</string>
+    <string name="patient_option_blood_pressure">Presión sanguínea</string>
+    <string name="patient_option_glucose">Glicemia</string>
+    <string name="patient_option_oxygen_saturation">Saturación de oxígeno</string>
+    <string name="patient_option_tests">Exámenes</string>
+    <string name="patient_option_prescriptions">Recetas</string>
+    <string name="patient_option_labs">Laboratorios</string>
+    <string name="patient_option_radiology">Radiología</string>
+    <string name="patient_option_pathology">Patología</string>
+    <string name="patient_option_surgery">Cirugía</string>
+    <string name="patient_option_notes">Notas</string>
+    <string name="patient_option_appointments">Asignar cita</string>
+    <string name="patient_option_exports">Exportaciones</string>
 </resources>

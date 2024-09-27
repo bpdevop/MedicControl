@@ -7,14 +7,17 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.bpdevop.mediccontrol.data.model.Allergy
 import com.bpdevop.mediccontrol.data.model.Vaccine
 import com.bpdevop.mediccontrol.ui.screens.AddPatientScreen
 import com.bpdevop.mediccontrol.ui.screens.AgendaScreen
-import com.bpdevop.mediccontrol.ui.screens.vaccination.EditVaccineScreen
 import com.bpdevop.mediccontrol.ui.screens.PatientDetailScreen
 import com.bpdevop.mediccontrol.ui.screens.PatientOptionsScreen
 import com.bpdevop.mediccontrol.ui.screens.PatientsScreen
 import com.bpdevop.mediccontrol.ui.screens.ProfileScreen
+import com.bpdevop.mediccontrol.ui.screens.allergy.AllergyScreen
+import com.bpdevop.mediccontrol.ui.screens.allergy.EditAllergyScreen
+import com.bpdevop.mediccontrol.ui.screens.vaccination.EditVaccineScreen
 import com.bpdevop.mediccontrol.ui.screens.vaccination.VaccinationScreen
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -45,12 +48,13 @@ fun AppNavGraph(
             )
         }
 
-        //Opciones del paciente
-        composable("patient_options/{patientId}") { backStackEntry ->
-            val patientId = backStackEntry.arguments?.getString("patientId")
-            PatientOptionsScreen(patientId = patientId, onOptionSelected = { route ->
-                navController.navigate(route)
-            })
+        //Pantalla para agregar paciente
+        composable(Screen.AddPatient.route) {
+            AddPatientScreen(
+                onPatientAdded = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         //Detalle del paciente
@@ -71,6 +75,14 @@ fun AppNavGraph(
                     }
                 )
             }
+        }
+
+        //Opciones del paciente
+        composable("patient_options/{patientId}") { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")
+            PatientOptionsScreen(patientId = patientId, onOptionSelected = { route ->
+                navController.navigate(route)
+            })
         }
 
         // Pantalla de Vacunas
@@ -112,12 +124,41 @@ fun AppNavGraph(
             )
         }
 
-        //Pantalla para agregar paciente
-        composable(Screen.AddPatient.route) {
-            AddPatientScreen(
-                onPatientAdded = {
-                    navController.popBackStack()
-                }
+        // Pantalla de Alergias
+        composable(
+            route = "${Screen.Allergy.route}/{patientId}",
+            arguments = listOf(navArgument("patientId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")
+            patientId?.let {
+                AllergyScreen(
+                    patientId = it, onSaveSuccess = {
+                        navController.popBackStack()
+                    },
+                    onEditAllergy = { allergy ->
+                        val allergyJson = Json.encodeToString(allergy)
+                        navController.navigate(Screen.EditAllergy.withArgs(patientId, allergyJson))
+                    }
+                )
+            }
+        }
+
+        // Pantalla de Edición de Alergias
+        composable(
+            route = "${Screen.EditAllergy.route}/{patientId}/{allergy}",
+            arguments = listOf(
+                navArgument("patientId") { type = NavType.StringType },
+                navArgument("allergy") { type = NavType.StringType },
+            )
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")!!
+            val allergyJson = backStackEntry.arguments?.getString("allergy")
+            val allergy = Json.decodeFromString<Allergy>(allergyJson!!)
+
+            EditAllergyScreen(
+                patientId = patientId,
+                allergy = allergy,
+                onAllergyUpdated = { navController.popBackStack() }
             )
         }
 

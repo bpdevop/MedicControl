@@ -129,13 +129,15 @@ fun rememberTopBarState(currentRoute: String?, selectedItem: NavigationItem?): P
         currentRoute?.startsWith(Screen.PatientDetail.route) == true -> stringResource(id = Screen.PatientDetail.titleResId)
         currentRoute == Screen.Agenda.route -> stringResource(id = Screen.Agenda.titleResId)
         currentRoute == Screen.Profile.route -> stringResource(id = Screen.Profile.titleResId)
+        currentRoute?.startsWith(Screen.Vaccination.route) == true -> stringResource(id = Screen.Vaccination.titleResId)
+        currentRoute?.startsWith(Screen.EditVaccination.route) == true -> stringResource(id = Screen.EditVaccination.titleResId)
+        currentRoute?.startsWith(Screen.Allergy.route) == true -> stringResource(id = Screen.Allergy.titleResId)
+        currentRoute?.startsWith(Screen.EditAllergy.route) == true -> stringResource(id = Screen.EditAllergy.titleResId)
         else -> selectedItem?.let { stringResource(id = it.titleResId) } ?: ""
     }
 
     return showBackArrow to topBarTitle
 }
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

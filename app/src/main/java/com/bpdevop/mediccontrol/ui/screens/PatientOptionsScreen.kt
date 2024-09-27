@@ -23,7 +23,7 @@ fun PatientOptionsScreen(
         stringResource(id = R.string.patient_option_medical_history) to "medical_history",
         stringResource(id = R.string.patient_option_medical_visit) to "medical_visit",
         stringResource(id = R.string.patient_option_vaccinations) to "vaccination_screen",
-        stringResource(id = R.string.patient_option_allergies) to "allergies",
+        stringResource(id = R.string.patient_option_allergies) to "allergy_screen",
         stringResource(id = R.string.patient_option_blood_pressure) to "blood_pressure",
         stringResource(id = R.string.patient_option_glucose) to "glucose",
         stringResource(id = R.string.patient_option_oxygen_saturation) to "oxygen_saturation",

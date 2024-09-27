@@ -19,6 +19,9 @@
     <string name="menu_add_patient">Add Patient</string>
     <string name="menu_patient_detail">Patient Details</string>
     <string name="menu_vaccination">Vaccination</string>
+    <string name="menu_edit_vaccination">Edit Vaccine</string>
+    <string name="menu_allergy">Allergies</string>
+    <string name="menu_edit_allergy">Edit Allergy</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_clinic_data">Clinic Data</string>
@@ -111,6 +114,22 @@
     <string name="dialog_delete_vaccine_title">Delete vaccine</string>
     <string name="dialog_delete_vaccine_message">Are you sure you want to delete this vaccine? This action cannot be undone.</string>
 
+    <!-- ALLERGY HISTORY SCREEN RESOURCES-->
+    <string name="allergy_screen_new_allergy">New Allergy</string>
+    <string name="allergy_screen_allergy_history">Allergy History</string>
 
+    <!--NEW ALLERGY SCREEN RESOURCES-->
+    <string name="new_allergy_description">Allergy Description</string>
+    <string name="new_allergy_error_description_required">The allergy description is required</string>
+    <string name="new_allergy_date">Allergy Date</string>
+    <string name="new_allergy_error_date_required">The allergy date is required</string>
+    <string name="new_allergy_save">Save Allergy</string>
+
+    <!-- ALLERGY HISTORY SCREEN RESOURCES-->
+    <string name="dialog_delete_allergy_title">Delete Allergy</string>
+    <string name="dialog_delete_allergy_message">Are you sure you want to delete this allergy?</string>
+    <string name="allergy_history_empty">No allergy history available.</string>
+    <string name="allergy_history_edit">Edit Allergy</string>
+    <string name="allergy_history_delete">Delete Allergy</string>
 
 </resources>

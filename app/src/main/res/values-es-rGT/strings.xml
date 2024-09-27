@@ -19,6 +19,9 @@
     <string name="menu_add_patient">Agregar Paciente</string>
     <string name="menu_patient_detail">Detalles del Paciente</string>
     <string name="menu_vaccination">Vacunas</string>
+    <string name="menu_edit_vaccination">Editar Vacuna</string>
+    <string name="menu_allergy">Alergias</string>
+    <string name="menu_edit_allergy">Editar Alergia</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Perfil</string>
     <string name="menu_clinic_data">Datos de la Clínica</string>
@@ -109,4 +112,22 @@
     <string name="vaccination_history_vaccine_delete">Eliminar</string>
     <string name="dialog_delete_vaccine_title">Eliminar vacuna</string>
     <string name="dialog_delete_vaccine_message">¿Estás seguro de que deseas eliminar esta vacuna? Esta acción no se puede deshacer.</string>
+
+    <!-- ALLERGY HISTORY SCREEN RESOURCES-->
+    <string name="allergy_screen_new_allergy">Nueva Alergia</string>
+    <string name="allergy_screen_allergy_history">Historial de Alergias</string>
+
+    <!--NEW ALLERGY SCREEN RESOURCES-->
+    <string name="new_allergy_description">Descripción de la alergia</string>
+    <string name="new_allergy_error_description_required">La descripción de la alergia es obligatoria</string>
+    <string name="new_allergy_date">Fecha de la alergia</string>
+    <string name="new_allergy_error_date_required">La fecha de la alergia es obligatoria</string>
+    <string name="new_allergy_save">Guardar Alergia</string>
+
+    <!-- ALLERGY HISTORY SCREEN RESOURCES-->
+    <string name="dialog_delete_allergy_title">Eliminar Alergia</string>
+    <string name="dialog_delete_allergy_message">¿Estás seguro de que deseas eliminar esta alergia?</string>
+    <string name="allergy_history_empty">No hay historial de alergias.</string>
+    <string name="allergy_history_edit">Editar Alergia</string>
+    <string name="allergy_history_delete">Eliminar Alergia</string>
 </resources>

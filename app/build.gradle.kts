@@ -70,6 +70,9 @@ dependencies {
 
     implementation(libs.coil.compose)
 
+    //Snapper
+    implementation(libs.snapper)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

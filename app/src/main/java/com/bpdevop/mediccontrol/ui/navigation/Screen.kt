@@ -22,6 +22,13 @@ sealed class Screen(val route: String, @StringRes val titleResId: Int) {
         fun withArgs(patientId: String, allergy: String): String = "$route/$patientId/$allergy"
     }
 
+    // Nuevas pantallas para Presión Arterial
+    data object BloodPressure : Screen("blood_pressure_screen", R.string.menu_blood_pressure)
+
+    data object EditBloodPressure : Screen("edit_blood_pressure_screen", R.string.menu_edit_blood_pressure) {
+        fun withArgs(patientId: String, bloodPressure: String): String = "$route/$patientId/$bloodPressure"
+    }
+
     data object Agenda : Screen("agenda", R.string.menu_agenda)
     data object Profile : Screen("profile", R.string.menu_profile)
     // Añade más pantallas si es necesario

@@ -13,6 +13,8 @@
     <string name="global_image_picker_remove_photo">Eliminar Foto</string>
     <string name="global_permission_denied">Permiso denegado</string>
     <string name="global_image_picker_content_description">Imagen seleccionada</string>
+    <string name="global_message_edit">Editar</string>
+    <string name="global_message_delete">Eliminar</string>
 
     <!--MENU RESOURCES-->
     <string name="menu_patients">Pacientes</string>
@@ -22,6 +24,8 @@
     <string name="menu_edit_vaccination">Editar Vacuna</string>
     <string name="menu_allergy">Alergias</string>
     <string name="menu_edit_allergy">Editar Alergia</string>
+    <string name="menu_blood_pressure">Presión Arterial</string>
+    <string name="menu_edit_blood_pressure">Editar Presión Arterial</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Perfil</string>
     <string name="menu_clinic_data">Datos de la Clínica</string>
@@ -108,12 +112,10 @@
 
     <!-- VACCINATION HISTORY SCREEN RESOURCES-->
     <string name="vaccination_history_empty">No se encontraron registros de vacunación</string>
-    <string name="vaccination_history_vaccine_edit">Editar</string>
-    <string name="vaccination_history_vaccine_delete">Eliminar</string>
     <string name="dialog_delete_vaccine_title">Eliminar vacuna</string>
     <string name="dialog_delete_vaccine_message">¿Estás seguro de que deseas eliminar esta vacuna? Esta acción no se puede deshacer.</string>
 
-    <!-- ALLERGY HISTORY SCREEN RESOURCES-->
+    <!-- ALLERGY SCREEN RESOURCES-->
     <string name="allergy_screen_new_allergy">Nueva Alergia</string>
     <string name="allergy_screen_allergy_history">Historial de Alergias</string>
 
@@ -128,6 +130,32 @@
     <string name="dialog_delete_allergy_title">Eliminar Alergia</string>
     <string name="dialog_delete_allergy_message">¿Estás seguro de que deseas eliminar esta alergia?</string>
     <string name="allergy_history_empty">No hay historial de alergias.</string>
-    <string name="allergy_history_edit">Editar Alergia</string>
-    <string name="allergy_history_delete">Eliminar Alergia</string>
+
+    <!-- BLOOD PRESSURE SCREEN RESOURCES-->
+    <string name="blood_pressure_screen_new_record">Nuevo registro</string>
+    <string name="blood_pressure_screen_record_history">Historial</string>
+
+    <!--NEW BLOOD PRESSURE SCREEN RESOURCES-->
+    <string name="new_blood_pressure_systolic">Sistólica</string>
+    <string name="new_blood_pressure_diastolic">Diastólica</string>
+    <string name="new_blood_pressure_pulse">Pulso</string>
+    <string name="new_blood_pressure_date">Fecha</string>
+    <string name="new_blood_pressure_time">Hora</string>
+    <string name="new_blood_pressure_notes">Notas</string>
+    <string name="new_blood_pressure_save">Guardar presión arterial</string>
+    <string name="new_blood_pressure_error_systolic_required">La sistólica es obligatoria</string>
+    <string name="new_blood_pressure_error_diastolic_required">La diastólica es obligatoria</string>
+    <string name="new_blood_pressure_error_pulse_required">El pulso es obligatorio</string>
+    <string name="new_blood_pressure_error_date_required">La fecha es obligatoria</string>
+    <string name="new_blood_pressure_error_time_required">La hora es obligatoria</string>
+
+    <!-- BLOOD PRESSURE HISTORY SCREEN RESOURCES-->
+    <string name="blood_pressure_history_empty">No hay historial de presión arterial disponible.</string>
+    <string name="dialog_delete_blood_pressure_title">Eliminar registro de presión arterial</string>
+    <string name="dialog_delete_blood_pressure_message">¿Estás seguro de que deseas eliminar este registro de presión arterial?</string>
+    <string name="blood_pressure_history">Historial de presión arterial</string>
+    <string name="blood_pressure_history_systolic">Sistólica</string>
+    <string name="blood_pressure_history_diastolic">Diastólica</string>
+    <string name="blood_pressure_history_pulse">Pulso</string>
+
 </resources>

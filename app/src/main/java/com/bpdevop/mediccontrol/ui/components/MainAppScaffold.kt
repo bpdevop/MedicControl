@@ -118,7 +118,8 @@ fun rememberTopBarState(currentRoute: String?, selectedItem: NavigationItem?): P
         null -> null
         Screen.Patients.route,
         Screen.Agenda.route,
-        Screen.Profile.route -> false
+        Screen.Profile.route,
+        -> false
 
         else -> true
     }
@@ -133,6 +134,8 @@ fun rememberTopBarState(currentRoute: String?, selectedItem: NavigationItem?): P
         currentRoute?.startsWith(Screen.EditVaccination.route) == true -> stringResource(id = Screen.EditVaccination.titleResId)
         currentRoute?.startsWith(Screen.Allergy.route) == true -> stringResource(id = Screen.Allergy.titleResId)
         currentRoute?.startsWith(Screen.EditAllergy.route) == true -> stringResource(id = Screen.EditAllergy.titleResId)
+        currentRoute?.startsWith(Screen.BloodPressure.route) == true -> stringResource(id = Screen.BloodPressure.titleResId)
+        currentRoute?.startsWith(Screen.EditBloodPressure.route) == true -> stringResource(id = Screen.EditBloodPressure.titleResId)
         else -> selectedItem?.let { stringResource(id = it.titleResId) } ?: ""
     }
 

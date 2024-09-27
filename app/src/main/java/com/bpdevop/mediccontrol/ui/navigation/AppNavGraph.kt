@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.bpdevop.mediccontrol.data.model.Allergy
+import com.bpdevop.mediccontrol.data.model.BloodPressure
 import com.bpdevop.mediccontrol.data.model.Vaccine
 import com.bpdevop.mediccontrol.ui.screens.AddPatientScreen
 import com.bpdevop.mediccontrol.ui.screens.AgendaScreen
@@ -17,6 +18,8 @@ import com.bpdevop.mediccontrol.ui.screens.PatientsScreen
 import com.bpdevop.mediccontrol.ui.screens.ProfileScreen
 import com.bpdevop.mediccontrol.ui.screens.allergy.AllergyScreen
 import com.bpdevop.mediccontrol.ui.screens.allergy.EditAllergyScreen
+import com.bpdevop.mediccontrol.ui.screens.bloodpressure.BloodPressureScreen
+import com.bpdevop.mediccontrol.ui.screens.bloodpressure.EditBloodPressureScreen
 import com.bpdevop.mediccontrol.ui.screens.vaccination.EditVaccineScreen
 import com.bpdevop.mediccontrol.ui.screens.vaccination.VaccinationScreen
 import kotlinx.serialization.encodeToString
@@ -159,6 +162,45 @@ fun AppNavGraph(
                 patientId = patientId,
                 allergy = allergy,
                 onAllergyUpdated = { navController.popBackStack() }
+            )
+        }
+
+        // Pantalla para presión arterial
+        composable(
+            route = "${Screen.BloodPressure.route}/{patientId}",
+            arguments = listOf(navArgument("patientId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")
+            patientId?.let {
+                BloodPressureScreen(
+                    patientId = it,
+                    onSaveSuccess = {
+                        navController.popBackStack()
+                    },
+                    onEditBloodPressure = { bloodPressure ->
+                        val bloodPressureJson = Json.encodeToString(bloodPressure)
+                        navController.navigate(Screen.EditBloodPressure.withArgs(patientId, bloodPressureJson))
+                    }
+                )
+            }
+        }
+
+        // Pantalla de edición de presión arterial
+        composable(
+            route = "${Screen.EditBloodPressure.route}/{patientId}/{bloodPressure}",
+            arguments = listOf(
+                navArgument("patientId") { type = NavType.StringType },
+                navArgument("bloodPressure") { type = NavType.StringType },
+            )
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")!!
+            val bloodPressureJson = backStackEntry.arguments?.getString("bloodPressure")
+            val bloodPressure = Json.decodeFromString<BloodPressure>(bloodPressureJson!!)
+
+            EditBloodPressureScreen(
+                patientId = patientId,
+                bloodPressure = bloodPressure,
+                onBloodPressureUpdated = { navController.popBackStack() }
             )
         }
 

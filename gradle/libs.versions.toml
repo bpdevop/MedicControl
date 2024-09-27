@@ -15,7 +15,8 @@ lifecycleRuntimeKtx = "2.8.6"
 activityCompose = "1.9.2"
 composeBom = "2024.09.02"
 coil = "2.7.0"
-serialization = "1.7.1"
+serialization = "1.7.3"
+snapper = "0.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -46,6 +47,7 @@ firebase_auth_ktx = { module = "com.google.firebase:firebase-auth-ktx" }
 firebase_firesore = { module = "com.google.firebase:firebase-firestore" }
 firebase_storage = { module = "com.google.firebase:firebase-storage" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

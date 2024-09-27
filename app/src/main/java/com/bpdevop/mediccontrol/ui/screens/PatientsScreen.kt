@@ -21,7 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.People
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -44,6 +43,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.bpdevop.mediccontrol.R
 import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.data.model.Patient
+import com.bpdevop.mediccontrol.ui.components.RefreshLoadingScreen
 import com.bpdevop.mediccontrol.ui.viewmodels.PatientsViewModel
 import kotlinx.coroutines.launch
 
@@ -70,7 +70,7 @@ fun PatientsScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             when (val state = patientsState) {
-                is UiState.Loading -> LoadingPatientsScreen()
+                is UiState.Loading -> RefreshLoadingScreen()
                 is UiState.Success -> {
                     val patients = state.data
                     if (patients.isEmpty()) EmptyPatientsScreen() else PatientsList(patients, onPatientClick, onDetailClick)
@@ -89,15 +89,6 @@ fun PatientsScreen(
         ) {
             Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.patients_screen_fab_add_patient))
         }
-    }
-}
-
-@Composable
-fun LoadingPatientsScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator()
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(text = stringResource(R.string.patients_screen_loading))
     }
 }
 

@@ -9,14 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -38,7 +31,10 @@ import com.bpdevop.mediccontrol.R
 import com.bpdevop.mediccontrol.core.extensions.formatToString
 import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.data.model.Allergy
+import com.bpdevop.mediccontrol.ui.components.DateHeader
 import com.bpdevop.mediccontrol.ui.components.MessageDialog
+import com.bpdevop.mediccontrol.ui.components.MoreOptionsMenu
+import com.bpdevop.mediccontrol.ui.components.RefreshLoadingScreen
 import com.bpdevop.mediccontrol.ui.viewmodels.AllergyViewModel
 import kotlinx.coroutines.launch
 
@@ -105,7 +101,7 @@ fun AllergyHistoryScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         when (val state = allergyHistoryState) {
-            is UiState.Loading -> LoadingScreen()
+            is UiState.Loading -> RefreshLoadingScreen()
 
             is UiState.Success -> {
                 val allergies = state.data
@@ -129,16 +125,6 @@ fun AllergyHistoryScreen(
 
             else -> Unit
         }
-    }
-}
-
-@Composable
-fun LoadingScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
     }
 }
 
@@ -202,25 +188,11 @@ fun AllergyHistoryList(
 }
 
 @Composable
-fun DateHeader(date: String) {
-    Text(
-        text = date,
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-    )
-}
-
-@Composable
 fun AllergyHistoryItem(
     allergy: Allergy,
     onEditAllergy: (Allergy) -> Unit,
     onDeleteAllergy: (Allergy) -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(false) }
-
     Box(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier
@@ -231,33 +203,10 @@ fun AllergyHistoryItem(
             allergy.date?.formatToString()?.let { Text(text = it, style = MaterialTheme.typography.bodySmall) }
         }
 
-        // Icono de 3 puntos para mostrar el menú
-        Box(modifier = Modifier.align(Alignment.TopEnd)) {
-            IconButton(onClick = { expanded = true }) {
-                Icon(Icons.Default.MoreVert, contentDescription = null)
-            }
-
-            // Menú contextual
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier.align(Alignment.TopEnd)
-            ) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.allergy_history_edit)) },
-                    onClick = {
-                        expanded = false
-                        onEditAllergy(allergy)
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.allergy_history_delete)) },
-                    onClick = {
-                        expanded = false
-                        onDeleteAllergy(allergy)
-                    }
-                )
-            }
-        }
+        MoreOptionsMenu(
+            onEditClick = { onEditAllergy(allergy) },
+            onDeleteClick = { onDeleteAllergy(allergy) },
+            modifier = Modifier.align(Alignment.TopEnd)
+        )
     }
 }

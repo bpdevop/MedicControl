@@ -1,11 +1,9 @@
 package com.bpdevop.mediccontrol.ui.screens
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,26 +40,39 @@ import kotlinx.coroutines.launch
 import java.util.Date
 
 @Composable
-fun NewVaccineScreen(
+fun EditVaccineScreen(
     patientId: String,
+    vaccine: Vaccine,
     viewModel: VaccinationViewModel = hiltViewModel(),
-    onVaccineAdded: () -> Unit,
+    onVaccineUpdated: () -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    var vaccineName by remember { mutableStateOf("") }
-    var notes by remember { mutableStateOf("") }
-    var vaccineDate by remember { mutableStateOf<Date?>(null) }
+    var vaccineName by remember { mutableStateOf(vaccine.name) }
+    var notes by remember { mutableStateOf(vaccine.notes ?: "") }
+    var vaccineDate by remember { mutableStateOf(vaccine.date) }
     var showDatePicker by remember { mutableStateOf(false) }
 
-    var vaccineNameError by remember { mutableStateOf(false) }
-    var vaccineDateError by remember { mutableStateOf(false) }
+    val editVaccineState by viewModel.updateVaccineState.collectAsState()
 
-    val addVaccineState by viewModel.addVaccineState.collectAsState()
+    when (editVaccineState) {
+        is UiState.Success -> {
+            LaunchedEffect(Unit) {
+                onVaccineUpdated()
+                viewModel.resetUpdateVaccineState()
+            }
+        }
 
+        is UiState.Error -> {
+            LaunchedEffect(Unit) {
+                Toast.makeText(context, (editVaccineState as UiState.Error).message, Toast.LENGTH_LONG).show()
+                viewModel.resetUpdateVaccineState()
+            }
+        }
 
-    HandleUiStates(addVaccineState, context, viewModel, onVaccineAdded)
+        else -> Unit
+    }
 
     Column(
         modifier = Modifier
@@ -73,19 +84,10 @@ fun NewVaccineScreen(
     ) {
         OutlinedTextField(
             value = vaccineName,
-            onValueChange = {
-                vaccineName = it
-                vaccineNameError = vaccineName.isEmpty()
-            },
+            onValueChange = { vaccineName = it },
             label = { Text(stringResource(R.string.new_vaccine_name)) },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            isError = vaccineNameError,
-            supportingText = {
-                if (vaccineNameError) {
-                    Text(stringResource(R.string.new_vaccine_error_name_required))
-                }
-            }
+            singleLine = true
         )
 
         OutlinedTextField(
@@ -95,13 +97,7 @@ fun NewVaccineScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { showDatePicker = true },
-            enabled = false,
-            isError = vaccineDateError,
-            supportingText = {
-                if (vaccineDateError) {
-                    Text(stringResource(R.string.new_vaccine_error_date_required))
-                }
-            }
+            enabled = false
         )
 
         if (showDatePicker) {
@@ -109,7 +105,6 @@ fun NewVaccineScreen(
                 onDateSelected = { selectedDateMillis ->
                     selectedDateMillis?.let { vaccineDate = Date(it) }
                     showDatePicker = false
-                    vaccineDateError = vaccineDate == null
                 },
                 onDismiss = { showDatePicker = false }
             )
@@ -128,24 +123,15 @@ fun NewVaccineScreen(
             )
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         Button(
             onClick = {
                 coroutineScope.launch {
-                    vaccineNameError = vaccineName.isEmpty()
-                    vaccineDateError = vaccineDate == null
-
-                    if (!vaccineNameError && !vaccineDateError) {
-                        coroutineScope.launch {
-                            val vaccine = Vaccine(
-                                name = vaccineName,
-                                date = vaccineDate,
-                                notes = notes.ifEmpty { null }
-                            )
-                            viewModel.addVaccine(patientId, vaccine)
-                        }
-                    }
+                    val updatedVaccine = vaccine.copy(
+                        name = vaccineName,
+                        date = vaccineDate!!,
+                        notes = notes.ifEmpty { null }
+                    )
+                    viewModel.editVaccine(patientId, updatedVaccine)
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -153,35 +139,8 @@ fun NewVaccineScreen(
             Text(text = stringResource(R.string.new_vaccine_save))
         }
 
-        if (addVaccineState is UiState.Loading) {
+        if (editVaccineState is UiState.Loading) {
             CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp))
         }
-    }
-}
-
-
-@Composable
-fun HandleUiStates(
-    state: UiState<String>,
-    context: Context,
-    viewModel: VaccinationViewModel,
-    onVaccineAdded: () -> Unit,
-) {
-    when (state) {
-        is UiState.Success -> {
-            LaunchedEffect(Unit) {
-                onVaccineAdded()
-                viewModel.resetAddVaccineState()
-            }
-        }
-
-        is UiState.Error -> {
-            LaunchedEffect(Unit) {
-                Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
-                viewModel.resetAddVaccineState()
-            }
-        }
-
-        else -> Unit
     }
 }

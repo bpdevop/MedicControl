@@ -18,6 +18,7 @@
     <string name="menu_patients">Pacientes</string>
     <string name="menu_add_patient">Agregar Paciente</string>
     <string name="menu_patient_detail">Detalles del Paciente</string>
+    <string name="menu_vaccination">Vacunas</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Perfil</string>
     <string name="menu_clinic_data">Datos de la Clínica</string>
@@ -101,4 +102,11 @@
     <string name="new_vaccine_save">Guardar vacuna</string>
     <string name="new_vaccine_error_name_required">El nombre de la vacuna es obligatorio</string>
     <string name="new_vaccine_error_date_required">La fecha de la vacuna es obligatoria</string>
+
+    <!-- VACCINATION HISTORY SCREEN RESOURCES-->
+    <string name="vaccination_history_empty">No se encontraron registros de vacunación</string>
+    <string name="vaccination_history_vaccine_edit">Editar</string>
+    <string name="vaccination_history_vaccine_delete">Eliminar</string>
+    <string name="dialog_delete_vaccine_title">Eliminar vacuna</string>
+    <string name="dialog_delete_vaccine_message">¿Estás seguro de que deseas eliminar esta vacuna? Esta acción no se puede deshacer.</string>
 </resources>

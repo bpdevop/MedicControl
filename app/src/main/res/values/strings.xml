@@ -18,6 +18,7 @@
     <string name="menu_patients">Patients</string>
     <string name="menu_add_patient">Add Patient</string>
     <string name="menu_patient_detail">Patient Details</string>
+    <string name="menu_vaccination">Vaccination</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_clinic_data">Clinic Data</string>
@@ -102,5 +103,14 @@
     <string name="new_vaccine_save">Save Vaccine</string>
     <string name="new_vaccine_error_name_required">Vaccine name is required</string>
     <string name="new_vaccine_error_date_required">Vaccine date is required</string>
+
+    <!-- VACCINATION HISTORY SCREEN RESOURCES-->
+    <string name="vaccination_history_empty">No vaccination records found</string>
+    <string name="vaccination_history_vaccine_edit">Edit vaccine</string>
+    <string name="vaccination_history_vaccine_delete">>Delete vaccine</string>
+    <string name="dialog_delete_vaccine_title">Delete vaccine</string>
+    <string name="dialog_delete_vaccine_message">Are you sure you want to delete this vaccine? This action cannot be undone.</string>
+
+
 
 </resources>

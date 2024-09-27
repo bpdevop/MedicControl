@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -54,6 +55,7 @@ dependencies {
 
     implementation(libs.bundles.core)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.kotlinx.serialization.json)
     implementation(platform(libs.androidx.compose.bom))
     //Compose
     implementation(libs.bundles.compose)

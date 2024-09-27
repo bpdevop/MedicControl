@@ -8,6 +8,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,7 +26,7 @@ fun DatePickerModal(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
+                datePickerState.selectedDateMillis?.let { selectedMillis -> onDateSelected(selectedMillis.convertUtcToLocal()) } ?: run { onDateSelected(null) }
                 onDismiss()
             }) {
                 Text(stringResource(id = android.R.string.ok))
@@ -35,4 +40,11 @@ fun DatePickerModal(
     ) {
         DatePicker(state = datePickerState)
     }
+}
+
+fun Long.convertUtcToLocal(): Long {
+    val utcDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(this), ZoneOffset.UTC)
+    return ZonedDateTime.of(utcDateTime, ZoneId.systemDefault())
+        .toInstant()
+        .toEpochMilli()
 }

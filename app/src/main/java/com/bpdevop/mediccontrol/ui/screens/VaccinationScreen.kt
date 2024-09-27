@@ -14,11 +14,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.bpdevop.mediccontrol.R
+import com.bpdevop.mediccontrol.data.model.Vaccine
 
 @Composable
 fun VaccinationScreen(
     patientId: String,
     onSaveSuccess: () -> Unit,
+    onEditVaccine: (Vaccine) -> Unit,
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
 
@@ -47,7 +49,7 @@ fun VaccinationScreen(
                 onVaccineAdded = onSaveSuccess
             )
 
-            1 -> VaccinationHistoryScreen()
+            1 -> VaccinationHistoryScreen(patientId, onEditVaccine = onEditVaccine)
         }
     }
 }

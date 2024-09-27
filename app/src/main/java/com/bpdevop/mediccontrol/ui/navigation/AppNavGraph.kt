@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.bpdevop.mediccontrol.data.model.Allergy
+import com.bpdevop.mediccontrol.data.model.BloodGlucose
 import com.bpdevop.mediccontrol.data.model.BloodPressure
 import com.bpdevop.mediccontrol.data.model.Vaccine
 import com.bpdevop.mediccontrol.ui.screens.AddPatientScreen
@@ -18,6 +19,8 @@ import com.bpdevop.mediccontrol.ui.screens.PatientsScreen
 import com.bpdevop.mediccontrol.ui.screens.ProfileScreen
 import com.bpdevop.mediccontrol.ui.screens.allergy.AllergyScreen
 import com.bpdevop.mediccontrol.ui.screens.allergy.EditAllergyScreen
+import com.bpdevop.mediccontrol.ui.screens.bloodglucose.BloodGlucoseScreen
+import com.bpdevop.mediccontrol.ui.screens.bloodglucose.EditBloodGlucoseScreen
 import com.bpdevop.mediccontrol.ui.screens.bloodpressure.BloodPressureScreen
 import com.bpdevop.mediccontrol.ui.screens.bloodpressure.EditBloodPressureScreen
 import com.bpdevop.mediccontrol.ui.screens.vaccination.EditVaccineScreen
@@ -203,6 +206,46 @@ fun AppNavGraph(
                 onBloodPressureUpdated = { navController.popBackStack() }
             )
         }
+
+        //Pantalla de Glicemia
+        composable(
+            route = "${Screen.BloodGlucose.route}/{patientId}",
+            arguments = listOf(navArgument("patientId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")
+            patientId?.let {
+                BloodGlucoseScreen(
+                    patientId = it,
+                    onSaveSuccess = {
+                        navController.popBackStack()
+                    },
+                    onEditBloodGlucose = { bloodGlucose ->
+                        val bloodGlucoseJson = Json.encodeToString(bloodGlucose)
+                        navController.navigate(Screen.EditBloodGlucose.withArgs(patientId, bloodGlucoseJson))
+                    }
+                )
+            }
+        }
+
+        //Pantalla de edición de Glicemia
+        composable(
+            route = "${Screen.EditBloodGlucose.route}/{patientId}/{bloodGlucose}",
+            arguments = listOf(
+                navArgument("patientId") { type = NavType.StringType },
+                navArgument("bloodGlucose") { type = NavType.StringType },
+            )
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")!!
+            val bloodGlucoseJson = backStackEntry.arguments?.getString("bloodGlucose")
+            val bloodGlucose = Json.decodeFromString<BloodGlucose>(bloodGlucoseJson!!)
+
+            EditBloodGlucoseScreen(
+                patientId = patientId,
+                bloodGlucose = bloodGlucose,
+                onBloodGlucoseUpdated = { navController.popBackStack() }
+            )
+        }
+
 
         composable(Screen.Agenda.route) {
             AgendaScreen(navController)

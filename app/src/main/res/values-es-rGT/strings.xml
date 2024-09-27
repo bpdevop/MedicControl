@@ -26,6 +26,8 @@
     <string name="menu_edit_allergy">Editar Alergia</string>
     <string name="menu_blood_pressure">Presión Arterial</string>
     <string name="menu_edit_blood_pressure">Editar Presión Arterial</string>
+    <string name="menu_blood_glucose">Glicemia</string>
+    <string name="menu_edit_blood_glucose">Editar Glicemia</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Perfil</string>
     <string name="menu_clinic_data">Datos de la Clínica</string>
@@ -157,5 +159,30 @@
     <string name="blood_pressure_history_systolic">Sistólica</string>
     <string name="blood_pressure_history_diastolic">Diastólica</string>
     <string name="blood_pressure_history_pulse">Pulso</string>
+
+    <!-- BLOOD GLUCOSE SCREEN RESOURCES-->
+    <string name="blood_glucose_screen_new_record">Nuevo Registro</string>
+    <string name="blood_glucose_screen_record_history">Historial de Registros</string>
+
+    <!--NEW BLOOD GLUCOSE SCREEN RESOURCES-->
+    <string name="new_blood_glucose_type">Tipo de Glicemia</string>
+    <string name="new_blood_glucose_result">Resultado</string>
+    <string name="new_blood_glucose_date">Fecha</string>
+    <string name="new_blood_glucose_time">Hora</string>
+    <string name="new_blood_glucose_notes">Notas</string>
+    <string name="new_blood_glucose_save">Guardar</string>
+    <string name="blood_glucose_type_fasting">Ayuno</string>
+    <string name="blood_glucose_type_postprandial">Postprandial</string>
+    <string name="blood_glucose_type_random">Aleatorio</string>
+    <string name="new_blood_glucose_error_date_required">La fecha es obligatoria</string>
+    <string name="new_blood_glucose_error_time_required">La hora es obligatoria</string>
+
+    <!-- BLOOD GLUCOSE HISTORY SCREEN RESOURCES-->
+    <string name="blood_glucose_history_empty">No hay historial de glicemia disponible.</string>
+    <string name="blood_glucose_history_type">Tipo</string>
+    <string name="blood_glucose_history_result">Resultado</string>
+    <string name="blood_glucose_history_unit">Unidad</string>
+    <string name="dialog_delete_blood_glucose_title">Eliminar Glicemia</string>
+    <string name="dialog_delete_blood_glucose_message">¿Está seguro de que desea eliminar este registro de glicemia?</string>
 
 </resources>

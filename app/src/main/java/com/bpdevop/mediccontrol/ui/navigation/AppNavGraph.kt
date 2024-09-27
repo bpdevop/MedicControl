@@ -70,7 +70,10 @@ fun AppNavGraph(
         // Pantalla de Vacunas
         composable("vaccination_screen/{patientId}") { backStackEntry ->
             val patientId = backStackEntry.arguments?.getString("patientId")
-            VaccinationScreen()
+            patientId?.let {
+                VaccinationScreen(
+                    patientId = it, onSaveSuccess = { navController.popBackStack() })
+            }
         }
 
         composable(Screen.AddPatient.route) {

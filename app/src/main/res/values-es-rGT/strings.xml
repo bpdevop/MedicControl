@@ -89,4 +89,16 @@
     <string name="patient_option_notes">Notas</string>
     <string name="patient_option_appointments">Asignar cita</string>
     <string name="patient_option_exports">Exportaciones</string>
+
+    <!--VACCINATION SCREEN RESOURCES-->
+    <string name="vaccination_screen_new_vaccine">Nueva Vacuna</string>
+    <string name="vaccination_screen_vaccine_history">Historial de Vacunas</string>
+
+    <!--NEW VACCINE SCREEN RESOURCES-->
+    <string name="new_vaccine_name">Nombre de la vacuna</string>
+    <string name="new_vaccine_date">Fecha de la vacuna</string>
+    <string name="new_vaccine_notes">Notas adicionales</string>
+    <string name="new_vaccine_save">Guardar vacuna</string>
+    <string name="new_vaccine_error_name_required">El nombre de la vacuna es obligatorio</string>
+    <string name="new_vaccine_error_date_required">La fecha de la vacuna es obligatoria</string>
 </resources>

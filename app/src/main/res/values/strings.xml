@@ -90,4 +90,17 @@
     <string name="patient_option_notes">Notes</string>
     <string name="patient_option_appointments">Appointments</string>
     <string name="patient_option_exports">Exports</string>
+
+    <!--VACCINATION SCREEN RESOURCES-->
+    <string name="vaccination_screen_new_vaccine">New Vaccine</string>
+    <string name="vaccination_screen_vaccine_history">Vaccine History</string>
+
+    <!--NEW VACCINE SCREEN RESOURCES-->
+    <string name="new_vaccine_name">Vaccine Name</string>
+    <string name="new_vaccine_date">Vaccine Date</string>
+    <string name="new_vaccine_notes">Additional Notes</string>
+    <string name="new_vaccine_save">Save Vaccine</string>
+    <string name="new_vaccine_error_name_required">Vaccine name is required</string>
+    <string name="new_vaccine_error_date_required">Vaccine date is required</string>
+
 </resources>

@@ -28,6 +28,8 @@
     <string name="menu_edit_blood_pressure">Edit Blood Pressure</string>
     <string name="menu_blood_glucose">Blood Glucose</string>
     <string name="menu_edit_blood_glucose">Edit Blood Glucose</string>
+    <string name="menu_oxygen_saturation">Oxygen Saturation</string>
+    <string name="menu_edit_oxygen_saturation">Edit Oxygen Saturation</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_clinic_data">Clinic Data</string>
@@ -185,6 +187,27 @@
     <string name="blood_glucose_history_unit">Unit</string>
     <string name="dialog_delete_blood_glucose_title">Delete Blood Glucose</string>
     <string name="dialog_delete_blood_glucose_message">Are you sure you want to delete this blood glucose record?</string>
+
+    <!-- OXYGEN SATURATION SCREEN RESOURCES-->
+    <string name="oxygen_saturation_screen_new_record">New Oxygen Saturation Record</string>
+    <string name="oxygen_saturation_screen_record_history">Oxygen Saturation History</string>
+
+    <!--NEW OXYGEN SATURATION SCREEN RESOURCES-->
+    <string name="new_oxygen_saturation_value">Oxygen Saturation (%)</string>
+    <string name="new_oxygen_saturation_pulse">Pulse (BPM)</string>
+    <string name="new_oxygen_saturation_date">Date</string>
+    <string name="new_oxygen_saturation_time">Time</string>
+    <string name="new_oxygen_saturation_notes">Notes</string>
+    <string name="new_oxygen_saturation_save">Save</string>
+    <string name="new_oxygen_saturation_error_date_required">Date is required</string>
+    <string name="new_oxygen_saturation_error_time_required">Time is required</string>
+
+    <!-- OXYGEN SATURATION HISTORY SCREEN RESOURCES-->
+    <string name="oxygen_saturation_result">Oxygen Saturation</string>
+    <string name="oxygen_saturation_pulse">Pulse</string>
+    <string name="oxygen_saturation_history_empty">No oxygen saturation records found</string>
+    <string name="dialog_delete_oxygen_saturation_title">Delete Oxygen Saturation Record</string>
+    <string name="dialog_delete_oxygen_saturation_message">Are you sure you want to delete this record?</string>
 
 
 </resources>

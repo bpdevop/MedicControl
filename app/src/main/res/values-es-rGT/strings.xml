@@ -28,6 +28,8 @@
     <string name="menu_edit_blood_pressure">Editar Presión Arterial</string>
     <string name="menu_blood_glucose">Glicemia</string>
     <string name="menu_edit_blood_glucose">Editar Glicemia</string>
+    <string name="menu_oxygen_saturation">Saturación de Oxígeno</string>
+    <string name="menu_edit_oxygen_saturation">Editar Saturación de Oxígeno</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Perfil</string>
     <string name="menu_clinic_data">Datos de la Clínica</string>
@@ -184,5 +186,26 @@
     <string name="blood_glucose_history_unit">Unidad</string>
     <string name="dialog_delete_blood_glucose_title">Eliminar Glicemia</string>
     <string name="dialog_delete_blood_glucose_message">¿Está seguro de que desea eliminar este registro de glicemia?</string>
+
+    <!-- OXYGEN SATURATION SCREEN RESOURCES-->
+    <string name="oxygen_saturation_screen_new_record">Nuevo registro de saturación de oxígeno</string>
+    <string name="oxygen_saturation_screen_record_history">Historial de saturación de oxígeno</string>
+
+    <!--NEW OXYGEN SATURATION SCREEN RESOURCES-->
+    <string name="new_oxygen_saturation_value">Saturación de oxígeno (%)</string>
+    <string name="new_oxygen_saturation_pulse">Pulso (BPM)</string>
+    <string name="new_oxygen_saturation_date">Fecha</string>
+    <string name="new_oxygen_saturation_time">Hora</string>
+    <string name="new_oxygen_saturation_notes">Notas</string>
+    <string name="new_oxygen_saturation_save">Guardar</string>
+    <string name="new_oxygen_saturation_error_date_required">Se requiere la fecha</string>
+    <string name="new_oxygen_saturation_error_time_required">Se requiere la hora</string>
+
+    <!-- OXYGEN SATURATION HISTORY SCREEN RESOURCES-->
+    <string name="oxygen_saturation_result">Saturación de Oxígeno</string>
+    <string name="oxygen_saturation_pulse">Pulso</string>
+    <string name="oxygen_saturation_history_empty">No se encontraron registros de saturación de oxígeno</string>
+    <string name="dialog_delete_oxygen_saturation_title">Eliminar Registro de Saturación de Oxígeno</string>
+    <string name="dialog_delete_oxygen_saturation_message">¿Estás seguro de que deseas eliminar este registro?</string>
 
 </resources>

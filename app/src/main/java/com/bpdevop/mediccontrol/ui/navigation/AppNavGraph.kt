@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.bpdevop.mediccontrol.data.model.Allergy
 import com.bpdevop.mediccontrol.data.model.BloodGlucose
 import com.bpdevop.mediccontrol.data.model.BloodPressure
+import com.bpdevop.mediccontrol.data.model.OxygenSaturation
 import com.bpdevop.mediccontrol.data.model.Vaccine
 import com.bpdevop.mediccontrol.ui.screens.AddPatientScreen
 import com.bpdevop.mediccontrol.ui.screens.AgendaScreen
@@ -23,6 +24,8 @@ import com.bpdevop.mediccontrol.ui.screens.bloodglucose.BloodGlucoseScreen
 import com.bpdevop.mediccontrol.ui.screens.bloodglucose.EditBloodGlucoseScreen
 import com.bpdevop.mediccontrol.ui.screens.bloodpressure.BloodPressureScreen
 import com.bpdevop.mediccontrol.ui.screens.bloodpressure.EditBloodPressureScreen
+import com.bpdevop.mediccontrol.ui.screens.oxygensaturation.EditOxygenSaturationScreen
+import com.bpdevop.mediccontrol.ui.screens.oxygensaturation.OxygenSaturationScreen
 import com.bpdevop.mediccontrol.ui.screens.vaccination.EditVaccineScreen
 import com.bpdevop.mediccontrol.ui.screens.vaccination.VaccinationScreen
 import kotlinx.serialization.encodeToString
@@ -243,6 +246,45 @@ fun AppNavGraph(
                 patientId = patientId,
                 bloodGlucose = bloodGlucose,
                 onBloodGlucoseUpdated = { navController.popBackStack() }
+            )
+        }
+
+        // Pantalla de Saturación de Oxígeno
+        composable(
+            route = "${Screen.OxygenSaturation.route}/{patientId}",
+            arguments = listOf(navArgument("patientId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")
+            patientId?.let {
+                OxygenSaturationScreen(
+                    patientId = it,
+                    onSaveSuccess = {
+                        navController.popBackStack()
+                    },
+                    onEditOxygenSaturation = { oxygenSaturation ->
+                        val oxygenSaturationJson = Json.encodeToString(oxygenSaturation)
+                        navController.navigate(Screen.EditOxygenSaturation.withArgs(patientId, oxygenSaturationJson))
+                    }
+                )
+            }
+        }
+
+        // Pantalla de edición de Saturación de Oxígeno
+        composable(
+            route = "${Screen.EditOxygenSaturation.route}/{patientId}/{oxygenSaturation}",
+            arguments = listOf(
+                navArgument("patientId") { type = NavType.StringType },
+                navArgument("oxygenSaturation") { type = NavType.StringType },
+            )
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")!!
+            val oxygenSaturationJson = backStackEntry.arguments?.getString("oxygenSaturation")
+            val oxygenSaturation = Json.decodeFromString<OxygenSaturation>(oxygenSaturationJson!!)
+
+            EditOxygenSaturationScreen(
+                patientId = patientId,
+                oxygenSaturation = oxygenSaturation,
+                onOxygenSaturationUpdated = { navController.popBackStack() }
             )
         }
 

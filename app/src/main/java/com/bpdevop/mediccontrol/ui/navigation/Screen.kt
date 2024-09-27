@@ -36,6 +36,13 @@ sealed class Screen(val route: String, @StringRes val titleResId: Int) {
         fun withArgs(patientId: String, bloodGlucose: String): String = "$route/$patientId/$bloodGlucose"
     }
 
+    // Pantallas para Saturación de Oxígeno
+    data object OxygenSaturation : Screen("oxygen_saturation_screen", R.string.menu_oxygen_saturation)
+
+    data object EditOxygenSaturation : Screen("edit_oxygen_saturation_screen", R.string.menu_edit_oxygen_saturation) {
+        fun withArgs(patientId: String, oxygenSaturation: String): String = "$route/$patientId/$oxygenSaturation"
+    }
+
     data object Agenda : Screen("agenda", R.string.menu_agenda)
     data object Profile : Screen("profile", R.string.menu_profile)
     // Añade más pantallas si es necesario

@@ -10,12 +10,12 @@ import androidx.navigation.navArgument
 import com.bpdevop.mediccontrol.data.model.Vaccine
 import com.bpdevop.mediccontrol.ui.screens.AddPatientScreen
 import com.bpdevop.mediccontrol.ui.screens.AgendaScreen
-import com.bpdevop.mediccontrol.ui.screens.EditVaccineScreen
+import com.bpdevop.mediccontrol.ui.screens.vaccination.EditVaccineScreen
 import com.bpdevop.mediccontrol.ui.screens.PatientDetailScreen
 import com.bpdevop.mediccontrol.ui.screens.PatientOptionsScreen
 import com.bpdevop.mediccontrol.ui.screens.PatientsScreen
 import com.bpdevop.mediccontrol.ui.screens.ProfileScreen
-import com.bpdevop.mediccontrol.ui.screens.VaccinationScreen
+import com.bpdevop.mediccontrol.ui.screens.vaccination.VaccinationScreen
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 

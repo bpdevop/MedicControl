@@ -1,4 +1,4 @@
-package com.bpdevop.mediccontrol.ui.screens
+package com.bpdevop.mediccontrol.ui.screens.vaccination
 
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi

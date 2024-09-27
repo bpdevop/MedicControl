@@ -1,4 +1,4 @@
-package com.bpdevop.mediccontrol.ui.screens
+package com.bpdevop.mediccontrol.ui.screens.vaccination
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

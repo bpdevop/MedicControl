@@ -30,6 +30,9 @@
     <string name="menu_edit_blood_glucose">Editar Glicemia</string>
     <string name="menu_oxygen_saturation">Saturación de Oxígeno</string>
     <string name="menu_edit_oxygen_saturation">Editar Saturación de Oxígeno</string>
+    <string name="menu_examination">Exámenes</string>
+    <string name="menu_edit_examination">Editar Examen</string>
+    <string name="menu_preview_document">Previsualización de Documento</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Perfil</string>
     <string name="menu_clinic_data">Datos de la Clínica</string>
@@ -207,5 +210,37 @@
     <string name="oxygen_saturation_history_empty">No se encontraron registros de saturación de oxígeno</string>
     <string name="dialog_delete_oxygen_saturation_title">Eliminar Registro de Saturación de Oxígeno</string>
     <string name="dialog_delete_oxygen_saturation_message">¿Estás seguro de que deseas eliminar este registro?</string>
+
+    <!-- EXAMINATION SCREEN RESOURCES-->
+    <string name="examination_screen_new_record">Nuevo Examen</string>
+    <string name="examination_screen_record_history">Historial de Exámenes</string>
+
+    <!--NEW EXAMINATION SCREEN RESOURCES-->
+    <string name="new_examination_temperature">Temperatura (°C/°F)</string>
+    <string name="new_examination_weight">Peso (kg/lb)</string>
+    <string name="new_examination_height">Altura (cm/pulg/pies)</string>
+    <string name="new_examination_symptoms">Síntomas</string>
+    <string name="new_examination_diagnosis">Diagnóstico</string>
+    <string name="new_examination_notes">Notas</string>
+    <string name="new_examination_date">Fecha del Examen</string>
+    <string name="new_examination_upload_files">Subir Archivos</string>
+    <string name="new_examination_uploaded_files">Archivos Subidos</string>
+    <string name="new_examination_save">Guardar Examen</string>
+    <string name="new_examination_symptoms_list">Lista de Síntomas</string>
+    <string name="new_examination_diagnosis_list">Lista de Diagnósticos</string>
+    <string name="new_examination_new_files">Nuevos archivos</string>
+
+    <!-- EXAMINATION HISTORY SCREEN RESOURCES-->
+    <string name="dialog_delete_examination_title">Eliminar Examen</string>
+    <string name="dialog_delete_examination_message">¿Está seguro de que desea eliminar este examen?</string>
+    <string name="examination_history_empty">No hay historial de exámenes disponible</string>
+    <string name="examination_history_temperature">Temperatura</string>
+    <string name="examination_history_weight">Peso</string>
+    <string name="examination_history_height">Altura</string>
+    <string name="examination_history_error">Error al cargar el historial de exámenes</string>
+    <string name="examination_history_symptoms">Síntomas</string>
+    <string name="examination_history_diagnosis">Diagnóstico</string>
+    <string name="examination_notes">Notas</string>
+    <string name="examination_history_files">Archivos adjuntos</string>
 
 </resources>

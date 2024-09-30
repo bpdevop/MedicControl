@@ -30,6 +30,9 @@
     <string name="menu_edit_blood_glucose">Edit Blood Glucose</string>
     <string name="menu_oxygen_saturation">Oxygen Saturation</string>
     <string name="menu_edit_oxygen_saturation">Edit Oxygen Saturation</string>
+    <string name="menu_examination">Examination</string>
+    <string name="menu_edit_examination">Edit Examination</string>
+    <string name="menu_preview_document">Document Preview</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_clinic_data">Clinic Data</string>
@@ -208,6 +211,38 @@
     <string name="oxygen_saturation_history_empty">No oxygen saturation records found</string>
     <string name="dialog_delete_oxygen_saturation_title">Delete Oxygen Saturation Record</string>
     <string name="dialog_delete_oxygen_saturation_message">Are you sure you want to delete this record?</string>
+
+    <!-- EXAMINATION SCREEN RESOURCES-->
+    <string name="examination_screen_new_record">New Examination</string>
+    <string name="examination_screen_record_history">Examination History</string>
+
+    <!--NEW EXAMINATION SCREEN RESOURCES-->
+    <string name="new_examination_temperature">Temperature (°C/°F)</string>
+    <string name="new_examination_weight">Weight (kg/lb)</string>
+    <string name="new_examination_height">Height (cm/in/ft)</string>
+    <string name="new_examination_symptoms">Symptoms</string>
+    <string name="new_examination_diagnosis">Diagnosis</string>
+    <string name="new_examination_notes">Notes</string>
+    <string name="new_examination_date">Examination Date</string>
+    <string name="new_examination_upload_files">Upload Files</string>
+    <string name="new_examination_uploaded_files">Uploaded Files</string>
+    <string name="new_examination_save">Save Examination</string>
+    <string name="new_examination_symptoms_list">Symptoms List</string>
+    <string name="new_examination_diagnosis_list">Diagnosis List</string>
+    <string name="new_examination_new_files">New files</string>
+
+    <!-- EXAMINATION HISTORY SCREEN RESOURCES-->
+    <string name="dialog_delete_examination_title">Delete Examination</string>
+    <string name="dialog_delete_examination_message">Are you sure you want to delete this examination?</string>
+    <string name="examination_history_empty">No examination history available</string>
+    <string name="examination_history_temperature">Temperature</string>
+    <string name="examination_history_weight">Weight</string>
+    <string name="examination_history_height">Height</string>
+    <string name="examination_history_error">Error loading examination history</string>
+    <string name="examination_history_symptoms">Symptoms</string>
+    <string name="examination_history_diagnosis">Diagnosis</string>
+    <string name="examination_notes">Notes</string>
+    <string name="examination_history_files">Attached Files</string>
 
 
 </resources>

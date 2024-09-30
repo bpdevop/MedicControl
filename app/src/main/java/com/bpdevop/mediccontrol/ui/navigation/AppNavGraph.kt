@@ -24,6 +24,8 @@ import com.bpdevop.mediccontrol.ui.screens.bloodglucose.BloodGlucoseScreen
 import com.bpdevop.mediccontrol.ui.screens.bloodglucose.EditBloodGlucoseScreen
 import com.bpdevop.mediccontrol.ui.screens.bloodpressure.BloodPressureScreen
 import com.bpdevop.mediccontrol.ui.screens.bloodpressure.EditBloodPressureScreen
+import com.bpdevop.mediccontrol.ui.screens.examination.EditExaminationScreen
+import com.bpdevop.mediccontrol.ui.screens.examination.ExaminationScreen
 import com.bpdevop.mediccontrol.ui.screens.oxygensaturation.EditOxygenSaturationScreen
 import com.bpdevop.mediccontrol.ui.screens.oxygensaturation.OxygenSaturationScreen
 import com.bpdevop.mediccontrol.ui.screens.vaccination.EditVaccineScreen
@@ -288,6 +290,42 @@ fun AppNavGraph(
             )
         }
 
+        // Pantalla de Examen
+        composable(
+            route = "${Screen.Examination.route}/{patientId}",
+            arguments = listOf(navArgument("patientId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")
+            patientId?.let {
+                ExaminationScreen(
+                    patientId = it,
+                    onSaveSuccess = {
+                        navController.popBackStack()
+                    },
+                    onEditExamination = { examinationId ->
+                        navController.navigate(Screen.EditExamination.withArgs(patientId, examinationId))
+                    }
+                )
+            }
+        }
+
+        // Pantalla de edición de Examen
+        composable(
+            route = "${Screen.EditExamination.route}/{patientId}/{examination}",
+            arguments = listOf(
+                navArgument("patientId") { type = NavType.StringType },
+                navArgument("examination") { type = NavType.StringType },
+            )
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")!!
+            val examinationId = backStackEntry.arguments?.getString("examination")!!
+
+            EditExaminationScreen(
+                patientId = patientId,
+                examinationId = examinationId,
+                onExaminationUpdated = { navController.popBackStack() }
+            )
+        }
 
         composable(Screen.Agenda.route) {
             AgendaScreen(navController)

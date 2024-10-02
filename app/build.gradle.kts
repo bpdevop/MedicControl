@@ -73,6 +73,10 @@ dependencies {
     //Snapper
     implementation(libs.snapper)
 
+    //Itext7
+    implementation(libs.itext7.core)
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

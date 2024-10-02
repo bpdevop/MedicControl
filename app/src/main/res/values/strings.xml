@@ -14,6 +14,8 @@
     <string name="global_image_picker_content_description">Selected Image</string>
     <string name="global_message_edit">Edit</string>
     <string name="global_message_delete">Delete</string>
+    <string name="global_message_print">Print</string>
+    <string name="global_message_send">Send</string>
 
 
     <!--MENU RESOURCES-->
@@ -32,7 +34,8 @@
     <string name="menu_edit_oxygen_saturation">Edit Oxygen Saturation</string>
     <string name="menu_examination">Examination</string>
     <string name="menu_edit_examination">Edit Examination</string>
-    <string name="menu_preview_document">Document Preview</string>
+    <string name="menu_prescription">Prescription</string>
+    <string name="menu_edit_prescription">Edit Prescription</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_clinic_data">Clinic Data</string>
@@ -244,5 +247,27 @@
     <string name="examination_notes">Notes</string>
     <string name="examination_history_files">Attached Files</string>
 
+    <!-- PRESCRIPTION SCREEN RESOURCES-->
+    <string name="prescription_screen_new_prescription">New Prescription</string>
+    <string name="prescription_screen_prescription_history">Prescription History</string>
+
+    <!--NEW PRESCRIPTION SCREEN RESOURCES-->
+    <string name="new_prescription_medication">Medication</string>
+    <string name="new_prescription_dosage">Dosage</string>
+    <string name="new_prescription_frequency">Frequency</string>
+    <string name="new_prescription_duration">Duration</string>
+    <string name="new_prescription_notes">Notes</string>
+    <string name="new_prescription_date">Date</string>
+    <string name="new_prescription_uploaded_files">Uploaded Files</string>
+    <string name="new_prescription_save">Save Prescription</string>
+    <string name="new_prescription_medications_list">Prescribed Medications</string>
+
+    <!-- PRESCRIPTION HISTORY SCREEN RESOURCES-->
+    <string name="prescription_history_empty">No prescriptions available</string>
+    <string name="prescription_history_medications">Medications</string>
+    <string name="prescription_history_notes">Doctor\'s notes</string>
+    <string name="prescription_history_date">Prescription date</string>
+    <string name="dialog_delete_prescription_title">Delete Prescription</string>
+    <string name="dialog_delete_prescription_message">Are you sure you want to delete this prescription?</string>
 
 </resources>

@@ -51,6 +51,15 @@ sealed class Screen(val route: String, @StringRes val titleResId: Int) {
         fun withArgs(patientId: String, examinationId: String): String = "$route/$patientId/$examinationId"
     }
 
+    // Pantalla para nueva receta
+    data object Prescription : Screen("prescription_screen", R.string.menu_prescription)
+
+    // Pantalla para editar receta
+    data object EditPrescription : Screen("edit_prescription_screen", R.string.menu_edit_prescription) {
+        fun withArgs(patientId: String, prescriptionId: String): String = "$route/$patientId/$prescriptionId"
+    }
+
+
     data object Agenda : Screen("agenda", R.string.menu_agenda)
     data object Profile : Screen("profile", R.string.menu_profile)
     // Añade más pantallas si es necesario

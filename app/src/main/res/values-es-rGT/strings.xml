@@ -15,6 +15,8 @@
     <string name="global_image_picker_content_description">Imagen seleccionada</string>
     <string name="global_message_edit">Editar</string>
     <string name="global_message_delete">Eliminar</string>
+    <string name="global_message_print">Imprimir</string>
+    <string name="global_message_send">Enviar</string>
 
     <!--MENU RESOURCES-->
     <string name="menu_patients">Pacientes</string>
@@ -32,7 +34,8 @@
     <string name="menu_edit_oxygen_saturation">Editar Saturación de Oxígeno</string>
     <string name="menu_examination">Exámenes</string>
     <string name="menu_edit_examination">Editar Examen</string>
-    <string name="menu_preview_document">Previsualización de Documento</string>
+    <string name="menu_prescription">Receta</string>
+    <string name="menu_edit_prescription">Editar Receta</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Perfil</string>
     <string name="menu_clinic_data">Datos de la Clínica</string>
@@ -242,5 +245,28 @@
     <string name="examination_history_diagnosis">Diagnóstico</string>
     <string name="examination_notes">Notas</string>
     <string name="examination_history_files">Archivos adjuntos</string>
+
+    <!-- PRESCRIPTION SCREEN RESOURCES-->
+    <string name="prescription_screen_new_prescription">Nueva Receta</string>
+    <string name="prescription_screen_prescription_history">Historial de Recetas</string>
+
+    <!--NEW PRESCRIPTION SCREEN RESOURCES-->
+    <string name="new_prescription_medication">Medicamento</string>
+    <string name="new_prescription_dosage">Dosis</string>
+    <string name="new_prescription_frequency">Frecuencia</string>
+    <string name="new_prescription_duration">Duración</string>
+    <string name="new_prescription_notes">Notas</string>
+    <string name="new_prescription_date">Fecha</string>
+    <string name="new_prescription_uploaded_files">Archivos Subidos</string>
+    <string name="new_prescription_save">Guardar Receta</string>
+    <string name="new_prescription_medications_list">Medicamentos Recetados</string>
+
+    <!-- PRESCRIPTION HISTORY SCREEN RESOURCES-->
+    <string name="prescription_history_empty">No hay recetas disponibles</string>
+    <string name="prescription_history_medications">Medicamentos</string>
+    <string name="prescription_history_notes">Notas del médico</string>
+    <string name="prescription_history_date">Fecha de la receta</string>
+    <string name="dialog_delete_prescription_title">Eliminar receta</string>
+    <string name="dialog_delete_prescription_message">¿Está seguro de que desea eliminar esta receta?</string>
 
 </resources>

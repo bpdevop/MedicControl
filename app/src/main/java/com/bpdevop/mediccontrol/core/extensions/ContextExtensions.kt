@@ -5,8 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
+import com.bpdevop.mediccontrol.data.model.DoctorProfile
+import com.bpdevop.mediccontrol.data.model.Patient
+import com.bpdevop.mediccontrol.data.model.Prescription
 import com.bpdevop.mediccontrol.ui.activities.LoginActivity
 import com.bpdevop.mediccontrol.ui.activities.MainActivity
+import com.bpdevop.mediccontrol.ui.screens.prescription.PrescriptionPdfGenerator
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -51,4 +55,9 @@ fun Context.navigateToMainActivity() {
 fun Context.openUrlInCustomTab(url: String) {
     val customTabsIntent = CustomTabsIntent.Builder().build()
     customTabsIntent.launchUrl(this, Uri.parse(url))
+}
+
+fun Context.generatePrescriptionPdf(doctor: DoctorProfile, patient: Patient, prescription: Prescription): File {
+    val generator = PrescriptionPdfGenerator(this)
+    return generator.createPrescriptionPdf(doctor, patient, prescription)
 }

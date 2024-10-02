@@ -34,7 +34,6 @@ import com.bpdevop.mediccontrol.data.model.Allergy
 import com.bpdevop.mediccontrol.ui.components.DateHeader
 import com.bpdevop.mediccontrol.ui.components.MessageDialog
 import com.bpdevop.mediccontrol.ui.components.MoreOptionsMenu
-import com.bpdevop.mediccontrol.ui.components.RefreshLoadingScreen
 import com.bpdevop.mediccontrol.ui.viewmodels.AllergyViewModel
 import kotlinx.coroutines.launch
 
@@ -101,8 +100,6 @@ fun AllergyHistoryScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         when (val state = allergyHistoryState) {
-            is UiState.Loading -> RefreshLoadingScreen()
-
             is UiState.Success -> {
                 val allergies = state.data
                 if (allergies.isEmpty()) {

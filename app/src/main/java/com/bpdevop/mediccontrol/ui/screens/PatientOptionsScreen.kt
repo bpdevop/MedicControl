@@ -28,7 +28,7 @@ fun PatientOptionsScreen(
         stringResource(id = R.string.patient_option_glucose) to "blood_glucose_screen",
         stringResource(id = R.string.patient_option_oxygen_saturation) to "oxygen_saturation_screen",
         stringResource(id = R.string.patient_option_tests) to "examination_screen",
-        stringResource(id = R.string.patient_option_prescriptions) to "prescriptions",
+        stringResource(id = R.string.patient_option_prescriptions) to "prescription_screen",
         stringResource(id = R.string.patient_option_labs) to "labs",
         stringResource(id = R.string.patient_option_radiology) to "radiology",
         stringResource(id = R.string.patient_option_pathology) to "pathology",

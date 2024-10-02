@@ -41,7 +41,6 @@ import com.bpdevop.mediccontrol.data.model.Examination
 import com.bpdevop.mediccontrol.ui.components.DateHeader
 import com.bpdevop.mediccontrol.ui.components.MessageDialog
 import com.bpdevop.mediccontrol.ui.components.MoreOptionsMenu
-import com.bpdevop.mediccontrol.ui.components.RefreshLoadingScreen
 import com.bpdevop.mediccontrol.ui.viewmodels.ExaminationViewModel
 import kotlinx.coroutines.launch
 
@@ -104,8 +103,6 @@ fun ExaminationHistoryScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         when (val state = examinationHistoryState) {
-            is UiState.Loading -> RefreshLoadingScreen()
-
             is UiState.Success -> {
                 val examinations = state.data
                 if (examinations.isEmpty()) {

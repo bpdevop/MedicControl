@@ -1,11 +1,12 @@
 [versions]
 agp = "8.5.2"
 core_splashscreen = "1.0.1"
-firebase-bom = "33.3.0"
+firebase-bom = "33.4.0"
 google_gms_google_services = "4.4.2"
 google_firebase_crashlytics = "3.0.2"
 hilt = "2.52"
 hiltNavigationCompose = "1.2.0"
+itext7Core = "8.0.5"
 kotlin = "2.0.10"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -21,6 +22,7 @@ snapper = "0.3.0"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 core_splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "core_splashscreen" }
+itext7-core = { module = "com.itextpdf:itext7-core", version.ref = "itext7Core" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

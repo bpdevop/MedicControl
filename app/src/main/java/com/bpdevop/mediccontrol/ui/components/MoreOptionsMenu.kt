@@ -23,6 +23,8 @@ fun MoreOptionsMenu(
     modifier: Modifier = Modifier,
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
+    onPrintClick: (() -> Unit)? = null,   // Opción opcional para imprimir
+    onSendClick: (() -> Unit)? = null,    // Opción opcional para enviar
     editText: String = stringResource(R.string.global_message_edit),
     deleteText: String = stringResource(R.string.global_message_delete),
 ) {
@@ -38,20 +40,33 @@ fun MoreOptionsMenu(
             onDismissRequest = { expanded = false },
             modifier = Modifier.align(Alignment.TopEnd)
         ) {
+            fun handleClick(action: () -> Unit) {
+                expanded = false
+                action()
+            }
+
             DropdownMenuItem(
                 text = { Text(editText) },
-                onClick = {
-                    expanded = false
-                    onEditClick()
-                }
+                onClick = { handleClick(onEditClick) }
             )
             DropdownMenuItem(
                 text = { Text(deleteText) },
-                onClick = {
-                    expanded = false
-                    onDeleteClick()
-                }
+                onClick = { handleClick(onDeleteClick) }
             )
+
+            onPrintClick?.let {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.global_message_print)) },
+                    onClick = { handleClick(it) }
+                )
+            }
+
+            onSendClick?.let {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.global_message_send)) },
+                    onClick = { handleClick(it) }
+                )
+            }
         }
     }
 }

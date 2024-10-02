@@ -36,7 +36,6 @@ import com.bpdevop.mediccontrol.data.model.BloodPressure
 import com.bpdevop.mediccontrol.ui.components.DateHeader
 import com.bpdevop.mediccontrol.ui.components.MessageDialog
 import com.bpdevop.mediccontrol.ui.components.MoreOptionsMenu
-import com.bpdevop.mediccontrol.ui.components.RefreshLoadingScreen
 import com.bpdevop.mediccontrol.ui.viewmodels.BloodPressureViewModel
 import kotlinx.coroutines.launch
 
@@ -99,8 +98,6 @@ fun BloodPressureHistoryScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         when (val state = bloodPressureHistoryState) {
-            is UiState.Loading -> RefreshLoadingScreen()
-
             is UiState.Success -> {
                 val bloodPressures = state.data
                 if (bloodPressures.isEmpty()) {

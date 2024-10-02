@@ -43,7 +43,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.bpdevop.mediccontrol.R
 import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.data.model.Patient
-import com.bpdevop.mediccontrol.ui.components.RefreshLoadingScreen
 import com.bpdevop.mediccontrol.ui.viewmodels.PatientsViewModel
 import kotlinx.coroutines.launch
 
@@ -70,7 +69,6 @@ fun PatientsScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             when (val state = patientsState) {
-                is UiState.Loading -> RefreshLoadingScreen()
                 is UiState.Success -> {
                     val patients = state.data
                     if (patients.isEmpty()) EmptyPatientsScreen() else PatientsList(patients, onPatientClick, onDetailClick)

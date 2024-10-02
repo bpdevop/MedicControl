@@ -142,6 +142,8 @@ fun rememberTopBarState(currentRoute: String?, selectedItem: NavigationItem?): P
         currentRoute?.startsWith(Screen.EditOxygenSaturation.route) == true -> stringResource(id = Screen.EditOxygenSaturation.titleResId)
         currentRoute?.startsWith(Screen.Examination.route) == true -> stringResource(id = Screen.Examination.titleResId)
         currentRoute?.startsWith(Screen.EditExamination.route) == true -> stringResource(id = Screen.EditExamination.titleResId)
+        currentRoute?.startsWith(Screen.Prescription.route) == true -> stringResource(id = Screen.Prescription.titleResId)
+        currentRoute?.startsWith(Screen.EditPrescription.route) == true -> stringResource(id = Screen.EditPrescription.titleResId)
         else -> selectedItem?.let { stringResource(id = it.titleResId) } ?: ""
     }
 

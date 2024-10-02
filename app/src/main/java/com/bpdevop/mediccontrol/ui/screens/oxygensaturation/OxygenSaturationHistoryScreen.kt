@@ -36,7 +36,6 @@ import com.bpdevop.mediccontrol.data.model.OxygenSaturation
 import com.bpdevop.mediccontrol.ui.components.DateHeader
 import com.bpdevop.mediccontrol.ui.components.MessageDialog
 import com.bpdevop.mediccontrol.ui.components.MoreOptionsMenu
-import com.bpdevop.mediccontrol.ui.components.RefreshLoadingScreen
 import com.bpdevop.mediccontrol.ui.viewmodels.OxygenSaturationViewModel
 import kotlinx.coroutines.launch
 
@@ -99,8 +98,6 @@ fun OxygenSaturationHistoryScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         when (val state = oxygenSaturationHistoryState) {
-            is UiState.Loading -> RefreshLoadingScreen()
-
             is UiState.Success -> {
                 val oxygenSaturations = state.data
                 if (oxygenSaturations.isEmpty()) {

@@ -28,6 +28,8 @@ import com.bpdevop.mediccontrol.ui.screens.examination.EditExaminationScreen
 import com.bpdevop.mediccontrol.ui.screens.examination.ExaminationScreen
 import com.bpdevop.mediccontrol.ui.screens.oxygensaturation.EditOxygenSaturationScreen
 import com.bpdevop.mediccontrol.ui.screens.oxygensaturation.OxygenSaturationScreen
+import com.bpdevop.mediccontrol.ui.screens.prescription.EditPrescriptionScreen
+import com.bpdevop.mediccontrol.ui.screens.prescription.PrescriptionScreen
 import com.bpdevop.mediccontrol.ui.screens.vaccination.EditVaccineScreen
 import com.bpdevop.mediccontrol.ui.screens.vaccination.VaccinationScreen
 import kotlinx.serialization.encodeToString
@@ -326,6 +328,44 @@ fun AppNavGraph(
                 onExaminationUpdated = { navController.popBackStack() }
             )
         }
+
+        // Pantalla de Receta
+        composable(
+            route = "${Screen.Prescription.route}/{patientId}",
+            arguments = listOf(navArgument("patientId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")
+            patientId?.let {
+                PrescriptionScreen(
+                    patientId = it,
+                    onSaveSuccess = {
+                        navController.popBackStack()
+                    },
+                    onEditPrescription = { prescriptionId ->
+                        navController.navigate(Screen.EditPrescription.withArgs(patientId, prescriptionId))
+                    }
+                )
+            }
+        }
+
+        // Pantalla de edición de Receta
+        composable(
+            route = "${Screen.EditPrescription.route}/{patientId}/{prescriptionId}",
+            arguments = listOf(
+                navArgument("patientId") { type = NavType.StringType },
+                navArgument("prescriptionId") { type = NavType.StringType },
+            )
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")!!
+            val prescriptionId = backStackEntry.arguments?.getString("prescriptionId")!!
+
+            EditPrescriptionScreen(
+                patientId = patientId,
+                prescriptionId = prescriptionId,
+                onPrescriptionUpdated = { navController.popBackStack() }
+            )
+        }
+
 
         composable(Screen.Agenda.route) {
             AgendaScreen(navController)

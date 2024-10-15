@@ -36,6 +36,8 @@
     <string name="menu_edit_examination">Edit Examination</string>
     <string name="menu_prescription">Prescription</string>
     <string name="menu_edit_prescription">Edit Prescription</string>
+    <string name="menu_laboratory">Laboratory</string>
+    <string name="menu_edit_laboratory">Edit Laboratory Record</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_clinic_data">Clinic Data</string>
@@ -269,5 +271,36 @@
     <string name="prescription_history_date">Prescription date</string>
     <string name="dialog_delete_prescription_title">Delete Prescription</string>
     <string name="dialog_delete_prescription_message">Are you sure you want to delete this prescription?</string>
+
+    <!-- LABORATORY SCREEN RESOURCES-->
+    <string name="laboratory_screen_new_record">New Test</string>
+    <string name="laboratory_screen_record_history">Test History</string>
+
+    <!--NEW LABORATORY SCREEN RESOURCES-->
+    <string name="new_lab_test_name">Test</string>
+    <string name="new_lab_test_result">Result</string>
+    <string name="new_lab_test_normal_checkbox">It\'s normal</string>
+    <string name="new_lab_test_normal">Normal</string>
+    <string name="new_lab_test_abnormal">Abnormal</string>
+    <string name="new_lab_add_test">Add Test</string>
+    <string name="new_lab_tests_list">Tests Added</string>
+    <string name="new_lab_notes">Notes</string>
+    <string name="new_lab_date">Date</string>
+    <string name="new_lab_uploaded_files">Uploaded Files</string>
+    <string name="new_lab_save">Save Laboratory</string>
+    <string name="new_lab_upload_document">Upload Document</string>
+    <string name="new_lab_save_success">Laboratory record saved successfully</string>
+    <string name="new_lab_save_error">Error saving laboratory record</string>
+
+    <!-- LABORATORY HISTORY SCREEN RESOURCES-->
+    <string name="laboratory_history_empty">No laboratory records found</string>
+    <string name="laboratory_history_date">Date</string>
+    <string name="laboratory_history_tests">Tests</string>
+    <string name="laboratory_history_notes">Notes</string>
+    <string name="laboratory_history_files">Attached Files</string>
+    <string name="laboratory_history_normal">Normal</string>
+    <string name="laboratory_history_abnormal">Abnormal</string>
+    <string name="dialog_delete_laboratory_title">Delete Laboratory Record</string>
+    <string name="dialog_delete_laboratory_message">Are you sure you want to delete this laboratory record?</string>
 
 </resources>

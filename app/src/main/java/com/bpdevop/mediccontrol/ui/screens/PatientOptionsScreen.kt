@@ -50,7 +50,7 @@ fun PatientOptionsScreen(
         stringResource(id = R.string.patient_option_oxygen_saturation) to Pair(OxygenSaturation, "oxygen_saturation_screen"),
         stringResource(id = R.string.patient_option_tests) to Pair(MedicalInformation, "examination_screen"),
         stringResource(id = R.string.patient_option_prescriptions) to Pair(Icons.Filled.Receipt, "prescription_screen"),
-        stringResource(id = R.string.patient_option_labs) to Pair(Labs, "labs"),
+        stringResource(id = R.string.patient_option_labs) to Pair(Labs, "laboratory_screen"),
         stringResource(id = R.string.patient_option_radiology) to Pair(Radiology, "radiology"),
         stringResource(id = R.string.patient_option_pathology) to Pair(Icons.Filled.Biotech, "pathology"),
         stringResource(id = R.string.patient_option_surgery) to Pair(Icons.Filled.LocalHospital, "surgery"),

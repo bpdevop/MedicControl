@@ -36,6 +36,8 @@
     <string name="menu_edit_examination">Editar Examen</string>
     <string name="menu_prescription">Receta</string>
     <string name="menu_edit_prescription">Editar Receta</string>
+    <string name="menu_laboratory">Laboratorio</string>
+    <string name="menu_edit_laboratory">Editar Registro de Laboratorio</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Perfil</string>
     <string name="menu_clinic_data">Datos de la Clínica</string>
@@ -268,5 +270,36 @@
     <string name="prescription_history_date">Fecha de la receta</string>
     <string name="dialog_delete_prescription_title">Eliminar receta</string>
     <string name="dialog_delete_prescription_message">¿Está seguro de que desea eliminar esta receta?</string>
+
+    <!-- LABORATORY SCREEN RESOURCES-->
+    <string name="laboratory_screen_new_record">Nueva Prueba</string>
+    <string name="laboratory_screen_record_history">Historial de Pruebas</string>
+
+    <!--NEW LABORATORY SCREEN RESOURCES-->
+    <string name="new_lab_test_name">Prueba</string>
+    <string name="new_lab_test_result">Resultado</string>
+    <string name="new_lab_test_normal_checkbox">Es Normal</string>
+    <string name="new_lab_test_normal">Normal</string>
+    <string name="new_lab_test_abnormal">Anormal</string>
+    <string name="new_lab_add_test">Agregar Prueba</string>
+    <string name="new_lab_tests_list">Pruebas Agregadas</string>
+    <string name="new_lab_notes">Notas</string>
+    <string name="new_lab_date">Fecha</string>
+    <string name="new_lab_uploaded_files">Archivos Subidos</string>
+    <string name="new_lab_save">Guardar Laboratorio</string>
+    <string name="new_lab_upload_document">Subir Documento</string>
+    <string name="new_lab_save_success">Registro de laboratorio guardado correctamente</string>
+    <string name="new_lab_save_error">Error al guardar el registro de laboratorio</string>
+
+    <!-- LABORATORY HISTORY SCREEN RESOURCES-->
+    <string name="laboratory_history_empty">No se encontraron registros de laboratorio</string>
+    <string name="laboratory_history_date">Fecha</string>
+    <string name="laboratory_history_tests">Pruebas</string>
+    <string name="laboratory_history_notes">Notas</string>
+    <string name="laboratory_history_files">Archivos Adjuntos</string>
+    <string name="laboratory_history_normal">Normal</string>
+    <string name="laboratory_history_abnormal">Anormal</string>
+    <string name="dialog_delete_laboratory_title">Eliminar Registro de Laboratorio</string>
+    <string name="dialog_delete_laboratory_message">¿Está seguro de que desea eliminar este registro de laboratorio?</string>
 
 </resources>

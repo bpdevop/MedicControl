@@ -26,6 +26,8 @@ import com.bpdevop.mediccontrol.ui.screens.bloodpressure.BloodPressureScreen
 import com.bpdevop.mediccontrol.ui.screens.bloodpressure.EditBloodPressureScreen
 import com.bpdevop.mediccontrol.ui.screens.examination.EditExaminationScreen
 import com.bpdevop.mediccontrol.ui.screens.examination.ExaminationScreen
+import com.bpdevop.mediccontrol.ui.screens.laboratory.EditLaboratoryScreen
+import com.bpdevop.mediccontrol.ui.screens.laboratory.LaboratoryScreen
 import com.bpdevop.mediccontrol.ui.screens.oxygensaturation.EditOxygenSaturationScreen
 import com.bpdevop.mediccontrol.ui.screens.oxygensaturation.OxygenSaturationScreen
 import com.bpdevop.mediccontrol.ui.screens.prescription.EditPrescriptionScreen
@@ -363,6 +365,43 @@ fun AppNavGraph(
                 patientId = patientId,
                 prescriptionId = prescriptionId,
                 onPrescriptionUpdated = { navController.popBackStack() }
+            )
+        }
+
+        // Pantalla de Laboratorio
+        composable(
+            route = "${Screen.Laboratory.route}/{patientId}",
+            arguments = listOf(navArgument("patientId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")
+            patientId?.let {
+                LaboratoryScreen(
+                    patientId = it,
+                    onSaveSuccess = {
+                        navController.popBackStack()
+                    },
+                    onEditLabRecord = { laboratoryId ->
+                        navController.navigate(Screen.EditLaboratory.withArgs(patientId, laboratoryId))
+                    }
+                )
+            }
+        }
+
+        // Pantalla de edición de Laboratorio
+        composable(
+            route = "${Screen.EditLaboratory.route}/{patientId}/{laboratoryId}",
+            arguments = listOf(
+                navArgument("patientId") { type = NavType.StringType },
+                navArgument("laboratoryId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")!!
+            val labRecordId = backStackEntry.arguments?.getString("laboratoryId")!!
+
+            EditLaboratoryScreen(
+                patientId = patientId,
+                laboratoryId = labRecordId,
+                onLaboratoryUpdated = { navController.popBackStack() }
             )
         }
 

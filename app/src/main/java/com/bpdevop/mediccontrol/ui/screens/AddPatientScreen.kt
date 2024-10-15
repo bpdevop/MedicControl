@@ -14,12 +14,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
@@ -38,13 +42,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bpdevop.mediccontrol.R
 import com.bpdevop.mediccontrol.core.extensions.formatToString
 import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.core.utils.deleteImageFile
+import com.bpdevop.mediccontrol.data.model.Disease
 import com.bpdevop.mediccontrol.data.model.Patient
 import com.bpdevop.mediccontrol.ui.components.DatePickerModal
+import com.bpdevop.mediccontrol.ui.components.DiseaseSelectionDialog
 import com.bpdevop.mediccontrol.ui.components.ImagePickerComponent
 import com.bpdevop.mediccontrol.ui.viewmodels.PatientsViewModel
 import java.io.File
@@ -71,11 +78,15 @@ fun AddPatientScreen(
     var photoUri by remember { mutableStateOf<Uri?>(null) }
     var photoFile: File? = null
 
+    var selectedDisease by remember { mutableStateOf<Disease?>(null) }
+    var showDiseaseDialog by remember { mutableStateOf(false) }
+
     var showBloodTypeMenu by remember { mutableStateOf(false) }
     var showRHMenu by remember { mutableStateOf(false) }
     var loading by remember { mutableStateOf(false) }
 
     val addPatientState by viewModel.addPatientState.collectAsState()
+    val diseaseSearchState by viewModel.diseaseSearchState.collectAsState()
 
     val showErrorToast: (String) -> Unit = { message ->
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
@@ -133,14 +144,10 @@ fun AddPatientScreen(
         if (showDatePicker) {
             DatePickerModal(
                 onDateSelected = { selectedDateMillis ->
-                    selectedDateMillis?.let {
-                        birthDate = Date(it)
-                    }
+                    birthDate = selectedDateMillis?.let { Date(it) }
                     showDatePicker = false
                 },
-                onDismiss = {
-                    showDatePicker = false
-                }
+                onDismiss = { showDatePicker = false }
             )
         }
 
@@ -290,6 +297,36 @@ fun AddPatientScreen(
             maxLines = 4
         )
 
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = selectedDisease?.title?.let { HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_COMPACT).toString() } ?: "Seleccione una enfermedad",
+            onValueChange = { },
+            readOnly = true,
+            label = { Text("Enfermedad seleccionada") },
+            trailingIcon = {
+                IconButton(onClick = { showDiseaseDialog = true }) {
+                    Icon(Icons.Default.Search, contentDescription = null)
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        if (showDiseaseDialog) {
+            DiseaseSelectionDialog(
+                title = "Seleccione una enfermedad",
+                diseases = diseaseSearchState,
+                onDismiss = { showDiseaseDialog = false },
+                onDiseaseSelected = { disease ->
+                    selectedDisease = disease
+                    showDiseaseDialog = false
+                },
+                onSearchQueryChanged = { query ->
+                    viewModel.searchDiseases(query)
+                }
+            )
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
@@ -305,7 +342,10 @@ fun AddPatientScreen(
                     birthDate = birthDate,
                     bloodType = bloodType.ifEmpty { null },
                     rhFactor = rhFactor.takeIf { it.isNotEmpty() }?.let { it == "+" },
-                    gender = gender
+                    gender = gender,
+                    diseaseId = selectedDisease?.id,
+                    diseaseCode = selectedDisease?.code,
+                    diseaseTitle = selectedDisease?.title
                 )
 
                 viewModel.addPatient(patient, photoUri)

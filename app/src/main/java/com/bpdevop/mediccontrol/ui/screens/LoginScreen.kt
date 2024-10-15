@@ -1,5 +1,6 @@
 package com.bpdevop.mediccontrol.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -22,9 +24,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.bpdevop.mediccontrol.R
 import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.ui.components.EmailField
 import com.bpdevop.mediccontrol.ui.components.MessageDialog
@@ -36,7 +40,7 @@ fun LoginScreen(
     authViewModel: AuthViewModel = hiltViewModel(),
     onSignUpClick: () -> Unit,
     onLoginSuccess: () -> Unit,
-    onForgotPasswordClick: () -> Unit
+    onForgotPasswordClick: () -> Unit,
 ) {
     val emailFocusRequester = remember { FocusRequester() }
     val passwordFocusRequester = remember { FocusRequester() }
@@ -66,6 +70,14 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+
+        Image(
+            painterResource(id = R.drawable.ic_launcher_foreground),
+            contentDescription = null,
+            modifier = Modifier
+                .size(300.dp)
+        )
+
         EmailField(
             value = email,
             onValueChange = {
@@ -151,14 +163,17 @@ fun LoginScreen(
                 CircularProgressIndicator()
             }
         }
+
         is UiState.Success -> {
             onLoginSuccess()  // Redirige al `MainActivity` después de un inicio de sesión exitoso
             authViewModel.resetUiState()
         }
+
         is UiState.Error -> {
             dialogMessage = (uiState as UiState.Error).message
             showDialog = true
         }
+
         is UiState.Idle -> {
             // No hacer nada
         }

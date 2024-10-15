@@ -10,6 +10,7 @@ import com.bpdevop.mediccontrol.data.model.Patient
 import com.bpdevop.mediccontrol.data.model.Prescription
 import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.kernel.colors.DeviceRgb
+import com.itextpdf.kernel.events.Event
 import com.itextpdf.kernel.events.IEventHandler
 import com.itextpdf.kernel.events.PdfDocumentEvent
 import com.itextpdf.kernel.geom.PageSize
@@ -238,7 +239,7 @@ class PrescriptionPdfGenerator(private val context: Context) {
 
 // Evento de página para manejar el encabezado en cada página
 class HeaderEventHandler(val doctor: DoctorProfile) : IEventHandler {
-    override fun handleEvent(event: com.itextpdf.kernel.events.Event) {
+    override fun handleEvent(event: Event) {
         val docEvent = event as PdfDocumentEvent
         val pdfPage = docEvent.page
         val pageSize = pdfPage.pageSize
@@ -323,7 +324,7 @@ class HeaderEventHandler(val doctor: DoctorProfile) : IEventHandler {
 
 // Evento de página para manejar el footer en cada página
 class FooterEventHandler(val context: Context, private val pdfDoc: PdfDocument) : IEventHandler {
-    override fun handleEvent(event: com.itextpdf.kernel.events.Event) {
+    override fun handleEvent(event: Event) {
         val docEvent = event as PdfDocumentEvent
         val pdfPage = docEvent.page
         val pageSize = pdfPage.pageSize

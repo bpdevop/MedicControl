@@ -14,10 +14,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -34,18 +43,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bpdevop.mediccontrol.R
 import com.bpdevop.mediccontrol.core.extensions.formatToString
 import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.core.utils.deleteImageFile
+import com.bpdevop.mediccontrol.data.model.Disease
 import com.bpdevop.mediccontrol.data.model.Patient
 import com.bpdevop.mediccontrol.ui.components.DatePickerModal
+import com.bpdevop.mediccontrol.ui.components.DiseaseSelectionDialog
 import com.bpdevop.mediccontrol.ui.components.ImagePickerComponent
 import com.bpdevop.mediccontrol.ui.viewmodels.PatientsViewModel
 import java.io.File
 import java.util.Date
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PatientDetailScreen(
     patientId: String,
@@ -64,15 +77,26 @@ fun PatientDetailScreen(
     var rhFactor by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("") }
     var doctorId by remember { mutableStateOf("") }
+    var photoUrl by remember { mutableStateOf<String?>(null) }
+    var displayPhotoUri by remember { mutableStateOf<Uri?>(null) }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
+
 
     var photoFile: File? = null
     var isEditing by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
 
+    var showBloodTypeMenu by remember { mutableStateOf(false) }
+    var showRHMenu by remember { mutableStateOf(false) }
+
     val patientDetailState by viewModel.patientDetailState.collectAsState()
     val updatePatientState by viewModel.updatePatientState.collectAsState()
     val deletePatientState by viewModel.deletePatientState.collectAsState()
+    val diseaseSearchState by viewModel.diseaseSearchState.collectAsState()
+
+    var selectedDisease by remember { mutableStateOf<Disease?>(null) }
+    var showDiseaseDialog by remember { mutableStateOf(false) }
+
 
     LaunchedEffect(patientId) {
         viewModel.loadPatientDetail(patientId)
@@ -108,7 +132,23 @@ fun PatientDetailScreen(
                 rhFactor = if (patient.rhFactor == true) "+" else "-"
                 gender = patient.gender ?: ""
                 doctorId = patient.doctorId
-                photoUri = patient.photoUrl?.let { Uri.parse(it) }
+                photoUrl = patient.photoUrl
+                if (photoUri == null) {
+                    displayPhotoUri = patient.photoUrl?.let { Uri.parse(it) }
+                }
+
+                if (patient.diseaseId != null && patient.diseaseTitle != null) {
+                    selectedDisease = Disease(
+                        id = patient.diseaseId,
+                        title = patient.diseaseTitle,
+                        code = patient.diseaseCode,
+                        chapter = null,
+                        isLeaf = true,
+                        stemId = null,
+                        descendants = null,
+                        synonyms = emptyList()
+                    )
+                }
             }
         }
 
@@ -126,13 +166,15 @@ fun PatientDetailScreen(
             .padding(16.dp)
     ) {
         ImagePickerComponent(
-            imageUri = photoUri,
+            imageUri = displayPhotoUri,
             onImagePicked = { newUri, file ->
                 photoUri = newUri
+                displayPhotoUri = newUri
                 photoFile = file
             },
             onImageRemoved = { file ->
                 file?.let { deleteImageFile(it) }
+                displayPhotoUri = null
                 photoUri = null
                 photoFile = null
             },
@@ -174,7 +216,7 @@ fun PatientDetailScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Botones de género
+        Text(text = stringResource(R.string.add_patient_gender), modifier = Modifier.padding(vertical = 8.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
@@ -191,6 +233,90 @@ fun PatientDetailScreen(
                     enabled = isEditing
                 )
                 Text(text = stringResource(R.string.detail_patient_female))
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.weight(0.7f)) {
+                ExposedDropdownMenuBox(
+                    expanded = showBloodTypeMenu,
+                    onExpandedChange = { showBloodTypeMenu = it }
+                ) {
+                    OutlinedTextField(
+                        value = bloodType,
+                        onValueChange = { },
+                        readOnly = true,
+                        enabled = isEditing,
+                        label = { Text(stringResource(R.string.add_patient_blood_type)) },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = showBloodTypeMenu)
+                        },
+                        colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                        modifier = Modifier
+                            .menuAnchor(type = MenuAnchorType.PrimaryEditable, enabled = true)
+                    )
+
+                    if (isEditing) {
+                        ExposedDropdownMenu(
+                            expanded = showBloodTypeMenu,
+                            onDismissRequest = { showBloodTypeMenu = false }
+                        ) {
+                            val bloodTypes = listOf("A", "B", "O", "AB")
+                            bloodTypes.forEach { type ->
+                                DropdownMenuItem(
+                                    text = { Text(type) },
+                                    onClick = {
+                                        bloodType = type
+                                        showBloodTypeMenu = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            Column(modifier = Modifier.weight(0.3f)) {
+                ExposedDropdownMenuBox(
+                    expanded = showRHMenu,
+                    onExpandedChange = { showRHMenu = it }
+                ) {
+                    OutlinedTextField(
+                        value = rhFactor,
+                        onValueChange = { },
+                        readOnly = true,
+                        enabled = isEditing,
+                        label = { Text(stringResource(R.string.add_patient_rh_factor)) },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = showRHMenu)
+                        },
+                        colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                        modifier = Modifier
+                            .menuAnchor(type = MenuAnchorType.PrimaryEditable, enabled = true)
+                    )
+
+                    if (isEditing) {
+                        ExposedDropdownMenu(
+                            expanded = showRHMenu,
+                            onDismissRequest = { showRHMenu = false }
+                        ) {
+                            listOf("+", "-").forEach { type ->
+                                DropdownMenuItem(
+                                    text = { Text(type) },
+                                    onClick = {
+                                        rhFactor = type
+                                        showRHMenu = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -250,6 +376,37 @@ fun PatientDetailScreen(
             maxLines = 4
         )
 
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = HtmlCompat.fromHtml(selectedDisease?.title ?: "", HtmlCompat.FROM_HTML_MODE_LEGACY).toString(),
+            onValueChange = { },
+            readOnly = true,
+            label = { Text("Enfermedad seleccionada") },
+            trailingIcon = {
+                IconButton(onClick = { showDiseaseDialog = true }) {
+                    Icon(Icons.Default.Search, contentDescription = null)
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = isEditing
+        )
+
+        if (showDiseaseDialog) {
+            DiseaseSelectionDialog(
+                title = "Seleccione una enfermedad",
+                diseases = diseaseSearchState,
+                onDismiss = { showDiseaseDialog = false },
+                onDiseaseSelected = { disease ->
+                    selectedDisease = disease
+                    showDiseaseDialog = false
+                },
+                onSearchQueryChanged = { query ->
+                    viewModel.searchDiseases(query)
+                }
+            )
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         // Botón de editar/guardar
@@ -266,9 +423,13 @@ fun PatientDetailScreen(
                             notes = notes.ifEmpty { null },
                             birthDate = birthDate,
                             bloodType = bloodType.ifEmpty { null },
-                            rhFactor = rhFactor == "+",
+                            rhFactor = rhFactor.takeIf { it.isNotEmpty() }?.let { it == "+" },
                             gender = gender,
-                            doctorId = doctorId
+                            photoUrl = photoUrl,
+                            doctorId = doctorId,
+                            diseaseId = selectedDisease?.id,
+                            diseaseCode = selectedDisease?.code,
+                            diseaseTitle = selectedDisease?.title
                         ),
                         photoUri
                     )

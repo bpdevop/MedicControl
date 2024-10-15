@@ -18,4 +18,7 @@ data class Patient(
     val notes: String? = null,
     val photoUrl: String? = null,
     val doctorId: String = "",
+    val diseaseId: String? = null,
+    val diseaseCode: String? = null,
+    val diseaseTitle: String? = null,
 )

@@ -76,6 +76,9 @@ dependencies {
     //Itext7
     implementation(libs.itext7.core)
 
+    // Retrofit
+    implementation(libs.bundles.retrofit)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

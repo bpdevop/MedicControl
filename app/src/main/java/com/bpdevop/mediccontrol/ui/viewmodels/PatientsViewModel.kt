@@ -4,7 +4,9 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bpdevop.mediccontrol.core.utils.UiState
+import com.bpdevop.mediccontrol.data.model.Disease
 import com.bpdevop.mediccontrol.data.model.Patient
+import com.bpdevop.mediccontrol.data.repository.IcdRepository
 import com.bpdevop.mediccontrol.data.repository.PatientsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PatientsViewModel @Inject constructor(
     private val repository: PatientsRepository,
+    private val icdRepository: IcdRepository,
 ) : ViewModel() {
 
     private val _patientsState = MutableStateFlow<UiState<List<Patient>>>(UiState.Idle)
@@ -34,6 +37,10 @@ class PatientsViewModel @Inject constructor(
 
     private val _deletePatientState = MutableStateFlow<UiState<String>>(UiState.Idle)
     val deletePatientState: StateFlow<UiState<String>> = _deletePatientState
+
+    private val _diseaseSearchState = MutableStateFlow<UiState<List<Disease>>>(UiState.Idle)
+    val diseaseSearchState: StateFlow<UiState<List<Disease>>> = _diseaseSearchState
+
 
     fun refreshPatients() {
         viewModelScope.launch {
@@ -76,6 +83,14 @@ class PatientsViewModel @Inject constructor(
         }
     }
 
+    fun searchDiseases(query: String) {
+        viewModelScope.launch {
+            _diseaseSearchState.value = UiState.Loading
+            val result = icdRepository.searchInfectiousDiseases(query)
+            _diseaseSearchState.value = result
+        }
+    }
+
     fun resetAddPatientState() {
         _addPatientState.value = UiState.Idle
     }
@@ -86,5 +101,9 @@ class PatientsViewModel @Inject constructor(
 
     fun resetDeletePatientState() {
         _deletePatientState.value = UiState.Idle
+    }
+
+    fun resetDiseaseSearchState() {
+        _diseaseSearchState.value = UiState.Idle
     }
 }

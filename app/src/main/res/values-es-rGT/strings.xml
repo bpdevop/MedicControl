@@ -38,6 +38,8 @@
     <string name="menu_edit_prescription">Editar Receta</string>
     <string name="menu_laboratory">Laboratorio</string>
     <string name="menu_edit_laboratory">Editar Registro de Laboratorio</string>
+    <string name="menu_radiology">Radiología</string>
+    <string name="menu_edit_radiology">Editar Radiología</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Perfil</string>
     <string name="menu_clinic_data">Datos de la Clínica</string>
@@ -301,5 +303,25 @@
     <string name="laboratory_history_abnormal">Anormal</string>
     <string name="dialog_delete_laboratory_title">Eliminar Registro de Laboratorio</string>
     <string name="dialog_delete_laboratory_message">¿Está seguro de que desea eliminar este registro de laboratorio?</string>
+
+    <!-- RADIOLOGY SCREEN RESOURCES-->
+    <string name="radiology_screen_new_record">Nuevo registro de radiología</string>
+    <string name="radiology_screen_record_history">Historial de radiología</string>
+
+    <!--NEW RADIOLOGY SCREEN RESOURCES-->
+    <string name="new_radiology_title">Título</string>
+    <string name="new_radiology_result">Resultado</string>
+    <string name="new_radiology_date">Fecha</string>
+    <string name="new_radiology_save">Guardar Radiología</string>
+    <string name="new_radiology_uploaded_files">Archivos Subidos</string>
+    <string name="new_radiology_new_files">Nuevos Archivos</string>
+    <string name="new_radiology_delete_file">Eliminar</string>
+
+    <!-- RADIOLOGY HISTORY SCREEN RESOURCES-->
+    <string name="radiology_history_empty">No hay registros de radiología disponibles</string>
+    <string name="dialog_delete_radiology_title">Eliminar registro de radiología</string>
+    <string name="dialog_delete_radiology_message">¿Estás seguro de que deseas eliminar este registro de radiología?</string>
+    <string name="radiology_history_title">Título: %1$s</string>
+    <string name="radiology_history_files">Archivos</string>
 
 </resources>

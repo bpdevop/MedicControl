@@ -38,6 +38,8 @@
     <string name="menu_edit_prescription">Edit Prescription</string>
     <string name="menu_laboratory">Laboratory</string>
     <string name="menu_edit_laboratory">Edit Laboratory Record</string>
+    <string name="menu_radiology">Radiology</string>
+    <string name="menu_edit_radiology">Edit Radiology</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_clinic_data">Clinic Data</string>
@@ -303,4 +305,23 @@
     <string name="dialog_delete_laboratory_title">Delete Laboratory Record</string>
     <string name="dialog_delete_laboratory_message">Are you sure you want to delete this laboratory record?</string>
 
+    <!-- RADIOLOGY SCREEN RESOURCES-->
+    <string name="radiology_screen_new_record">New Radiology Record</string>
+    <string name="radiology_screen_record_history">Radiology History</string>
+
+    <!--NEW RADIOLOGY SCREEN RESOURCES-->
+    <string name="new_radiology_title">Title</string>
+    <string name="new_radiology_result">Result</string>
+    <string name="new_radiology_date">Date</string>
+    <string name="new_radiology_save">Save Radiology</string>
+    <string name="new_radiology_uploaded_files">Uploaded Files</string>
+    <string name="new_radiology_new_files">New Files</string>
+    <string name="new_radiology_delete_file">Delete</string>
+
+    <!-- RADIOLOGY HISTORY SCREEN RESOURCES-->
+    <string name="radiology_history_empty">No radiology records available</string>
+    <string name="dialog_delete_radiology_title">Delete Radiology Record</string>
+    <string name="dialog_delete_radiology_message">Are you sure you want to delete this radiology record?</string>
+    <string name="radiology_history_title">Title: %1$s</string>
+    <string name="radiology_history_files">Files</string>
 </resources>

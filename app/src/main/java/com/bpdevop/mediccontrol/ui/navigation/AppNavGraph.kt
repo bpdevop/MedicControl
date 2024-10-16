@@ -32,6 +32,8 @@ import com.bpdevop.mediccontrol.ui.screens.oxygensaturation.EditOxygenSaturation
 import com.bpdevop.mediccontrol.ui.screens.oxygensaturation.OxygenSaturationScreen
 import com.bpdevop.mediccontrol.ui.screens.prescription.EditPrescriptionScreen
 import com.bpdevop.mediccontrol.ui.screens.prescription.PrescriptionScreen
+import com.bpdevop.mediccontrol.ui.screens.radiology.EditRadiologyScreen
+import com.bpdevop.mediccontrol.ui.screens.radiology.RadiologyScreen
 import com.bpdevop.mediccontrol.ui.screens.vaccination.EditVaccineScreen
 import com.bpdevop.mediccontrol.ui.screens.vaccination.VaccinationScreen
 import kotlinx.serialization.encodeToString
@@ -405,6 +407,42 @@ fun AppNavGraph(
             )
         }
 
+        // Pantalla de Radiología
+        composable(
+            route = "${Screen.Radiology.route}/{patientId}",
+            arguments = listOf(navArgument("patientId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")
+            patientId?.let {
+                RadiologyScreen(
+                    patientId = it,
+                    onSaveSuccess = {
+                        navController.popBackStack()
+                    },
+                    onEditRadiologyRecord = { radiologyId ->
+                        navController.navigate(Screen.EditRadiology.withArgs(patientId, radiologyId))
+                    }
+                )
+            }
+        }
+
+        // Pantalla de edición de Radiología
+        composable(
+            route = "${Screen.EditRadiology.route}/{patientId}/{radiologyId}",
+            arguments = listOf(
+                navArgument("patientId") { type = NavType.StringType },
+                navArgument("radiologyId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")!!
+            val radiologyRecordId = backStackEntry.arguments?.getString("radiologyId")!!
+
+            EditRadiologyScreen(
+                patientId = patientId,
+                radiologyId = radiologyRecordId,
+                onRadiologyUpdated = { navController.popBackStack() }
+            )
+        }
 
         composable(Screen.Agenda.route) {
             AgendaScreen(navController)

@@ -3,8 +3,6 @@ package com.bpdevop.mediccontrol.ui.screens.laboratory
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,18 +33,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.bpdevop.mediccontrol.BuildConfig
 import com.bpdevop.mediccontrol.R
-import com.bpdevop.mediccontrol.core.extensions.createImageFile
-import com.bpdevop.mediccontrol.core.extensions.createVideoFile
 import com.bpdevop.mediccontrol.core.extensions.formatToString
 import com.bpdevop.mediccontrol.core.utils.UiState
+import com.bpdevop.mediccontrol.core.utils.deleteImageFile
 import com.bpdevop.mediccontrol.data.model.Laboratory
 import com.bpdevop.mediccontrol.ui.components.DatePickerModal
-import com.bpdevop.mediccontrol.ui.screens.examination.DocumentButtons
-import com.bpdevop.mediccontrol.ui.screens.examination.DocumentsSection
+import com.bpdevop.mediccontrol.ui.components.DocumentButtons
+import com.bpdevop.mediccontrol.ui.components.DocumentsSection
 import com.bpdevop.mediccontrol.ui.viewmodels.LaboratoryViewModel
 import kotlinx.coroutines.launch
 import java.io.File
@@ -112,38 +107,18 @@ fun EditLaboratoryForm(
     val initialDocuments = remember { laboratory.files }
     val documentUris = remember { mutableStateListOf<Uri>() }
     val deletedDocuments = remember { mutableStateListOf<String>() }
+    val tempFiles = remember { mutableStateListOf<File>() }
 
     val editLaboratoryState by viewModel.updateLaboratoryState.collectAsState()
 
-    HandleUiStatesLaboratory(editLaboratoryState, context, viewModel, onLaboratoryUpdated) { isLoading ->
-        loading = isLoading
-    }
-
-    // Launchers para captura y selección de documentos
-    val cameraUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
-    val videoUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
-    val photoFiles = remember { mutableStateListOf<File>() }
-    val videoFiles = remember { mutableStateListOf<File>() }
-
-    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-        if (success) {
-            cameraUri.value.let { documentUris.add(it) }
-        } else {
-            photoFiles.removeLastOrNull()?.delete()
-        }
-    }
-
-    val videoLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CaptureVideo()) { success ->
-        if (success) {
-            videoUri.value.let { documentUris.add(it) }
-        } else {
-            videoFiles.removeLastOrNull()?.delete()
-        }
-    }
-
-    val documentLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
-        documentUris.addAll(uris)
-    }
+    HandleUiStatesLaboratory(
+        editLaboratoryState,
+        context,
+        viewModel,
+        onLaboratoryUpdated,
+        setLoading = { isLoading -> loading = isLoading },
+        tempFiles = tempFiles
+    )
 
     Column(
         modifier = Modifier
@@ -195,24 +170,22 @@ fun EditLaboratoryForm(
         DocumentsSection(
             initialDocuments = initialDocuments,
             newDocumentUris = documentUris,
-            onRemoveDocument = { uri -> documentUris.remove(uri) },
-            onRemoveExistingDocument = { filePath -> deletedDocuments.add(filePath) }
+            onRemoveDocument = { uri ->
+                documentUris.remove(uri)
+            },
+            onRemoveExistingDocument = { filePath ->
+                deletedDocuments.add(filePath)
+            }
         )
 
         DocumentButtons(
-            onCameraClick = {
-                val photoFileCreated = context.createImageFile()
-                photoFiles.add(photoFileCreated)
-                cameraUri.value = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFileCreated)
-                cameraLauncher.launch(cameraUri.value)
+            context = context,
+            onDocumentUris = { newUris ->
+                documentUris.addAll(newUris)
             },
-            onVideoClick = {
-                val videoFileCreated = context.createVideoFile()
-                videoFiles.add(videoFileCreated)
-                videoUri.value = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", videoFileCreated)
-                videoLauncher.launch(videoUri.value)
-            },
-            onDocumentClick = { documentLauncher.launch("*/*") }
+            onTempFiles = { file ->
+                tempFiles.addAll(file)
+            }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -257,10 +230,12 @@ private fun HandleUiStatesLaboratory(
     viewModel: LaboratoryViewModel,
     onExaminationUpdated: () -> Unit,
     setLoading: (Boolean) -> Unit,
+    tempFiles: List<File>,
 ) {
     when (state) {
         is UiState.Success -> {
             LaunchedEffect(Unit) {
+                tempFiles.forEach { deleteImageFile(it) }
                 setLoading(false)
                 onExaminationUpdated()
                 viewModel.resetAddLaboratoryState()

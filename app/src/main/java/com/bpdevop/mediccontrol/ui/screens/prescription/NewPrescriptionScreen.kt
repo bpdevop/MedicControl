@@ -3,8 +3,7 @@ package com.bpdevop.mediccontrol.ui.screens.prescription
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,18 +39,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.bpdevop.mediccontrol.BuildConfig
 import com.bpdevop.mediccontrol.R
-import com.bpdevop.mediccontrol.core.extensions.createImageFile
-import com.bpdevop.mediccontrol.core.extensions.createVideoFile
 import com.bpdevop.mediccontrol.core.extensions.formatToString
 import com.bpdevop.mediccontrol.core.utils.UiState
+import com.bpdevop.mediccontrol.core.utils.deleteImageFile
 import com.bpdevop.mediccontrol.data.model.Prescription
 import com.bpdevop.mediccontrol.data.model.PrescriptionItem
 import com.bpdevop.mediccontrol.ui.components.DatePickerModal
-import com.bpdevop.mediccontrol.ui.screens.examination.DocumentButtons
+import com.bpdevop.mediccontrol.ui.components.DocumentButtons
+import com.bpdevop.mediccontrol.ui.components.DocumentsSection
 import com.bpdevop.mediccontrol.ui.viewmodels.PrescriptionViewModel
 import kotlinx.coroutines.launch
 import java.io.File
@@ -66,11 +63,6 @@ fun NewPrescriptionScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    val cameraUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
-    val videoUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
-    val photoFiles = remember { mutableStateListOf<File>() }
-    val videoFiles = remember { mutableStateListOf<File>() }
-
     // Estados para los campos
     var medicationName by remember { mutableStateOf("") }
     var dosage by remember { mutableStateOf("") }
@@ -84,29 +76,21 @@ fun NewPrescriptionScreen(
     var loading by remember { mutableStateOf(false) }
 
     val documentUris = remember { mutableStateListOf<Uri>() }
+    val tempFiles = remember { mutableStateListOf<File>() }
     val addPrescriptionState by viewModel.addPrescriptionState.collectAsState()
 
-    HandleUiStatesPrescription(addPrescriptionState, context, viewModel, onPrescriptionAdded, setLoading = { isLoading -> loading = isLoading })
+    HandleUiStatesPrescription(
+        addPrescriptionState,
+        context,
+        viewModel,
+        onPrescriptionAdded,
+        setLoading = { isLoading -> loading = isLoading },
+        tempFiles = tempFiles
+    )
 
-    // Launchers para tomar fotos, grabar videos y seleccionar documentos
-    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-        if (success) {
-            cameraUri.value.let { documentUris.add(it) }
-        } else {
-            photoFiles.removeLastOrNull()?.delete()
-        }
-    }
-
-    val videoLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CaptureVideo()) { success ->
-        if (success) {
-            videoUri.value.let { documentUris.add(it) }
-        } else {
-            videoFiles.removeLastOrNull()?.delete()
-        }
-    }
-
-    val documentLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
-        documentUris.addAll(uris)
+    // Limpiar archivos temporales al retroceder
+    BackHandler {
+        tempFiles.forEach { deleteImageFile(it) }
     }
 
     Column(
@@ -206,21 +190,22 @@ fun NewPrescriptionScreen(
             )
         }
 
-        // Botones para cámara, video y documentos
+
+        DocumentsSection(
+            initialDocuments = emptyList(),
+            newDocumentUris = documentUris,
+            onRemoveDocument = { uri -> documentUris.remove(uri) },
+            onRemoveExistingDocument = {}
+        )
+
         DocumentButtons(
-            onCameraClick = {
-                val photoFileCreated = context.createImageFile()
-                photoFiles.add(photoFileCreated)
-                cameraUri.value = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFileCreated)
-                cameraLauncher.launch(cameraUri.value)
+            context = context,
+            onDocumentUris = { newUris ->
+                documentUris.addAll(newUris)
             },
-            onVideoClick = {
-                val videoFileCreated = context.createVideoFile()
-                videoFiles.add(videoFileCreated)
-                videoUri.value = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", videoFileCreated)
-                videoLauncher.launch(videoUri.value)
-            },
-            onDocumentClick = { documentLauncher.launch("*/*") }
+            onTempFiles = { file ->
+                tempFiles.addAll(file)
+            }
         )
 
         // Guardar receta
@@ -256,10 +241,12 @@ private fun HandleUiStatesPrescription(
     viewModel: PrescriptionViewModel,
     onPrescriptionAdded: () -> Unit,
     setLoading: (Boolean) -> Unit,
+    tempFiles: List<File>,
 ) {
     when (state) {
         is UiState.Success -> {
             LaunchedEffect(Unit) {
+                tempFiles.forEach { deleteImageFile(it) }
                 setLoading(false)
                 onPrescriptionAdded()
                 viewModel.resetAddPrescriptionState()

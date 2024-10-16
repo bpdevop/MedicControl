@@ -3,6 +3,7 @@ package com.bpdevop.mediccontrol.ui.screens.examination
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,10 +20,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -51,12 +49,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bpdevop.mediccontrol.R
 import com.bpdevop.mediccontrol.core.extensions.formatToString
 import com.bpdevop.mediccontrol.core.utils.UiState
+import com.bpdevop.mediccontrol.core.utils.deleteImageFile
 import com.bpdevop.mediccontrol.data.model.Examination
 import com.bpdevop.mediccontrol.ui.components.DatePickerModal
 import com.bpdevop.mediccontrol.ui.components.DocumentButtons
 import com.bpdevop.mediccontrol.ui.components.DocumentsSection
 import com.bpdevop.mediccontrol.ui.viewmodels.ExaminationViewModel
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.Date
 
 @Composable
@@ -84,9 +84,22 @@ fun NewExaminationScreen(
     var loading by remember { mutableStateOf(false) }
 
     val documentUris = remember { mutableStateListOf<Uri>() }
+    val tempFiles = remember { mutableStateListOf<File>() }
     val addExaminationState by viewModel.addExaminationState.collectAsState()
 
-    HandleUiStatesExamination(addExaminationState, context, viewModel, onExaminationAdded, setLoading = { isLoading -> loading = isLoading })
+    HandleUiStatesExamination(
+        state = addExaminationState,
+        context = context,
+        viewModel = viewModel,
+        onExaminationAdded = onExaminationAdded,
+        setLoading = { isLoading -> loading = isLoading },
+        tempFiles = tempFiles,
+    )
+
+    // Limpiar archivos temporales al retroceder
+    BackHandler {
+        tempFiles.forEach { deleteImageFile(it) }
+    }
 
     Column(
         modifier = Modifier
@@ -166,6 +179,9 @@ fun NewExaminationScreen(
             context = context,
             onDocumentUris = { newUris ->
                 documentUris.addAll(newUris)
+            },
+            onTempFiles = { file ->
+                tempFiles.addAll(file)
             }
         )
 
@@ -218,10 +234,12 @@ private fun HandleUiStatesExamination(
     viewModel: ExaminationViewModel,
     onExaminationAdded: () -> Unit,
     setLoading: (Boolean) -> Unit,
+    tempFiles: List<File>,
 ) {
     when (state) {
         is UiState.Success -> {
             LaunchedEffect(Unit) {
+                tempFiles.forEach { deleteImageFile(it) }
                 setLoading(false)
                 onExaminationAdded()
                 viewModel.resetAddExaminationState()
@@ -446,27 +464,6 @@ fun AddSymptomsAndDiagnosis(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun DocumentButtons(
-    onCameraClick: () -> Unit,
-    onVideoClick: () -> Unit,
-    onDocumentClick: () -> Unit,
-) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-        IconButton(onClick = onCameraClick) {
-            Icon(imageVector = Icons.Default.CameraAlt, contentDescription = null)
-        }
-
-        IconButton(onClick = onVideoClick) {
-            Icon(imageVector = Icons.Default.Videocam, contentDescription = null)
-        }
-
-        IconButton(onClick = onDocumentClick) {
-            Icon(imageVector = Icons.Default.Folder, contentDescription = null)
         }
     }
 }

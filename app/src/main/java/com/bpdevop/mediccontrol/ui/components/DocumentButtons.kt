@@ -30,21 +30,19 @@ import java.io.File
 fun DocumentButtons(
     context: Context,
     onDocumentUris: (List<Uri>) -> Unit,
+    onTempFiles: (List<File>) -> Unit,
 ) {
     val cameraUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
     val videoUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
-    val photoFiles = remember { mutableStateListOf<File>() }
-    val videoFiles = remember { mutableStateListOf<File>() }
     val documentUris = remember { mutableStateListOf<Uri>() }
+    val tempFiles = remember { mutableStateListOf<File>() }
 
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
-            cameraUri.value.let {
-                documentUris.add(it)
-                onDocumentUris(documentUris) // Notificar con la lista actualizada
-            }
+            cameraUri.value.let { documentUris.add(it) }
+            onDocumentUris(documentUris)
         } else {
-            photoFiles.removeLastOrNull()?.delete()
+            tempFiles.removeLastOrNull()?.delete()
         }
     }
 
@@ -53,8 +51,13 @@ fun DocumentButtons(
             videoUri.value.let { documentUris.add(it) }
             onDocumentUris(documentUris)
         } else {
-            videoFiles.removeLastOrNull()?.delete()
+            tempFiles.removeLastOrNull()?.delete()
         }
+    }
+
+    val documentLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
+        documentUris.addAll(uris)
+        onDocumentUris(documentUris)
     }
 
     // Permiso para la cámara
@@ -62,9 +65,9 @@ fun DocumentButtons(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            // Lógica para foto
             val photoFileCreated = context.createImageFile()
-            photoFiles.add(photoFileCreated)
+            tempFiles.add(photoFileCreated)
+            onTempFiles(tempFiles)
             cameraUri.value = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", photoFileCreated)
             cameraLauncher.launch(cameraUri.value)
         } else {
@@ -77,19 +80,14 @@ fun DocumentButtons(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            // Lógica para video
             val videoFileCreated = context.createVideoFile()
-            videoFiles.add(videoFileCreated)
+            tempFiles.add(videoFileCreated)
+            onTempFiles(tempFiles)
             videoUri.value = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", videoFileCreated)
             videoLauncher.launch(videoUri.value)
         } else {
             Toast.makeText(context, context.getString(R.string.global_permission_denied), Toast.LENGTH_LONG).show()
         }
-    }
-
-    val documentLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
-        documentUris.addAll(uris)
-        onDocumentUris(documentUris)
     }
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {

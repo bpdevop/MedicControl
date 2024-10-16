@@ -63,6 +63,9 @@
     <string name="patients_screen_no_phone">Teléfono no disponible</string>
     <string name="patients_screen_fab_add_patient">Agregar paciente</string>
 
+    <!-- AGENDA SCREEN RESOURCES -->
+    <string name="agenda_screen_no_appointments_message">No hay citas en la agenda</string>
+
     <!--ADD PATIENT SCREEN RESOURCES-->
     <string name="add_patient_photo_desc">Foto del paciente</string>
     <string name="add_patient_take_photo">Tomar una foto</string>

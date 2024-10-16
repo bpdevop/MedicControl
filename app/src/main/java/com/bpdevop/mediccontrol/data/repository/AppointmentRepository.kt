@@ -5,6 +5,8 @@ import com.bpdevop.mediccontrol.data.model.MedicalAppointment
 import com.bpdevop.mediccontrol.data.model.PatientAppointment
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
+import java.util.Calendar
+import java.util.Date
 import javax.inject.Inject
 
 class AppointmentRepository @Inject constructor(
@@ -75,20 +77,41 @@ class AppointmentRepository @Inject constructor(
             UiState.Error(it.message ?: "Error al obtener el historial de citas del paciente")
         }
 
-    suspend fun getDoctorAppointmentHistory(): UiState<List<MedicalAppointment>> =
+    suspend fun getDoctorAppointmentHistory(date: Date): UiState<List<MedicalAppointment>> =
         authRepository.getCurrentUserId()?.let { doctorId ->
             runCatching {
+                // Convertir la fecha seleccionada al formato de inicio y fin del día
+                val calendar = Calendar.getInstance().apply {
+                    time = date
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }
+                val startOfDay = calendar.time
+
+                calendar[Calendar.HOUR_OF_DAY] = 23
+                calendar[Calendar.MINUTE] = 59
+                calendar[Calendar.SECOND] = 59
+                calendar[Calendar.MILLISECOND] = 999
+                val endOfDay = calendar.time
+
+                // Realizar la consulta a Firestore filtrando entre el inicio y el fin del día seleccionado
                 val snapshot = firestore.collection("doctors")
                     .document(doctorId)
                     .collection("appointments")
+                    .whereGreaterThanOrEqualTo("date", startOfDay)
+                    .whereLessThanOrEqualTo("date", endOfDay)
                     .get()
                     .await()
+
                 val appointments = snapshot.toObjects(MedicalAppointment::class.java)
                 UiState.Success(appointments)
             }.getOrElse {
                 UiState.Error(it.message ?: "Error al obtener el historial de citas del médico")
             }
         } ?: UiState.Error("No se encontró el ID del médico")
+
 
     suspend fun updateAppointment(patientId: String, updatedAppointment: PatientAppointment): UiState<String> =
         authRepository.getCurrentUserId()?.let { doctorId ->

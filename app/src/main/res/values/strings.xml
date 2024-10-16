@@ -63,6 +63,9 @@
     <string name="patients_screen_no_phone">No phone available</string>
     <string name="patients_screen_fab_add_patient">Add patient</string>
 
+    <!-- AGENDA SCREEN RESOURCES -->
+    <string name="agenda_screen_no_appointments_message">No appointments in the agenda</string>
+
     <!--ADD PATIENT SCREEN RESOURCES-->
     <string name="add_patient_photo_desc">Patient photo</string>
     <string name="add_patient_take_photo">Take a photo</string>

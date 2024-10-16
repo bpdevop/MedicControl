@@ -487,8 +487,12 @@ fun AppNavGraph(
         }
 
         composable(Screen.Agenda.route) {
-            AgendaScreen(navController)
+            AgendaScreen(
+                onAppointmentClick = { _ ->
+                }
+            )
         }
+
 
         composable(Screen.Profile.route) {
             ProfileScreen(navController)

@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,11 +51,10 @@ class AppointmentViewModel @Inject constructor(
         }
     }
 
-    // Obtener el historial de citas del médico
-    fun getDoctorAppointmentHistory() {
+    fun getDoctorAppointmentHistory(date: Date) {
         viewModelScope.launch {
             _doctorAppointmentHistoryState.value = UiState.Loading
-            val result = repository.getDoctorAppointmentHistory()
+            val result = repository.getDoctorAppointmentHistory(date)
             _doctorAppointmentHistoryState.value = result
         }
     }

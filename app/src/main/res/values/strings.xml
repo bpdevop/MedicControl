@@ -40,6 +40,8 @@
     <string name="menu_edit_laboratory">Edit Laboratory Record</string>
     <string name="menu_radiology">Radiology</string>
     <string name="menu_edit_radiology">Edit Radiology</string>
+    <string name="menu_appointment">Appointments</string>
+    <string name="menu_edit_appointment">Edit Appointment</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_clinic_data">Clinic Data</string>
@@ -324,4 +326,32 @@
     <string name="dialog_delete_radiology_message">Are you sure you want to delete this radiology record?</string>
     <string name="radiology_history_title">Title: %1$s</string>
     <string name="radiology_history_files">Files</string>
+
+    <!-- APPOINTMENT SCREEN RESOURCES-->
+    <string name="appointment_screen_new_appointment">New Appointment</string>
+    <string name="appointment_screen_appointment_history">Appointment History</string>
+
+    <!--NEW APPOINTMENT SCREEN RESOURCES-->
+    <string name="new_appointment_visit_type">Visit Type</string>
+    <string name="visit_type_new">New</string>
+    <string name="visit_type_follow_up">Follow-up</string>
+    <string name="visit_type_emergency">Emergency</string>
+    <string name="new_appointment_date">Date</string>
+    <string name="new_appointment_time">Time</string>
+    <string name="new_appointment_notes">Notes</string>
+    <string name="new_appointment_save">Save Appointment</string>
+
+    <!-- APPOINTMENT HISTORY SCREEN RESOURCES-->
+    <string name="dialog_delete_appointment_title">Delete Appointment</string>
+    <string name="dialog_delete_appointment_message">Are you sure you want to delete this appointment?</string>
+    <string name="appointment_history_empty">No appointment history available.</string>
+    <string name="appointment_history_visit_type">Visit Type</string>
+    <string name="appointment_history_time">Time</string>
+    <string name="appointment_history_notes">Notes</string>
+    <string name="appointment_type_new">New</string>
+    <string name="appointment_type_follow_up">Follow-up</string>
+    <string name="appointment_type_emergency">Emergency</string>
+    <string name="no_notes_available">No notes available</string>
+    <string name="no_time_available">No time available</string>
+
 </resources>

@@ -6,11 +6,12 @@ import kotlinx.serialization.Serializable
 import java.util.Date
 
 @Serializable
-data class Radiology(
+data class PatientAppointment(
     val id: String = "",
-    val title: String = "", // Nombre del estudio
-    val result: String = "", // Resultado del estudio
     @Serializable(with = DateAsLongSerializer::class)
-    @ServerTimestamp val date: Date? = null, // Fecha del estudio
-    val files: List<String> = emptyList(),
+    @ServerTimestamp val date: Date? = null,
+    @Serializable(with = DateAsLongSerializer::class)
+    @ServerTimestamp val time: Date? = null,
+    val visitType: VisitType = VisitType.NEW,
+    val notes: String? = null,
 )

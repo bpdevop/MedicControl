@@ -40,6 +40,8 @@
     <string name="menu_edit_laboratory">Editar Registro de Laboratorio</string>
     <string name="menu_radiology">Radiología</string>
     <string name="menu_edit_radiology">Editar Radiología</string>
+    <string name="menu_appointment">Citas</string>
+    <string name="menu_edit_appointment">Editar Cita</string>
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Perfil</string>
     <string name="menu_clinic_data">Datos de la Clínica</string>
@@ -323,5 +325,32 @@
     <string name="dialog_delete_radiology_message">¿Estás seguro de que deseas eliminar este registro de radiología?</string>
     <string name="radiology_history_title">Título: %1$s</string>
     <string name="radiology_history_files">Archivos</string>
+
+    <!-- APPOINTMENT SCREEN RESOURCES-->
+    <string name="appointment_screen_new_appointment">Nueva Cita</string>
+    <string name="appointment_screen_appointment_history">Historial de Citas</string>
+
+    <!--NEW APPOINTMENT SCREEN RESOURCES-->
+    <string name="new_appointment_visit_type">Tipo de Visita</string>
+    <string name="visit_type_new">Nueva</string>
+    <string name="visit_type_follow_up">Seguimiento</string>
+    <string name="visit_type_emergency">Emergencia</string>
+    <string name="new_appointment_date">Fecha</string>
+    <string name="new_appointment_time">Hora</string>
+    <string name="new_appointment_notes">Notas</string>
+    <string name="new_appointment_save">Guardar Cita</string>
+
+    <!-- APPOINTMENT HISTORY SCREEN RESOURCES-->
+    <string name="dialog_delete_appointment_title">Eliminar cita</string>
+    <string name="dialog_delete_appointment_message">¿Está seguro que desea eliminar esta cita?</string>
+    <string name="appointment_history_empty">No hay historial de citas disponible.</string>
+    <string name="appointment_history_visit_type">Tipo de visita</string>
+    <string name="appointment_history_time">Hora</string>
+    <string name="appointment_history_notes">Notas</string>
+    <string name="appointment_type_new">Nueva</string>
+    <string name="appointment_type_follow_up">Seguimiento</string>
+    <string name="appointment_type_emergency">Emergencia</string>
+    <string name="no_notes_available">No hay notas disponibles</string>
+    <string name="no_time_available">Hora no disponible</string>
 
 </resources>

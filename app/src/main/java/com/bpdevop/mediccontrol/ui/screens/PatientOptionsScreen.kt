@@ -55,7 +55,7 @@ fun PatientOptionsScreen(
         stringResource(id = R.string.patient_option_pathology) to Pair(Icons.Filled.Biotech, "pathology"),
         stringResource(id = R.string.patient_option_surgery) to Pair(Icons.Filled.LocalHospital, "surgery"),
         stringResource(id = R.string.patient_option_notes) to Pair(Icons.AutoMirrored.Filled.Note, "notes"),
-        stringResource(id = R.string.patient_option_appointments) to Pair(Icons.AutoMirrored.Filled.EventNote, "appointments"),
+        stringResource(id = R.string.patient_option_appointments) to Pair(Icons.AutoMirrored.Filled.EventNote, "appointment_screen"),
         stringResource(id = R.string.patient_option_exports) to Pair(Icons.Filled.Share, "exports")
     )
 

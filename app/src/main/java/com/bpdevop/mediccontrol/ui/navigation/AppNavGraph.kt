@@ -11,6 +11,7 @@ import com.bpdevop.mediccontrol.data.model.Allergy
 import com.bpdevop.mediccontrol.data.model.BloodGlucose
 import com.bpdevop.mediccontrol.data.model.BloodPressure
 import com.bpdevop.mediccontrol.data.model.OxygenSaturation
+import com.bpdevop.mediccontrol.data.model.PatientAppointment
 import com.bpdevop.mediccontrol.data.model.Vaccine
 import com.bpdevop.mediccontrol.ui.screens.AddPatientScreen
 import com.bpdevop.mediccontrol.ui.screens.AgendaScreen
@@ -20,6 +21,8 @@ import com.bpdevop.mediccontrol.ui.screens.PatientsScreen
 import com.bpdevop.mediccontrol.ui.screens.ProfileScreen
 import com.bpdevop.mediccontrol.ui.screens.allergy.AllergyScreen
 import com.bpdevop.mediccontrol.ui.screens.allergy.EditAllergyScreen
+import com.bpdevop.mediccontrol.ui.screens.appointment.AppointmentScreen
+import com.bpdevop.mediccontrol.ui.screens.appointment.EditAppointmentScreen
 import com.bpdevop.mediccontrol.ui.screens.bloodglucose.BloodGlucoseScreen
 import com.bpdevop.mediccontrol.ui.screens.bloodglucose.EditBloodGlucoseScreen
 import com.bpdevop.mediccontrol.ui.screens.bloodpressure.BloodPressureScreen
@@ -441,6 +444,45 @@ fun AppNavGraph(
                 patientId = patientId,
                 radiologyId = radiologyRecordId,
                 onRadiologyUpdated = { navController.popBackStack() }
+            )
+        }
+
+        // Pantalla de Asignación de Citas
+        composable(
+            route = "${Screen.Appointment.route}/{patientId}",
+            arguments = listOf(navArgument("patientId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")
+            patientId?.let {
+                AppointmentScreen(
+                    patientId = it,
+                    onSaveSuccess = {
+                        navController.popBackStack()
+                    },
+                    onEditAppointment = { appointment ->
+                        val appointmentJson = Json.encodeToString(appointment)
+                        navController.navigate(Screen.EditAppointment.withArgs(patientId, appointmentJson))
+                    }
+                )
+            }
+        }
+
+        // Pantalla de Edición de Citas
+        composable(
+            route = "${Screen.EditAppointment.route}/{patientId}/{appointment}",
+            arguments = listOf(
+                navArgument("patientId") { type = NavType.StringType },
+                navArgument("appointment") { type = NavType.StringType },
+            )
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")!!
+            val appointmentJson = backStackEntry.arguments?.getString("appointment")
+            val appointment = Json.decodeFromString<PatientAppointment>(appointmentJson!!)
+
+            EditAppointmentScreen(
+                patientId = patientId,
+                appointment = appointment,
+                onAppointmentUpdated = { navController.popBackStack() }
             )
         }
 

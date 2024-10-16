@@ -1,6 +1,7 @@
 package com.bpdevop.mediccontrol.data.model
 
 import com.bpdevop.mediccontrol.core.utils.DateAsLongSerializer
+import com.google.firebase.firestore.ServerTimestamp
 import kotlinx.serialization.Serializable
 import java.util.Date
 
@@ -17,6 +18,6 @@ data class Examination(
     val diagnosis: List<String> = emptyList(),
     val notes: String? = null,
     @Serializable(with = DateAsLongSerializer::class)
-    val date: Date? = null,
+    @ServerTimestamp val date: Date? = null,
     val files: List<String> = emptyList() // Paths to uploaded files, documents, images, etc.
 )

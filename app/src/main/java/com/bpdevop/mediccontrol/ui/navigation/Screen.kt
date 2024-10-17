@@ -85,6 +85,7 @@ sealed class Screen(val route: String, @StringRes val titleResId: Int) {
 
     data object Agenda : Screen("agenda", R.string.menu_agenda)
     data object Profile : Screen("profile", R.string.menu_profile)
+    data object Export : Screen("export", R.string.menu_export)
 
     data object Settings : Screen("settings", R.string.menu_settings)
     data object About : Screen("about", R.string.menu_about)

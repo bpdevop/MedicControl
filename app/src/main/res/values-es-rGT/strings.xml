@@ -45,6 +45,7 @@
     <string name="menu_agenda">Agenda</string>
     <string name="menu_profile">Perfil</string>
     <string name="menu_clinic_data">Datos de la Clínica</string>
+    <string name="menu_export">Exportar Pacientes Infectocontagiosos</string>
     <string name="menu_settings">Configuraciones</string>
     <string name="menu_about">Acerca de</string>
     <string name="menu_more">Más</string>
@@ -74,6 +75,12 @@
     <string name="profile_action_edit">Editar perfil</string>
     <string name="profile_action_save">Guardar cambios</string>
     <string name="profile_photo_label">Foto de perfil</string>
+
+    <!-- EXPORT SCREEN RESOURCES -->
+    <string name="export_screen_fab_export">Exportar a PDF</string>
+    <string name="export_screen_no_patients_message">No hay pacientes infectocontagiosos registrados</string>
+    <string name="export_screen_error_loading">Error al cargar los pacientes</string>
+    <string name="export_screen_unknown_disease">Enfermedad desconocida</string>
 
     <!-- SETTINGS SCREEN RESOURCES -->
     <string name="settings_screen_account_section_title">Cuenta</string>
@@ -141,7 +148,6 @@
     <string name="patient_option_surgery">Cirugía</string>
     <string name="patient_option_notes">Notas</string>
     <string name="patient_option_appointments">Asignar cita</string>
-    <string name="patient_option_exports">Exportaciones</string>
 
     <!--VACCINATION SCREEN RESOURCES-->
     <string name="vaccination_screen_new_vaccine">Nueva Vacuna</string>

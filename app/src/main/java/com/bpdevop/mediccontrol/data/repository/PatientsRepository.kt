@@ -37,6 +37,21 @@ class PatientsRepository @Inject constructor(
                 ?: UiState.Error("Paciente no encontrado")
         }.getOrElse { UiState.Error(it.message ?: "Error al obtener los detalles del paciente") }
 
+    suspend fun getInfectiousPatients(): UiState<List<Patient>> =
+        authRepository.getCurrentUserId()?.let { doctorId ->
+            runCatching {
+                val infectiousPatients = firestore.collection("patients")
+                    .whereEqualTo("doctorId", doctorId)
+                    .whereNotEqualTo("diseaseId", null)
+                    .get()
+                    .await()
+                    .toObjects(Patient::class.java)
+                    .filter { it.diseaseCode != null && it.diseaseTitle != null }
+                UiState.Success(infectiousPatients)
+            }.getOrElse { UiState.Error(it.message ?: "Error al obtener pacientes infectocontagiosos") }
+        } ?: UiState.Error("No se encontró el ID del doctor")
+
+
     suspend fun addPatient(patient: Patient, photoUri: Uri?): UiState<String> =
         authRepository.getCurrentUserId()?.let { doctorId ->
             runCatching {

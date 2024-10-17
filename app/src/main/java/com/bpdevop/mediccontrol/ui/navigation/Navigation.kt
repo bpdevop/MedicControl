@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.LocalHospital
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.bpdevop.mediccontrol.R
 
@@ -18,6 +19,7 @@ sealed class NavigationItem(val route: String, val titleResId: Int, val icon: Im
     data object ClinicData : NavigationItem("clinic_data", R.string.menu_clinic_data, Icons.Default.LocalHospital)
     data object Settings : NavigationItem("settings", R.string.menu_settings, Icons.Default.Settings)
     data object About : NavigationItem("about", R.string.menu_about, Icons.Default.Info)
+    data object Export : NavigationItem("export", R.string.menu_export, Icons.Default.Upload)
 }
 
 
@@ -27,6 +29,7 @@ val mainMenuItems = listOf(
     NavigationItem.Agenda,
     NavigationItem.Profile,
     //NavigationItem.ClinicData
+    NavigationItem.Export
 )
 
 // Lista de ítems secundarios del menú

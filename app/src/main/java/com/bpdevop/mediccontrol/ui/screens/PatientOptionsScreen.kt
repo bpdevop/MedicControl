@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.Biotech
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.LocalHospital
 import androidx.compose.material.icons.filled.Receipt
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Vaccines
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -56,7 +55,6 @@ fun PatientOptionsScreen(
         stringResource(id = R.string.patient_option_surgery) to Pair(Icons.Filled.LocalHospital, "surgery"),
         stringResource(id = R.string.patient_option_notes) to Pair(Icons.AutoMirrored.Filled.Note, "notes"),
         stringResource(id = R.string.patient_option_appointments) to Pair(Icons.AutoMirrored.Filled.EventNote, "appointment_screen"),
-        stringResource(id = R.string.patient_option_exports) to Pair(Icons.Filled.Share, "exports")
     )
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {

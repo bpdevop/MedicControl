@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.VectorDrawable
 import com.bpdevop.mediccontrol.R
+import com.bpdevop.mediccontrol.core.extensions.clearFilesWithPrefix
 import com.bpdevop.mediccontrol.data.model.DoctorProfile
 import com.bpdevop.mediccontrol.data.model.Patient
 import com.bpdevop.mediccontrol.data.model.Prescription
@@ -42,6 +43,8 @@ class PrescriptionPdfGenerator(private val context: Context) {
         patient: Patient,
         prescription: Prescription,
     ): File {
+        context.clearFilesWithPrefix("prescription_")
+
         val pdfFile = File(context.cacheDir, "prescription_${prescription.id}.pdf")
 
         // Configurar el tamaño de la receta a 5.5 x 8.5 pulgadas

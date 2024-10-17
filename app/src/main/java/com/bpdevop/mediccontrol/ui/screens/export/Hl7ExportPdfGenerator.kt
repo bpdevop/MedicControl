@@ -3,7 +3,7 @@ package com.bpdevop.mediccontrol.ui.screens.export
 import android.content.Context
 import androidx.core.text.HtmlCompat
 import com.bpdevop.mediccontrol.R
-import com.bpdevop.mediccontrol.core.extensions.clearOldHl7Exports
+import com.bpdevop.mediccontrol.core.extensions.clearFilesWithPrefix
 import com.bpdevop.mediccontrol.core.extensions.formatToString
 import com.bpdevop.mediccontrol.data.model.DoctorProfile
 import com.bpdevop.mediccontrol.data.model.Patient
@@ -30,7 +30,7 @@ class Hl7ExportPdfGenerator(
 ) {
 
     fun createHl7ExportPdf(patients: List<Patient>): File {
-        context.clearOldHl7Exports()
+        context.clearFilesWithPrefix("hl7_export_infectocontagiosos_")
 
         val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val pdfFile = File(context.cacheDir, "hl7_export_infectocontagiosos_$timestamp.pdf")

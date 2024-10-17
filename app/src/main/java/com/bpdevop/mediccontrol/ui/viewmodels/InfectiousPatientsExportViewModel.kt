@@ -34,7 +34,6 @@ class InfectiousPatientsExportViewModel @Inject constructor(
     val pdfExportState: StateFlow<UiState<File>> = _pdfExportState
 
     private val _doctorProfileState = MutableStateFlow<UiState<DoctorProfile?>>(UiState.Idle)
-    val doctorProfileState: StateFlow<UiState<DoctorProfile?>> = _doctorProfileState
 
     fun loadInfectiousPatients() {
         viewModelScope.launch {

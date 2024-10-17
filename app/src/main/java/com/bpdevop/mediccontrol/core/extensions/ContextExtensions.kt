@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.FileProvider
+import com.bpdevop.mediccontrol.BuildConfig
 import com.bpdevop.mediccontrol.data.model.DoctorProfile
 import com.bpdevop.mediccontrol.data.model.Patient
 import com.bpdevop.mediccontrol.data.model.Prescription
@@ -68,7 +70,27 @@ fun Context.generateHl7ExportPdf(doctor: DoctorProfile, patients: List<Patient>)
     return generator.createHl7ExportPdf(patients)
 }
 
-fun Context.clearOldHl7Exports() {
-    cacheDir.listFiles { file -> file.name.startsWith("hl7_export_infectocontagiosos_") }
+fun Context.clearFilesWithPrefix(prefix: String) {
+    cacheDir.listFiles { file -> file.name.startsWith(prefix) }
         ?.forEach { it.delete() }
+}
+
+
+fun Context.openPDF(file: File) {
+    val pdfUri = FileProvider.getUriForFile(this, "${BuildConfig.APPLICATION_ID}.provider", file)
+    val intent = Intent(Intent.ACTION_VIEW).apply {
+        setDataAndType(pdfUri, "application/pdf")
+        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+    }
+    startActivity(intent)
+}
+
+fun Context.sendPrescription(file: File) {
+    val pdfUri = FileProvider.getUriForFile(this, "${BuildConfig.APPLICATION_ID}.provider", file)
+    val intent = Intent(Intent.ACTION_SEND).apply {
+        type = "application/pdf"
+        putExtra(Intent.EXTRA_STREAM, pdfUri)
+        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+    }
+    startActivity(Intent.createChooser(intent, "Send Prescription"))
 }

@@ -1,7 +1,6 @@
 package com.bpdevop.mediccontrol.ui.screens.export
 
 import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,12 +37,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.FileProvider
 import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
-import com.bpdevop.mediccontrol.BuildConfig
 import com.bpdevop.mediccontrol.R
+import com.bpdevop.mediccontrol.core.extensions.openPDF
 import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.data.model.Patient
 import com.bpdevop.mediccontrol.ui.components.CommonDialog
@@ -135,7 +133,7 @@ fun HandlePdfExportDialog(
 
         is UiState.Success -> {
             LaunchedEffect(Unit) {
-                openPDF(context, pdfExportState.data)
+                context.openPDF(pdfExportState.data)
                 onPdfOpened()
             }
         }
@@ -203,14 +201,4 @@ private fun EmptyInfectiousPatientsScreen() {
             Text(stringResource(R.string.export_screen_no_patients_message))
         }
     }
-}
-
-// Función para abrir el PDF
-private fun openPDF(context: Context, file: File) {
-    val pdfUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", file)
-    val intent = Intent(Intent.ACTION_VIEW).apply {
-        setDataAndType(pdfUri, "application/pdf")
-        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
-    }
-    context.startActivity(intent)
 }

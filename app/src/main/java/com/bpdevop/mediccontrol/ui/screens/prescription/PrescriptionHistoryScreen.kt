@@ -1,7 +1,7 @@
 package com.bpdevop.mediccontrol.ui.screens.prescription
 
 import android.content.Context
-import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -33,15 +33,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.bpdevop.mediccontrol.BuildConfig
 import com.bpdevop.mediccontrol.R
 import com.bpdevop.mediccontrol.core.extensions.formatToString
-import com.bpdevop.mediccontrol.core.extensions.generatePrescriptionPdf
+import com.bpdevop.mediccontrol.core.extensions.openPDF
+import com.bpdevop.mediccontrol.core.extensions.sendPrescription
 import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.data.model.Prescription
+import com.bpdevop.mediccontrol.ui.components.CommonDialog
 import com.bpdevop.mediccontrol.ui.components.DateHeader
+import com.bpdevop.mediccontrol.ui.components.LoadingPdfDialog
 import com.bpdevop.mediccontrol.ui.components.MessageDialog
 import com.bpdevop.mediccontrol.ui.components.MoreOptionsMenu
 import com.bpdevop.mediccontrol.ui.viewmodels.PrescriptionViewModel
@@ -57,16 +58,18 @@ fun PrescriptionHistoryScreen(
 ) {
     val prescriptionHistoryState by viewModel.prescriptionHistoryState.collectAsState()
     val deletePrescriptionState by viewModel.deletePrescriptionState.collectAsState()
-    val isRefreshing = prescriptionHistoryState is UiState.Loading
-    val coroutineScope = rememberCoroutineScope()
+    val pdfExportState by viewModel.pdfExportState.collectAsState()
+    val shouldOpenPdf by viewModel.shouldOpenPdf.collectAsState()
 
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     var prescriptionToDelete by remember { mutableStateOf<Prescription?>(null) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.getPrescriptionHistory(patientId)
+        viewModel.getDoctorProfile()
     }
 
     when (deletePrescriptionState) {
@@ -100,7 +103,7 @@ fun PrescriptionHistoryScreen(
     }
 
     PullToRefreshBox(
-        isRefreshing = isRefreshing,
+        isRefreshing = prescriptionHistoryState is UiState.Loading,
         onRefresh = {
             coroutineScope.launch { viewModel.getPrescriptionHistory(patientId) }
         },
@@ -119,7 +122,6 @@ fun PrescriptionHistoryScreen(
                             prescriptionToDelete = prescription
                             showDeleteDialog = true
                         },
-                        context = context,
                         viewModel = viewModel,
                         patientId = patientId
                     )
@@ -133,6 +135,14 @@ fun PrescriptionHistoryScreen(
             else -> Unit
         }
     }
+
+    HandlePrescriptionPdfExportDialog(
+        pdfExportState = pdfExportState,
+        onPdfOpened = { viewModel.resetPdfExportState() },
+        onResetState = { viewModel.resetPdfExportState() },
+        context = context,
+        shouldOpenPdf = shouldOpenPdf
+    )
 }
 
 @Composable
@@ -169,7 +179,6 @@ fun PrescriptionHistoryList(
     prescriptions: List<Prescription>,
     onEditPrescription: (String) -> Unit,
     onDeletePrescription: (Prescription) -> Unit,
-    context: Context,
     viewModel: PrescriptionViewModel,
     patientId: String,
 ) {
@@ -191,7 +200,6 @@ fun PrescriptionHistoryList(
                     prescription = prescription,
                     onEditPrescription = onEditPrescription,
                     onDeletePrescription = onDeletePrescription,
-                    context = context,
                     viewModel = viewModel,
                     patientId = patientId
                 )
@@ -208,13 +216,9 @@ fun PrescriptionHistoryItem(
     prescription: Prescription,
     onEditPrescription: (String) -> Unit,
     onDeletePrescription: (Prescription) -> Unit,
-    context: Context,
-    viewModel: PrescriptionViewModel, // ViewModel para obtener doctor y paciente
-    patientId: String, // ID del paciente
+    viewModel: PrescriptionViewModel,
+    patientId: String,
 ) {
-    val doctorProfileState by viewModel.doctorProfileState.collectAsState()
-    val patientState by viewModel.patientState.collectAsState()
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -233,7 +237,7 @@ fun PrescriptionHistoryItem(
                         text = stringResource(R.string.prescription_history_medications),
                         style = MaterialTheme.typography.bodyMedium
                     )
-                    prescription.medications?.forEach { item ->
+                    prescription.medications.forEach { item ->
                         Text(
                             text = "${item.name}: ${item.dosage}, ${item.frequency}, ${item.duration}",
                             style = MaterialTheme.typography.bodyLarge
@@ -245,52 +249,12 @@ fun PrescriptionHistoryItem(
                     onEditClick = { onEditPrescription(prescription.id) },
                     onDeleteClick = { onDeletePrescription(prescription) },
                     onPrintClick = {
-                        viewModel.getDoctorProfile()
-                        viewModel.getPatientById(patientId)
-
-                        if (doctorProfileState is UiState.Loading || patientState is UiState.Loading) {
-                            Toast.makeText(context, "generando documento", Toast.LENGTH_SHORT).show()
-                        } else if (doctorProfileState is UiState.Success && patientState is UiState.Success) {
-                            val doctorProfile = (doctorProfileState as UiState.Success).data
-                            val patient = (patientState as UiState.Success).data
-
-                            if (doctorProfile != null && patient != null) {
-                                val pdfFile = context.generatePrescriptionPdf(
-                                    doctorProfile,
-                                    patient,
-                                    prescription
-                                )
-                                printPrescription(context, pdfFile)
-                            } else {
-                                Toast.makeText(context, "Doctor profile or patient data is missing", Toast.LENGTH_SHORT).show()
-                            }
-                        } else if (doctorProfileState is UiState.Error || patientState is UiState.Error) {
-                            Toast.makeText(context, "Error loading data", Toast.LENGTH_SHORT).show()
-                        }
+                        viewModel.setShouldOpenPdf(true)
+                        viewModel.exportPrescriptionToPDF(patientId, prescription)
                     },
                     onSendClick = {
-                        viewModel.getDoctorProfile()
-                        viewModel.getPatientById(patientId)
-
-                        if (doctorProfileState is UiState.Loading || patientState is UiState.Loading) {
-                            Toast.makeText(context, "generando documento", Toast.LENGTH_SHORT).show()
-                        } else if (doctorProfileState is UiState.Success && patientState is UiState.Success) {
-                            val doctorProfile = (doctorProfileState as UiState.Success).data
-                            val patient = (patientState as UiState.Success).data
-
-                            if (doctorProfile != null && patient != null) {
-                                val pdfFile = context.generatePrescriptionPdf(
-                                    doctorProfile,
-                                    patient,
-                                    prescription
-                                )
-                                sendPrescription(context, pdfFile)
-                            } else {
-                                Toast.makeText(context, "Doctor profile or patient data is missing", Toast.LENGTH_SHORT).show()
-                            }
-                        } else if (doctorProfileState is UiState.Error || patientState is UiState.Error) {
-                            Toast.makeText(context, "Error loading data", Toast.LENGTH_SHORT).show()
-                        }
+                        viewModel.setShouldOpenPdf(false)
+                        viewModel.exportPrescriptionToPDF(patientId, prescription)
                     },
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
@@ -303,7 +267,7 @@ fun PrescriptionHistoryItem(
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    text = prescription.notes ?: "",
+                    text = prescription.notes,
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
@@ -326,22 +290,37 @@ fun PrescriptionHistoryItem(
     }
 }
 
+@Composable
+fun HandlePrescriptionPdfExportDialog(
+    pdfExportState: UiState<File>,
+    onPdfOpened: () -> Unit,
+    onResetState: () -> Unit,
+    context: Context,
+    shouldOpenPdf: Boolean,
+) {
+    when (pdfExportState) {
+        is UiState.Loading -> LoadingPdfDialog()
 
-fun printPrescription(context: Context, file: File) {
-    val pdfUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", file)
-    val intent = Intent(Intent.ACTION_VIEW).apply {
-        setDataAndType(pdfUri, "application/pdf")
-        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-    }
-    context.startActivity(intent)
-}
+        is UiState.Success -> {
+            if (shouldOpenPdf) {
+                context.openPDF(pdfExportState.data)
+                Log.e("PrescriptionHistoryScreen", "pase acá ")
+            } else {
+                context.sendPrescription(pdfExportState.data)
+            }
+            onPdfOpened()
+            onResetState()
+        }
 
-fun sendPrescription(context: Context, file: File) {
-    val pdfUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", file)
-    val intent = Intent(Intent.ACTION_SEND).apply {
-        type = "application/pdf"
-        putExtra(Intent.EXTRA_STREAM, pdfUri)
-        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        is UiState.Error -> {
+            CommonDialog(
+                message = pdfExportState.message,
+                onConfirm = {
+                    onResetState()
+                }
+            )
+        }
+
+        else -> Unit
     }
-    context.startActivity(Intent.createChooser(intent, "Send Prescription"))
 }

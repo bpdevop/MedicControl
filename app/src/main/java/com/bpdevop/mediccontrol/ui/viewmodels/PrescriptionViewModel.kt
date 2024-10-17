@@ -1,18 +1,20 @@
 package com.bpdevop.mediccontrol.ui.viewmodels
 
-import android.app.Application
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bpdevop.mediccontrol.core.extensions.generatePrescriptionPdf
 import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.data.model.DoctorProfile
-import com.bpdevop.mediccontrol.data.model.Patient
 import com.bpdevop.mediccontrol.data.model.Prescription
 import com.bpdevop.mediccontrol.data.repository.DoctorProfileRepository
 import com.bpdevop.mediccontrol.data.repository.PatientsRepository
 import com.bpdevop.mediccontrol.data.repository.PrescriptionRepository
+import com.bpdevop.mediccontrol.di.IoDispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -21,10 +23,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PrescriptionViewModel @Inject constructor(
-    private val app: Application,
+    @ApplicationContext private val context: Context,
     private val prescriptionRepository: PrescriptionRepository,
     private val doctorProfileRepository: DoctorProfileRepository,
     private val patientsRepository: PatientsRepository,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     private val _prescriptionHistoryState = MutableStateFlow<UiState<List<Prescription>>>(UiState.Idle)
@@ -43,10 +46,12 @@ class PrescriptionViewModel @Inject constructor(
     val deletePrescriptionState: StateFlow<UiState<String>> = _deletePrescriptionState
 
     private val _doctorProfileState = MutableStateFlow<UiState<DoctorProfile?>>(UiState.Idle)
-    val doctorProfileState: StateFlow<UiState<DoctorProfile?>> = _doctorProfileState
 
-    private val _patientState = MutableStateFlow<UiState<Patient>>(UiState.Idle)
-    val patientState: StateFlow<UiState<Patient>> = _patientState
+    private val _shouldOpenPdf = MutableStateFlow(false)
+    val shouldOpenPdf: StateFlow<Boolean> = _shouldOpenPdf
+
+    private val _pdfExportState = MutableStateFlow<UiState<File>>(UiState.Idle)
+    val pdfExportState: StateFlow<UiState<File>> = _pdfExportState
 
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading
@@ -104,38 +109,50 @@ class PrescriptionViewModel @Inject constructor(
         }
     }
 
-    fun getPatientById(patientId: String) {
-        viewModelScope.launch {
-            _patientState.value = UiState.Loading
-            val result = patientsRepository.getPatientById(patientId)
-            _patientState.value = result
+    fun setShouldOpenPdf(openPdf: Boolean) {
+        _shouldOpenPdf.value = openPdf
+    }
+
+    fun exportPrescriptionToPDF(patientId: String, prescription: Prescription) {
+        viewModelScope.launch(ioDispatcher) {
+            _pdfExportState.value = UiState.Loading
+            try {
+                // Obtener el perfil del paciente
+                val patientState = patientsRepository.getPatientById(patientId)
+
+                if (patientState is UiState.Success) {
+                    val patient = patientState.data
+
+                    // Asegurar que el doctor está cargado
+                    val doctorProfile = (_doctorProfileState.value as? UiState.Success)?.data
+                    if (doctorProfile == null) {
+                        _pdfExportState.value = UiState.Error("Perfil del doctor no encontrado.")
+                        return@launch
+                    }
+
+                    // Generar el PDF con el perfil del paciente y del doctor
+                    val file = context.generatePrescriptionPdf(doctorProfile, patient, prescription)
+                    _pdfExportState.value = UiState.Success(file)
+                } else if (patientState is UiState.Error) {
+                    _pdfExportState.value = UiState.Error("Error al cargar el perfil del paciente: ${patientState.message}")
+                }
+            } catch (e: Exception) {
+                _pdfExportState.value = UiState.Error("Error al exportar a PDF: ${e.message}")
+            }
         }
     }
 
-    fun generatePdfAndOpen(
-        doctor: DoctorProfile,
-        patient: Patient,
-        prescription: Prescription,
-        openPdf: (File) -> Unit,
-    ) {
-        _loading.value = true
-        viewModelScope.launch {
-            val pdfFile = app.generatePrescriptionPdf(doctor, patient, prescription)
-            _loading.value = false
-            openPdf(pdfFile)
-        }
-    }
 
     // Resetear los estados después de la operación
     fun resetAddPrescriptionState() {
         _addPrescriptionState.value = UiState.Idle
     }
 
-    fun resetUpdatePrescriptionState() {
-        _updatePrescriptionState.value = UiState.Idle
-    }
-
     fun resetDeletePrescriptionState() {
         _deletePrescriptionState.value = UiState.Idle
+    }
+
+    fun resetPdfExportState() {
+        _pdfExportState.value = UiState.Idle
     }
 }

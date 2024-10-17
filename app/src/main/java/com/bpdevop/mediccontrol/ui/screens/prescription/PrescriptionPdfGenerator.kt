@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.VectorDrawable
+import androidx.appcompat.content.res.AppCompatResources
 import com.bpdevop.mediccontrol.R
 import com.bpdevop.mediccontrol.core.extensions.clearFilesWithPrefix
 import com.bpdevop.mediccontrol.data.model.DoctorProfile
@@ -47,10 +48,8 @@ class PrescriptionPdfGenerator(private val context: Context) {
 
         val pdfFile = File(context.cacheDir, "prescription_${prescription.id}.pdf")
 
-        // Configurar el tamaño de la receta a 5.5 x 8.5 pulgadas
         val pageSize = PageSize(5.5f * 72, 8.5f * 72) // 72 puntos por pulgada
 
-        // Inicializar PdfWriter con PdfDocument
         val writer = PdfWriter(FileOutputStream(pdfFile))
         val pdfDocument = PdfDocument(writer)
         val document = Document(pdfDocument, pageSize)
@@ -58,145 +57,79 @@ class PrescriptionPdfGenerator(private val context: Context) {
         // Añadir el manejador de eventos para el encabezado
         pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, HeaderEventHandler(doctor))
 
-
         // Añadir el manejador de eventos para el footer
         pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, FooterEventHandler(context, pdfDocument))
 
+        // Añadir la marca de agua a cada página del documento
+        addWatermark(pdfDocument, pageSize)
+
         addPatientDetails(document, prescription, patient)
-        addMedicationsSection(document, prescription, context)
+        addMedicationsSection(document, prescription)
         // Cerrar el documento PDF
         document.close()
 
         return pdfFile
     }
 
-    // Método privado para agregar el encabezado
-
-
-    // Método para agregar la fecha y nombre del paciente
-    private fun addPatientDetails(document: Document, prescription: Prescription, patient: Patient) {
-        val fontSizeNormal = 8f
-        val colorPrimary = DeviceRgb(63, 81, 181) // Color #3f51b5
-
-        // Añadir un espacio en blanco (padding) para que no esté tan pegado al encabezado
-        document.add(Paragraph("\n\n\n"))
-
-        // Convertir la fecha usando LocalDate
-        val currentDate = prescription.date?.toInstant()?.atZone(ZoneId.systemDefault())?.toLocalDate() ?: LocalDate.now()
-        val day = currentDate.dayOfMonth.toString()
-        val month = currentDate.month.getDisplayName(TextStyle.FULL, Locale("es"))
-        val year = currentDate.year.toString()
-
-        // Crear una tabla para la fecha: "Guatemala, __ de ____ de ____"
-        val dateTable = Table(UnitValue.createPercentArray(floatArrayOf(0.5f, 0.2f, 0.1f, 0.3f, 0.1f, 1f))).useAllAvailableWidth()
-
-        // Primera celda: "Guatemala,"
-        dateTable.addCell(
-            Cell().add(Paragraph("Guatemala,").setFontColor(colorPrimary))
-                .setFontSize(fontSizeNormal)
-                .setBorder(Border.NO_BORDER)
-                .setVerticalAlignment(VerticalAlignment.BOTTOM)
-        )
-
-        // Segunda celda: Día (subrayado)
-        dateTable.addCell(
-            Cell().add(Paragraph(day))
-                .setFontSize(fontSizeNormal)
-                .setBorder(Border.NO_BORDER)
-                .setUnderline()
-                .setTextAlignment(TextAlignment.CENTER)
-        )
-
-        // Tercera celda: "de"
-        dateTable.addCell(
-            Cell().add(Paragraph("de").setFontColor(colorPrimary))
-                .setFontSize(fontSizeNormal)
-                .setBorder(Border.NO_BORDER)
-                .setVerticalAlignment(VerticalAlignment.BOTTOM)
-        )
-
-        // Cuarta celda: Mes (subrayado)
-        dateTable.addCell(
-            Cell().add(Paragraph(month))
-                .setFontSize(fontSizeNormal)
-                .setBorder(Border.NO_BORDER)
-                .setUnderline()
-                .setTextAlignment(TextAlignment.CENTER)
-        )
-
-        // Quinta celda: "de"
-        dateTable.addCell(
-            Cell().add(Paragraph("de").setFontColor(colorPrimary))
-                .setFontSize(fontSizeNormal)
-                .setBorder(Border.NO_BORDER)
-                .setVerticalAlignment(VerticalAlignment.BOTTOM)
-        )
-
-        // Sexta celda: Año (subrayado)
-        dateTable.addCell(
-            Cell().add(Paragraph(year))
-                .setFontSize(fontSizeNormal)
-                .setBorder(Border.NO_BORDER)
-                .setUnderline()
-                .setTextAlignment(TextAlignment.CENTER)
-        )
-
-        document.add(dateTable)
-
-        // Crear una tabla para el nombre del paciente con subrayado
-        // Ajuste de proporciones: la primera columna ("Nombre:") tiene un ancho de 1f,
-        // mientras que la segunda columna (el nombre del paciente) ocupa el resto del espacio.
-        val patientTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 4f))).useAllAvailableWidth()
-
-        // Celda "Nombre:"
-        patientTable.addCell(
-            Cell().add(Paragraph("Nombre:").setFontColor(colorPrimary))
-                .setFontSize(fontSizeNormal)
-                .setBorder(Border.NO_BORDER)
-                .setVerticalAlignment(VerticalAlignment.BOTTOM)
-        )
-
-        // Celda Nombre del paciente (subrayado)
-        patientTable.addCell(
-            Cell().add(Paragraph(patient.name))
-                .setFontSize(fontSizeNormal)
-                .setBorder(Border.NO_BORDER)
-                .setUnderline()
-                .setTextAlignment(TextAlignment.LEFT)
-        )
-
-        document.add(patientTable)
-    }
-
-    // Método para agregar los medicamentos y la marca de agua
-    private fun addMedicationsSection(document: Document, prescription: Prescription, context: Context) {
-        // Añadir espacio entre la sección anterior
-        document.add(Paragraph("\n"))
-
-        // Tamaño del documento 5.5 x 8.5 pulgadas en puntos (1 pulgada = 72 puntos)
-        val pageWidth = 5.5f * 72
-        val pageHeight = 8.5f * 72
-
-        // Convertir el vector XML (ic_launcher_foreground) a Bitmap
+    // Método para añadir la marca de agua en cada página
+    private fun addWatermark(pdfDocument: PdfDocument, pageSize: PageSize) {
+        // Convertir el vector XML a Bitmap
         val bitmap = getBitmapFromVectorDrawable(context, R.drawable.ic_launcher_foreground)
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
         val imageData = ImageDataFactory.create(stream.toByteArray())
 
-        // Agregar la imagen como marca de agua, centrada y un poco más grande
+        // Configuración de la imagen de la marca de agua
         val watermark = Image(imageData)
-        watermark.scaleToFit(pageWidth * 0.8f, pageHeight * 0.8f) // Ajustar tamaño de la imagen
-        watermark.setFixedPosition(
-            (pageWidth - watermark.imageScaledWidth) / 2,  // Centrar horizontalmente
-            (pageHeight - watermark.imageScaledHeight) / 2  // Centrar verticalmente
-        )
-        watermark.setOpacity(0.1f) // Ajustar la opacidad para ser discreta
-        document.add(watermark)
+        watermark.scaleToFit(pageSize.width * 0.8f, pageSize.height * 0.8f)
+        watermark.setOpacity(0.1f)
 
-        // Añadir el título "Rp:" para la receta con tamaño 10f
+        // Añadir la marca de agua en cada página
+        for (i in 1..pdfDocument.numberOfPages) {
+            watermark.setFixedPosition(
+                (pageSize.width - watermark.imageScaledWidth) / 2,
+                (pageSize.height - watermark.imageScaledHeight) / 2
+            )
+            Document(pdfDocument).add(watermark)
+        }
+    }
+
+
+    // Método para agregar la fecha y nombre del paciente
+    private fun addPatientDetails(document: Document, prescription: Prescription, patient: Patient) {
+        val fontSizeNormal = 8f
+        val colorPrimary = DeviceRgb(63, 81, 181)
+
+        // Añadir un espacio en blanco (padding) para que no esté tan pegado al encabezado
+        document.add(Paragraph("\n\n\n"))
+
+        val currentDate = prescription.date?.toInstant()?.atZone(ZoneId.systemDefault())?.toLocalDate() ?: LocalDate.now()
+        val day = currentDate.dayOfMonth.toString()
+        val month = currentDate.month.getDisplayName(TextStyle.FULL, Locale("es"))
+        val year = currentDate.year.toString()
+
+        val dateTable = Table(UnitValue.createPercentArray(floatArrayOf(0.5f, 0.2f, 0.1f, 0.3f, 0.1f, 1f))).useAllAvailableWidth()
+        dateTable.addCell(Cell().add(Paragraph("Guatemala,").setFontColor(colorPrimary)).setFontSize(fontSizeNormal).setBorder(Border.NO_BORDER).setVerticalAlignment(VerticalAlignment.BOTTOM))
+        dateTable.addCell(Cell().add(Paragraph(day)).setFontSize(fontSizeNormal).setBorder(Border.NO_BORDER).setUnderline().setTextAlignment(TextAlignment.CENTER))
+        dateTable.addCell(Cell().add(Paragraph("de").setFontColor(colorPrimary)).setFontSize(fontSizeNormal).setBorder(Border.NO_BORDER).setVerticalAlignment(VerticalAlignment.BOTTOM))
+        dateTable.addCell(Cell().add(Paragraph(month)).setFontSize(fontSizeNormal).setBorder(Border.NO_BORDER).setUnderline().setTextAlignment(TextAlignment.CENTER))
+        dateTable.addCell(Cell().add(Paragraph("de").setFontColor(colorPrimary)).setFontSize(fontSizeNormal).setBorder(Border.NO_BORDER).setVerticalAlignment(VerticalAlignment.BOTTOM))
+        dateTable.addCell(Cell().add(Paragraph(year)).setFontSize(fontSizeNormal).setBorder(Border.NO_BORDER).setUnderline().setTextAlignment(TextAlignment.CENTER))
+
+        document.add(dateTable)
+
+        val patientTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 4f))).useAllAvailableWidth()
+        patientTable.addCell(Cell().add(Paragraph("Nombre:").setFontColor(colorPrimary)).setFontSize(fontSizeNormal).setBorder(Border.NO_BORDER).setVerticalAlignment(VerticalAlignment.BOTTOM))
+        patientTable.addCell(Cell().add(Paragraph(patient.name)).setFontSize(fontSizeNormal).setBorder(Border.NO_BORDER).setUnderline().setTextAlignment(TextAlignment.LEFT))
+
+        document.add(patientTable)
+    }
+
+    // Método para agregar los medicamentos y la marca de agua
+    private fun addMedicationsSection(document: Document, prescription: Prescription) {
+        document.add(Paragraph("\n"))
         document.add(Paragraph("Rp:").setBold().setFontSize(10f))
 
-        // Crear una tabla para los medicamentos
         val medicationsTable = Table(UnitValue.createPercentArray(floatArrayOf(3f, 1f, 2f, 2f))).useAllAvailableWidth()
 
         // Agregar los encabezados de la tabla con tamaño 10f
@@ -205,26 +138,19 @@ class PrescriptionPdfGenerator(private val context: Context) {
         medicationsTable.addHeaderCell(Cell().add(Paragraph("Frecuencia").setBold().setFontSize(8f)).setTextAlignment(TextAlignment.LEFT).setBorder(Border.NO_BORDER))
         medicationsTable.addHeaderCell(Cell().add(Paragraph("Duración").setBold().setFontSize(8f)).setTextAlignment(TextAlignment.LEFT).setBorder(Border.NO_BORDER))
 
-        // Añadir los medicamentos de la receta
         for (item in prescription.medications) {
-            val medicamentoText = item.name ?: "N/A"
-            val dosisText = item.dosage ?: "N/A"
-            val frecuenciaText = "tomar ${item.frequency ?: "N/A"}"
-            val duracionText = "Por ${item.duration ?: "N/A"}"
-
-            medicationsTable.addCell(Cell().add(Paragraph(medicamentoText).setFontSize(8f)).setBorder(Border.NO_BORDER))
-            medicationsTable.addCell(Cell().add(Paragraph(dosisText).setFontSize(8f)).setBorder(Border.NO_BORDER))
-            medicationsTable.addCell(Cell().add(Paragraph(frecuenciaText).setFontSize(8f)).setBorder(Border.NO_BORDER))
-            medicationsTable.addCell(Cell().add(Paragraph(duracionText).setFontSize(8f)).setBorder(Border.NO_BORDER))
+            medicationsTable.addCell(Cell().add(Paragraph(item.name ?: "N/A").setFontSize(8f)).setBorder(Border.NO_BORDER))
+            medicationsTable.addCell(Cell().add(Paragraph(item.dosage ?: "N/A").setFontSize(8f)).setBorder(Border.NO_BORDER))
+            medicationsTable.addCell(Cell().add(Paragraph("tomar ${item.frequency ?: "N/A"}").setFontSize(8f)).setBorder(Border.NO_BORDER))
+            medicationsTable.addCell(Cell().add(Paragraph("Por ${item.duration ?: "N/A"}").setFontSize(8f)).setBorder(Border.NO_BORDER))
         }
 
-        // Añadir la tabla de medicamentos al documento
         document.add(medicationsTable)
     }
 
     // Método para convertir VectorDrawable a Bitmap
     private fun getBitmapFromVectorDrawable(context: Context, drawableId: Int): Bitmap {
-        val drawable = context.getDrawable(drawableId)
+        val drawable = AppCompatResources.getDrawable(context, drawableId)
         if (drawable is VectorDrawable) {
             val bitmap = Bitmap.createBitmap(
                 drawable.intrinsicWidth,

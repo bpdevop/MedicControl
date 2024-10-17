@@ -82,6 +82,22 @@
     <string name="export_screen_error_loading">Error al cargar los pacientes</string>
     <string name="export_screen_unknown_disease">Enfermedad desconocida</string>
 
+    <!-- EXPORT MSPAS PDF SCREEN RESOURCES -->
+    <string name="pdf_title">Informe de Exportación HL7 - Pacientes Infectocontagiosos</string>
+    <string name="pdf_exported_on">Exportado el: %1$s</string>
+    <string name="pdf_doctor_name">Médico: %1$s</string>
+    <string name="pdf_license">Licencia No.: %1$s</string>
+    <string name="pdf_email">Email: %1$s</string>
+    <string name="pdf_phone">Teléfono: %1$s</string>
+    <string name="pdf_patient_visit_info">Ambulatorio</string>
+    <string name="pdf_patient_name">Nombre</string>
+    <string name="pdf_birth_date">Fecha de nacimiento</string>
+    <string name="pdf_gender">Género</string>
+    <string name="pdf_blood_type">Tipo de Sangre</string>
+    <string name="pdf_unknown">Desconocido</string>
+    <string name="pdf_not_specified">No especificado</string>
+    <string name="pdf_diagnosis_format">CIE-11 - %1$s - %2$s</string>
+
     <!-- SETTINGS SCREEN RESOURCES -->
     <string name="settings_screen_account_section_title">Cuenta</string>
     <string name="settings_screen_change_password_title">Cambiar contraseña</string>

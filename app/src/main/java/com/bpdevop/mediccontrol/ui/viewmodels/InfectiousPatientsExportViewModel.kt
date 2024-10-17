@@ -1,28 +1,40 @@
 package com.bpdevop.mediccontrol.ui.viewmodels
 
 import android.content.Context
-import android.graphics.Paint
-import android.graphics.pdf.PdfDocument
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bpdevop.mediccontrol.core.extensions.generateHl7ExportPdf
 import com.bpdevop.mediccontrol.core.utils.UiState
+import com.bpdevop.mediccontrol.data.model.DoctorProfile
 import com.bpdevop.mediccontrol.data.model.Patient
+import com.bpdevop.mediccontrol.data.repository.DoctorProfileRepository
 import com.bpdevop.mediccontrol.data.repository.PatientsRepository
+import com.bpdevop.mediccontrol.di.IoDispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.io.File
-import java.io.FileOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
 class InfectiousPatientsExportViewModel @Inject constructor(
-    private val patientsRepository: PatientsRepository
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    private val patientsRepository: PatientsRepository,
+    private val doctorProfileRepository: DoctorProfileRepository,
+    @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     private val _infectiousPatients = MutableStateFlow<UiState<List<Patient>>>(UiState.Idle)
     val infectiousPatients: StateFlow<UiState<List<Patient>>> = _infectiousPatients
+
+    private val _pdfExportState = MutableStateFlow<UiState<File>>(UiState.Idle)
+    val pdfExportState: StateFlow<UiState<File>> = _pdfExportState
+
+    private val _doctorProfileState = MutableStateFlow<UiState<DoctorProfile?>>(UiState.Idle)
+    val doctorProfileState: StateFlow<UiState<DoctorProfile?>> = _doctorProfileState
 
     fun loadInfectiousPatients() {
         viewModelScope.launch {
@@ -31,47 +43,33 @@ class InfectiousPatientsExportViewModel @Inject constructor(
         }
     }
 
-    fun exportToPDF(patients: List<Patient>, context: Context) {
+    fun loadDoctorProfile() {
         viewModelScope.launch {
+            _doctorProfileState.value = UiState.Loading
+            _doctorProfileState.value = doctorProfileRepository.getDoctorProfile()
+        }
+    }
+
+    fun exportToPDF(patients: List<Patient>) {
+        viewModelScope.launch(ioDispatcher) {
+            _pdfExportState.value = UiState.Loading
             try {
-                // Implementación de exportación a PDF en formato HL7
-                val document = createHL7PDF(patients, context)
-                // Notificar al usuario sobre la ubicación del archivo PDF
-                UiState.Success("PDF exportado a ${document.absolutePath}")
+
+                val doctorProfile = (_doctorProfileState.value as? UiState.Success)?.data
+                if (doctorProfile == null) {
+                    _pdfExportState.value = UiState.Error("Perfil del doctor no encontrado.")
+                    return@launch
+                }
+
+                val file = context.generateHl7ExportPdf(doctorProfile, patients)
+                _pdfExportState.value = UiState.Success(file)
             } catch (e: Exception) {
-                _infectiousPatients.value = UiState.Error("Error al exportar a PDF: ${e.message}")
+                _pdfExportState.value = UiState.Error("Error al exportar a PDF: ${e.message}")
             }
         }
     }
 
-    private fun createHL7PDF(patients: List<Patient>, context: Context): File {
-        // Crear el archivo PDF
-        val document = PdfDocument()
-        val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
-        val page = document.startPage(pageInfo)
-        val canvas = page.canvas
-        val paint = Paint().apply {
-            textSize = 12f
-        }
-
-        var yPosition = 50
-        patients.forEach { patient ->
-            canvas.drawText(
-                "PID|${patient.id}|${patient.name}|${patient.gender}|${patient.birthDate}|${patient.diseaseTitle}",
-                50f,
-                yPosition.toFloat(),
-                paint
-            )
-            yPosition += 20
-        }
-
-        document.finishPage(page)
-
-        // Guardar el archivo
-        val file = File(context.getExternalFilesDir(null), "InfectiousPatients.pdf")
-        document.writeTo(FileOutputStream(file))
-        document.close()
-
-        return file
+    fun resetPdfExportState() {
+        _pdfExportState.value = UiState.Idle
     }
 }

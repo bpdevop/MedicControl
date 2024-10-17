@@ -1,6 +1,7 @@
-package com.bpdevop.mediccontrol.ui.screens
+package com.bpdevop.mediccontrol.ui.screens.export
 
-import android.widget.Toast
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,14 +20,17 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,61 +38,73 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
+import com.bpdevop.mediccontrol.BuildConfig
 import com.bpdevop.mediccontrol.R
 import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.data.model.Patient
+import com.bpdevop.mediccontrol.ui.components.CommonDialog
+import com.bpdevop.mediccontrol.ui.components.LoadingPdfDialog
+import com.bpdevop.mediccontrol.ui.screens.HeaderLetter
 import com.bpdevop.mediccontrol.ui.viewmodels.InfectiousPatientsExportViewModel
+import kotlinx.coroutines.launch
+import java.io.File
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InfectiousPatientsExportScreen(
     viewModel: InfectiousPatientsExportViewModel = hiltViewModel(),
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val infectiousPatientsState by viewModel.infectiousPatients.collectAsState()
+    val pdfExportState by viewModel.pdfExportState.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.loadInfectiousPatients()
+        viewModel.loadDoctorProfile()
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
+        PullToRefreshBox(
+            isRefreshing = infectiousPatientsState is UiState.Loading,
+            onRefresh = { coroutineScope.launch { viewModel.loadInfectiousPatients() } },
+            modifier = Modifier.fillMaxSize()
         ) {
-            when (val state = infectiousPatientsState) {
-                is UiState.Success -> {
-                    val patients = state.data
-                    if (patients.isEmpty()) {
-                        EmptyInfectiousPatientsScreen()
-                    } else {
-                        InfectiousPatientsList(patients)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                when (val state = infectiousPatientsState) {
+                    is UiState.Success -> {
+                        val patients = state.data
+                        if (patients.isEmpty()) {
+                            EmptyInfectiousPatientsScreen()
+                        } else {
+                            InfectiousPatientsList(patients)
+                        }
                     }
-                }
 
-                is UiState.Error -> {
-                    Text(
-                        text = state.message ?: stringResource(id = R.string.export_screen_error_loading),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
+                    is UiState.Error -> {
+                        Text(
+                            text = state.message,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
 
-                else -> Unit
+                    else -> Unit
+                }
             }
         }
 
-        // Floating Action Button for Export
         FloatingActionButton(
             onClick = {
                 if (infectiousPatientsState is UiState.Success) {
-                    viewModel.exportToPDF(
-                        (infectiousPatientsState as UiState.Success).data,
-                        context
-                    )
-                    Toast.makeText(context, "Exportando a PDF...", Toast.LENGTH_SHORT).show()
+                    viewModel.exportToPDF((infectiousPatientsState as UiState.Success).data)
                 }
             },
             modifier = Modifier
@@ -97,8 +113,44 @@ fun InfectiousPatientsExportScreen(
         ) {
             Icon(Icons.Filled.Download, contentDescription = stringResource(R.string.export_screen_fab_export))
         }
+
+        HandlePdfExportDialog(
+            pdfExportState = pdfExportState,
+            onPdfOpened = { viewModel.resetPdfExportState() },
+            onResetState = { viewModel.resetPdfExportState() },
+            context = context
+        )
     }
 }
+
+@Composable
+fun HandlePdfExportDialog(
+    pdfExportState: UiState<File>,
+    onPdfOpened: () -> Unit,
+    onResetState: () -> Unit,
+    context: Context,
+) {
+    when (pdfExportState) {
+        is UiState.Loading -> LoadingPdfDialog()
+
+        is UiState.Success -> {
+            LaunchedEffect(Unit) {
+                openPDF(context, pdfExportState.data)
+                onPdfOpened()
+            }
+        }
+
+        is UiState.Error -> {
+            CommonDialog(
+                message = pdfExportState.message,
+                onConfirm = onResetState
+            )
+        }
+
+        else -> Unit
+    }
+}
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -140,8 +192,6 @@ fun InfectiousPatientItem(patient: Patient) {
                 style = MaterialTheme.typography.bodyMedium
             )
         }
-
-
     }
 }
 
@@ -153,4 +203,14 @@ private fun EmptyInfectiousPatientsScreen() {
             Text(stringResource(R.string.export_screen_no_patients_message))
         }
     }
+}
+
+// Función para abrir el PDF
+private fun openPDF(context: Context, file: File) {
+    val pdfUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", file)
+    val intent = Intent(Intent.ACTION_VIEW).apply {
+        setDataAndType(pdfUri, "application/pdf")
+        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
+    }
+    context.startActivity(intent)
 }

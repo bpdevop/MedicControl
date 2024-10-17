@@ -83,6 +83,26 @@
     <string name="export_screen_error_loading">Error loading patients</string>
     <string name="export_screen_unknown_disease">Unknown disease</string>
 
+    <!-- EXPORT MSPAS PDF SCREEN RESOURCES -->
+    <string name="pdf_title">HL7 Export Report - Infectious Patients</string>
+    <string name="pdf_exported_on">Exported on: %1$s</string>
+    <string name="pdf_doctor_name">Doctor: %1$s</string>
+    <string name="pdf_license">License No.: %1$s</string>
+    <string name="pdf_email">Email: %1$s</string>
+    <string name="pdf_phone">Phone: %1$s</string>
+    <string name="pdf_patient_id" translatable="false">PID</string>
+    <string name="pdf_patient_visit" translatable="false">PV1</string>
+    <string name="pdf_patient_visit_info">Outpatient</string>
+    <string name="pdf_diagnosis_info" translatable="false">DG1</string>
+    <string name="pdf_patient_name">Name</string>
+    <string name="pdf_birth_date">Birth Date</string>
+    <string name="pdf_gender">Gender</string>
+    <string name="pdf_blood_type">Blood Type</string>
+    <string name="pdf_unknown">Unknown</string>
+    <string name="pdf_not_specified">Not specified</string>
+    <string name="pdf_diagnosis_format">ICD-11 - %1$s - %2$s</string>
+
+
     <!-- SETTINGS SCREEN RESOURCES -->
     <string name="settings_screen_account_section_title">Account</string>
     <string name="settings_screen_change_password_title">Change Password</string>

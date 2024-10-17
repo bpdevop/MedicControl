@@ -13,13 +13,14 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.6"
-activityCompose = "1.9.2"
-composeBom = "2024.09.03"
+activityCompose = "1.9.3"
+composeBom = "2024.10.00"
 coil = "2.7.0"
 serialization = "1.7.3"
 snapper = "0.3.0"
 retrofit = "2.11.0"
 logging_interceptor = "4.12.0"
+lottie_compose = "6.5.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -55,6 +56,7 @@ snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit_converter_gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 logging_interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "logging_interceptor" }
+lottie_compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie_compose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

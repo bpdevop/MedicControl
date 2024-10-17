@@ -16,7 +16,7 @@ import com.bpdevop.mediccontrol.data.model.Vaccine
 import com.bpdevop.mediccontrol.ui.screens.AboutScreen
 import com.bpdevop.mediccontrol.ui.screens.AddPatientScreen
 import com.bpdevop.mediccontrol.ui.screens.AgendaScreen
-import com.bpdevop.mediccontrol.ui.screens.InfectiousPatientsExportScreen
+import com.bpdevop.mediccontrol.ui.screens.export.InfectiousPatientsExportScreen
 import com.bpdevop.mediccontrol.ui.screens.PatientDetailScreen
 import com.bpdevop.mediccontrol.ui.screens.PatientOptionsScreen
 import com.bpdevop.mediccontrol.ui.screens.PatientsScreen

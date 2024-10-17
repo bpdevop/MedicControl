@@ -79,6 +79,8 @@ dependencies {
     // Retrofit
     implementation(libs.bundles.retrofit)
 
+    //Lottie
+    implementation(libs.lottie.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

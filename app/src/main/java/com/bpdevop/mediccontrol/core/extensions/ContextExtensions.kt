@@ -10,6 +10,7 @@ import com.bpdevop.mediccontrol.data.model.Patient
 import com.bpdevop.mediccontrol.data.model.Prescription
 import com.bpdevop.mediccontrol.ui.activities.LoginActivity
 import com.bpdevop.mediccontrol.ui.activities.MainActivity
+import com.bpdevop.mediccontrol.ui.screens.export.Hl7ExportPdfGenerator
 import com.bpdevop.mediccontrol.ui.screens.prescription.PrescriptionPdfGenerator
 import java.io.File
 import java.text.SimpleDateFormat
@@ -60,4 +61,14 @@ fun Context.openUrlInCustomTab(url: String) {
 fun Context.generatePrescriptionPdf(doctor: DoctorProfile, patient: Patient, prescription: Prescription): File {
     val generator = PrescriptionPdfGenerator(this)
     return generator.createPrescriptionPdf(doctor, patient, prescription)
+}
+
+fun Context.generateHl7ExportPdf(doctor: DoctorProfile, patients: List<Patient>): File {
+    val generator = Hl7ExportPdfGenerator(this, doctor)
+    return generator.createHl7ExportPdf(patients)
+}
+
+fun Context.clearOldHl7Exports() {
+    cacheDir.listFiles { file -> file.name.startsWith("hl7_export_infectocontagiosos_") }
+        ?.forEach { it.delete() }
 }

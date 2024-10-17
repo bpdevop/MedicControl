@@ -47,7 +47,19 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun resetPasswordForCurrentUser() {
+        viewModelScope.launch {
+            _passwordResetState.value = UiState.Loading
+            val result = authRepository.resetPasswordForCurrentUser()
+            _passwordResetState.value = result
+        }
+    }
+
     fun resetUiState() {
         _uiState.value = UiState.Idle
+    }
+
+    fun resetPasswordResetState() {
+        _passwordResetState.value = UiState.Idle
     }
 }

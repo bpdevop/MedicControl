@@ -20,6 +20,7 @@ import com.bpdevop.mediccontrol.ui.screens.PatientDetailScreen
 import com.bpdevop.mediccontrol.ui.screens.PatientOptionsScreen
 import com.bpdevop.mediccontrol.ui.screens.PatientsScreen
 import com.bpdevop.mediccontrol.ui.screens.ProfileScreen
+import com.bpdevop.mediccontrol.ui.screens.SettingsScreen
 import com.bpdevop.mediccontrol.ui.screens.allergy.AllergyScreen
 import com.bpdevop.mediccontrol.ui.screens.allergy.EditAllergyScreen
 import com.bpdevop.mediccontrol.ui.screens.appointment.AppointmentScreen
@@ -497,6 +498,10 @@ fun AppNavGraph(
 
         composable(Screen.Profile.route) {
             ProfileScreen()
+        }
+
+        composable(Screen.Settings.route) {
+            SettingsScreen()
         }
 
         composable(Screen.About.route) {

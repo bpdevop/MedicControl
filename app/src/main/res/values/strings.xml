@@ -75,6 +75,23 @@
     <string name="profile_action_save">Save Changes</string>
     <string name="profile_photo_label">Profile Photo</string>
 
+    <!-- SETTINGS SCREEN RESOURCES -->
+    <string name="settings_screen_account_section_title">Account</string>
+    <string name="settings_screen_change_password_title">Change Password</string>
+    <string name="settings_screen_change_password_description">Update your access password</string>
+
+    <string name="settings_screen_privacy_section_title">Privacy</string>
+    <string name="settings_screen_manage_permissions_title">Manage Permissions</string>
+    <string name="settings_screen_manage_permissions_description">Adjust app permissions</string>
+
+    <string name="settings_screen_write_review_title">Write a Review</string>
+    <string name="settings_screen_write_review_description">Share your experience on the Play Store</string>
+    <string name="settings_screen_contact_us_title">Contact Us</string>
+    <string name="settings_screen_contact_us_description">Send us your feedback or questions</string>
+    <string name="settings_screen_about_title">About</string>
+    <string name="settings_screen_about_description">Information about the application</string>
+
+
     <!--ADD PATIENT SCREEN RESOURCES-->
     <string name="add_patient_photo_desc">Patient photo</string>
     <string name="add_patient_take_photo">Take a photo</string>

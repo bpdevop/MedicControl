@@ -83,6 +83,20 @@ class AuthRepository @Inject constructor(
         }
     }
 
+    suspend fun resetPasswordForCurrentUser(): UiState<String> {
+        return try {
+            val email = firebaseAuth.currentUser?.email
+            if (email != null) {
+                firebaseAuth.sendPasswordResetEmail(email).await()
+                UiState.Success("Correo de recuperación enviado a $email")
+            } else {
+                UiState.Error("No se pudo obtener el correo del usuario. Inicia sesión nuevamente.")
+            }
+        } catch (e: Exception) {
+            UiState.Error(e.message ?: "Error al enviar el correo de recuperación")
+        }
+    }
+
     suspend fun resetPassword(email: String): UiState<String> {
         return try {
             firebaseAuth.sendPasswordResetEmail(email).await()

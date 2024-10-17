@@ -1,4 +1,4 @@
-package com.bpdevop.mediccontrol.ui.screens
+package com.bpdevop.mediccontrol.ui.screens.patient
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

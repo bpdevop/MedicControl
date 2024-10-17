@@ -46,7 +46,7 @@ import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.data.model.Patient
 import com.bpdevop.mediccontrol.ui.components.CommonDialog
 import com.bpdevop.mediccontrol.ui.components.LoadingPdfDialog
-import com.bpdevop.mediccontrol.ui.screens.HeaderLetter
+import com.bpdevop.mediccontrol.ui.screens.patient.HeaderLetter
 import com.bpdevop.mediccontrol.ui.viewmodels.InfectiousPatientsExportViewModel
 import kotlinx.coroutines.launch
 import java.io.File

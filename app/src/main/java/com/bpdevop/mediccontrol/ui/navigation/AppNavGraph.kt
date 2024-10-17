@@ -14,12 +14,12 @@ import com.bpdevop.mediccontrol.data.model.OxygenSaturation
 import com.bpdevop.mediccontrol.data.model.PatientAppointment
 import com.bpdevop.mediccontrol.data.model.Vaccine
 import com.bpdevop.mediccontrol.ui.screens.AboutScreen
-import com.bpdevop.mediccontrol.ui.screens.AddPatientScreen
+import com.bpdevop.mediccontrol.ui.screens.patient.AddPatientScreen
 import com.bpdevop.mediccontrol.ui.screens.AgendaScreen
 import com.bpdevop.mediccontrol.ui.screens.export.InfectiousPatientsExportScreen
-import com.bpdevop.mediccontrol.ui.screens.PatientDetailScreen
-import com.bpdevop.mediccontrol.ui.screens.PatientOptionsScreen
-import com.bpdevop.mediccontrol.ui.screens.PatientsScreen
+import com.bpdevop.mediccontrol.ui.screens.patient.PatientDetailScreen
+import com.bpdevop.mediccontrol.ui.screens.patient.PatientOptionsScreen
+import com.bpdevop.mediccontrol.ui.screens.patient.PatientsScreen
 import com.bpdevop.mediccontrol.ui.screens.ProfileScreen
 import com.bpdevop.mediccontrol.ui.screens.SettingsScreen
 import com.bpdevop.mediccontrol.ui.screens.allergy.AllergyScreen

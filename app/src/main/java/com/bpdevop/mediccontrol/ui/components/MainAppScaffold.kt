@@ -38,9 +38,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.bpdevop.mediccontrol.R
 import com.bpdevop.mediccontrol.core.extensions.navigateToLoginActivity
+import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.ui.navigation.AppNavGraph
 import com.bpdevop.mediccontrol.ui.navigation.NavigationItem
 import com.bpdevop.mediccontrol.ui.navigation.Screen
+import com.bpdevop.mediccontrol.ui.viewmodels.DoctorProfileViewModel
 import com.bpdevop.mediccontrol.ui.viewmodels.MainViewModel
 import com.bpdevop.mediccontrol.ui.viewmodels.UserSessionViewModel
 import kotlinx.coroutines.launch
@@ -52,15 +54,26 @@ fun MainAppScaffold() {
     val scope = rememberCoroutineScope()
     val mainViewModel: MainViewModel = hiltViewModel()
     val sessionViewModel: UserSessionViewModel = hiltViewModel()
+    val doctorProfileViewModel: DoctorProfileViewModel = hiltViewModel()
 
     val selectedItem by mainViewModel.selectedItem.collectAsState()
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
-
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+
+    // Cargar el perfil del médico
+    LaunchedEffect(Unit) {
+        doctorProfileViewModel.getDoctorProfile()
+    }
+
+    val doctorProfileState by doctorProfileViewModel.doctorProfileState.collectAsState()
+    val doctorName = when (doctorProfileState) {
+        is UiState.Success -> (doctorProfileState as UiState.Success).data?.name ?: "Usuario"
+        else -> "Usuario"
+    }
 
     val (showBackArrow, topBarTitle) = rememberTopBarState(currentRoute, selectedItem)
 
@@ -87,7 +100,7 @@ fun MainAppScaffold() {
                 onItemClicked = { item ->
                     scope.launch { navigateToItem(navController, item.route, drawerState) }
                 },
-                userName = "Usuario"
+                userName = doctorName
             )
         }
     ) {

@@ -13,6 +13,7 @@ import com.bpdevop.mediccontrol.data.model.BloodPressure
 import com.bpdevop.mediccontrol.data.model.OxygenSaturation
 import com.bpdevop.mediccontrol.data.model.PatientAppointment
 import com.bpdevop.mediccontrol.data.model.Vaccine
+import com.bpdevop.mediccontrol.ui.screens.AboutScreen
 import com.bpdevop.mediccontrol.ui.screens.AddPatientScreen
 import com.bpdevop.mediccontrol.ui.screens.AgendaScreen
 import com.bpdevop.mediccontrol.ui.screens.PatientDetailScreen
@@ -496,6 +497,10 @@ fun AppNavGraph(
 
         composable(Screen.Profile.route) {
             ProfileScreen()
+        }
+
+        composable(Screen.About.route) {
+            AboutScreen()
         }
     }
 }

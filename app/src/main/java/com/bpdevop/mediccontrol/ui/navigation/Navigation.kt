@@ -26,7 +26,7 @@ val mainMenuItems = listOf(
     NavigationItem.Patients,
     NavigationItem.Agenda,
     NavigationItem.Profile,
-    NavigationItem.ClinicData
+    //NavigationItem.ClinicData
 )
 
 // Lista de ítems secundarios del menú

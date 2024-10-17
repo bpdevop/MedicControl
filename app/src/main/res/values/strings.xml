@@ -366,4 +366,12 @@
     <string name="no_notes_available">No notes available</string>
     <string name="no_time_available">No time available</string>
 
+    <!-- ABOUT SCREEN RESOURCES -->
+    <string name="about_title">About</string>
+    <string name="about_description">An application for efficient and secure management of digital medical records.</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="contact_us_label">Need Assistance?</string>
+    <string name="terms_conditions_label">Terms and Conditions</string>
+    <string name="terms_conditions">By using this app, you agree to our terms and conditions…</string>
+
 </resources>

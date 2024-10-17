@@ -85,5 +85,6 @@ sealed class Screen(val route: String, @StringRes val titleResId: Int) {
 
     data object Agenda : Screen("agenda", R.string.menu_agenda)
     data object Profile : Screen("profile", R.string.menu_profile)
-    // Añade más pantallas si es necesario
+
+    data object About : Screen("about", R.string.menu_about)
 }

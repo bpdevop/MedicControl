@@ -365,4 +365,12 @@
     <string name="no_notes_available">No hay notas disponibles</string>
     <string name="no_time_available">Hora no disponible</string>
 
+    <!-- ABOUT SCREEN RESOURCES -->
+    <string name="about_title">Acerca de</string>
+    <string name="about_description">Aplicación para la gestión eficiente y segura de historiales médicos digitales.</string>
+    <string name="contact_us">Contáctanos</string>
+    <string name="contact_us_label">¿Necesitas asistencia?</string>
+    <string name="terms_conditions_label">Términos y Condiciones</string>
+    <string name="terms_conditions">Al usar esta aplicación, aceptas nuestros términos y condiciones…</string>
+
 </resources>

@@ -495,7 +495,7 @@ fun AppNavGraph(
 
 
         composable(Screen.Profile.route) {
-            ProfileScreen(navController)
+            ProfileScreen()
         }
     }
 }

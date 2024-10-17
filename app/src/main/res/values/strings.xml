@@ -66,6 +66,15 @@
     <!-- AGENDA SCREEN RESOURCES -->
     <string name="agenda_screen_no_appointments_message">No appointments in the agenda</string>
 
+    <!-- PROFILE SCREEN RESOURCES -->
+    <string name="profile_name">Name</string>
+    <string name="profile_email">Email</string>
+    <string name="profile_registration_number">Registration Number</string>
+    <string name="profile_phone">Phone Number</string>
+    <string name="profile_action_edit">Edit Profile</string>
+    <string name="profile_action_save">Save Changes</string>
+    <string name="profile_photo_label">Profile Photo</string>
+
     <!--ADD PATIENT SCREEN RESOURCES-->
     <string name="add_patient_photo_desc">Patient photo</string>
     <string name="add_patient_take_photo">Take a photo</string>

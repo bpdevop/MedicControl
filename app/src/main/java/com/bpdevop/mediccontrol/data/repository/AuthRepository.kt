@@ -51,18 +51,6 @@ class AuthRepository @Inject constructor(
         return storageRef.downloadUrl.await().toString() // Retornar la URL de descarga
     }
 
-    // Obtener el perfil del médico de Firestore
-    suspend fun getDoctorProfile(): UiState<DoctorProfile?> {
-        val doctorId = getCurrentUserId() ?: return UiState.Error("No se ha iniciado sesión")
-        return try {
-            val document = firestore.collection("doctors").document(doctorId).get().await()
-            val doctorProfile = document.toObject(DoctorProfile::class.java)
-            UiState.Success(doctorProfile)
-        } catch (e: Exception) {
-            UiState.Error(e.message ?: "Error al obtener el perfil del médico")
-        }
-    }
-
     suspend fun signIn(email: String, password: String): UiState<FirebaseUser?> {
         return try {
             val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()

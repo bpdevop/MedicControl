@@ -9,7 +9,7 @@ import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.data.model.DoctorProfile
 import com.bpdevop.mediccontrol.data.model.Patient
 import com.bpdevop.mediccontrol.data.model.Prescription
-import com.bpdevop.mediccontrol.data.repository.AuthRepository
+import com.bpdevop.mediccontrol.data.repository.DoctorProfileRepository
 import com.bpdevop.mediccontrol.data.repository.PatientsRepository
 import com.bpdevop.mediccontrol.data.repository.PrescriptionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +23,7 @@ import javax.inject.Inject
 class PrescriptionViewModel @Inject constructor(
     private val app: Application,
     private val prescriptionRepository: PrescriptionRepository,
-    private val authRepository: AuthRepository,
+    private val doctorProfileRepository: DoctorProfileRepository,
     private val patientsRepository: PatientsRepository,
 ) : ViewModel() {
 
@@ -99,7 +99,7 @@ class PrescriptionViewModel @Inject constructor(
     fun getDoctorProfile() {
         viewModelScope.launch {
             _doctorProfileState.value = UiState.Loading
-            val result = authRepository.getDoctorProfile()
+            val result = doctorProfileRepository.getDoctorProfile()
             _doctorProfileState.value = result
         }
     }

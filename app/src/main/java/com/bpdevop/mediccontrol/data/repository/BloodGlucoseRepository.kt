@@ -3,6 +3,7 @@ package com.bpdevop.mediccontrol.data.repository
 import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.data.model.BloodGlucose
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -35,6 +36,22 @@ class BloodGlucoseRepository @Inject constructor(
             UiState.Success(bloodGlucoseRecords)
         }.getOrElse {
             UiState.Error(it.message ?: "Error al obtener el historial de glicemia")
+        }
+
+    suspend fun getLastBloodGlucoseRecord(patientId: String): UiState<BloodGlucose?> =
+        runCatching {
+            val snapshot = firestore.collection("patients")
+                .document(patientId)
+                .collection("blood_glucose")
+                .orderBy("date", Query.Direction.DESCENDING)
+                .limit(1)
+                .get()
+                .await()
+
+            val lastBloodGlucose = snapshot.documents.firstOrNull()?.toObject(BloodGlucose::class.java)
+            UiState.Success(lastBloodGlucose)
+        }.getOrElse {
+            UiState.Error(it.message ?: "Error al obtener el último registro de glicemia")
         }
 
     suspend fun updateBloodGlucose(patientId: String, bloodGlucose: BloodGlucose): UiState<String> =

@@ -2,9 +2,12 @@ package com.bpdevop.mediccontrol.data.repository
 
 import android.net.Uri
 import com.bpdevop.mediccontrol.core.utils.UiState
+import com.bpdevop.mediccontrol.data.model.LabTestItem
 import com.bpdevop.mediccontrol.data.model.Laboratory
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
 import javax.inject.Inject
@@ -73,6 +76,25 @@ class LaboratoryRepository @Inject constructor(
         }.getOrElse {
             UiState.Error(it.message ?: "Error fetching laboratory record")
         }
+
+    // Nuevo método para el historial médico del paciente
+    fun getLaboratorySummaryForPatient(patientId: String): Flow<UiState<List<LabTestItem>>> = flow {
+        try {
+            val snapshot = firestore.collection("patients")
+                .document(patientId)
+                .collection("laboratories")
+                .get()
+                .await()
+
+            // Resumimos los datos del laboratorio, obteniendo solo los tests
+            val labTestsSummary = snapshot.toObjects(Laboratory::class.java)
+                .flatMap { it.tests } // Obtenemos solo las pruebas de laboratorio (LabTestItem)
+
+            emit(UiState.Success(labTestsSummary))
+        } catch (e: Exception) {
+            emit(UiState.Error(e.message ?: "Error retrieving laboratory summary"))
+        }
+    }
 
     // Actualizar un registro de laboratorio
     suspend fun updateLaboratory(patientId: String, laboratory: Laboratory, newDocumentUris: List<Uri>?, existingDocumentUrls: List<String>): UiState<String> =

@@ -10,6 +10,8 @@ sealed class Screen(val route: String, @StringRes val titleResId: Int) {
         fun withArgs(patientId: String): String = "$route/$patientId"
     }
 
+    data object MedicalHistory : Screen("medical_history_screen", R.string.menu_medical_history)
+
     data object Vaccination : Screen("vaccination_screen", R.string.menu_vaccination)
 
     data object EditVaccination : Screen("edit_vaccine_screen", R.string.menu_edit_vaccination) {

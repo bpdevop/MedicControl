@@ -9,10 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.EventNote
-import androidx.compose.material.icons.automirrored.filled.Note
-import androidx.compose.material.icons.filled.Biotech
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.LocalHospital
 import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material.icons.filled.Vaccines
 import androidx.compose.material3.Icon
@@ -32,7 +29,6 @@ import com.bpdevop.mediccontrol.ui.icons.Labs
 import com.bpdevop.mediccontrol.ui.icons.MedicalInformation
 import com.bpdevop.mediccontrol.ui.icons.OxygenSaturation
 import com.bpdevop.mediccontrol.ui.icons.Radiology
-import com.bpdevop.mediccontrol.ui.icons.StethoscopeCheck
 
 @Composable
 fun PatientOptionsScreen(
@@ -40,8 +36,8 @@ fun PatientOptionsScreen(
     onOptionSelected: (String) -> Unit,
 ) {
     val options = mapOf(
-        stringResource(id = R.string.patient_option_medical_history) to Pair(Icons.Filled.History, "medical_history"),
-        stringResource(id = R.string.patient_option_medical_visit) to Pair(StethoscopeCheck, "medical_visit"),
+        stringResource(id = R.string.patient_option_medical_history) to Pair(Icons.Filled.History, "medical_history_screen"),
+        //stringResource(id = R.string.patient_option_medical_visit) to Pair(StethoscopeCheck, "medical_visit"),
         stringResource(id = R.string.patient_option_vaccinations) to Pair(Icons.Filled.Vaccines, "vaccination_screen"),
         stringResource(id = R.string.patient_option_allergies) to Pair(Allergies, "allergy_screen"),
         stringResource(id = R.string.patient_option_blood_pressure) to Pair(BloodPressure, "blood_pressure_screen"),
@@ -51,9 +47,9 @@ fun PatientOptionsScreen(
         stringResource(id = R.string.patient_option_prescriptions) to Pair(Icons.Filled.Receipt, "prescription_screen"),
         stringResource(id = R.string.patient_option_labs) to Pair(Labs, "laboratory_screen"),
         stringResource(id = R.string.patient_option_radiology) to Pair(Radiology, "radiology_screen"),
-        stringResource(id = R.string.patient_option_pathology) to Pair(Icons.Filled.Biotech, "pathology"),
-        stringResource(id = R.string.patient_option_surgery) to Pair(Icons.Filled.LocalHospital, "surgery"),
-        stringResource(id = R.string.patient_option_notes) to Pair(Icons.AutoMirrored.Filled.Note, "notes"),
+        //stringResource(id = R.string.patient_option_pathology) to Pair(Icons.Filled.Biotech, "pathology"),
+        //stringResource(id = R.string.patient_option_surgery) to Pair(Icons.Filled.LocalHospital, "surgery"),
+        //stringResource(id = R.string.patient_option_notes) to Pair(Icons.AutoMirrored.Filled.Note, "notes"),
         stringResource(id = R.string.patient_option_appointments) to Pair(Icons.AutoMirrored.Filled.EventNote, "appointment_screen"),
     )
 

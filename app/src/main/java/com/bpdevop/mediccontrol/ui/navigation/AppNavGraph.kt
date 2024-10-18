@@ -13,13 +13,9 @@ import com.bpdevop.mediccontrol.data.model.BloodPressure
 import com.bpdevop.mediccontrol.data.model.OxygenSaturation
 import com.bpdevop.mediccontrol.data.model.PatientAppointment
 import com.bpdevop.mediccontrol.data.model.Vaccine
+import com.bpdevop.mediccontrol.ui.PatientMedicalHistoryScreen
 import com.bpdevop.mediccontrol.ui.screens.AboutScreen
-import com.bpdevop.mediccontrol.ui.screens.patient.AddPatientScreen
 import com.bpdevop.mediccontrol.ui.screens.AgendaScreen
-import com.bpdevop.mediccontrol.ui.screens.export.InfectiousPatientsExportScreen
-import com.bpdevop.mediccontrol.ui.screens.patient.PatientDetailScreen
-import com.bpdevop.mediccontrol.ui.screens.patient.PatientOptionsScreen
-import com.bpdevop.mediccontrol.ui.screens.patient.PatientsScreen
 import com.bpdevop.mediccontrol.ui.screens.ProfileScreen
 import com.bpdevop.mediccontrol.ui.screens.SettingsScreen
 import com.bpdevop.mediccontrol.ui.screens.allergy.AllergyScreen
@@ -32,10 +28,15 @@ import com.bpdevop.mediccontrol.ui.screens.bloodpressure.BloodPressureScreen
 import com.bpdevop.mediccontrol.ui.screens.bloodpressure.EditBloodPressureScreen
 import com.bpdevop.mediccontrol.ui.screens.examination.EditExaminationScreen
 import com.bpdevop.mediccontrol.ui.screens.examination.ExaminationScreen
+import com.bpdevop.mediccontrol.ui.screens.export.InfectiousPatientsExportScreen
 import com.bpdevop.mediccontrol.ui.screens.laboratory.EditLaboratoryScreen
 import com.bpdevop.mediccontrol.ui.screens.laboratory.LaboratoryScreen
 import com.bpdevop.mediccontrol.ui.screens.oxygensaturation.EditOxygenSaturationScreen
 import com.bpdevop.mediccontrol.ui.screens.oxygensaturation.OxygenSaturationScreen
+import com.bpdevop.mediccontrol.ui.screens.patient.AddPatientScreen
+import com.bpdevop.mediccontrol.ui.screens.patient.PatientDetailScreen
+import com.bpdevop.mediccontrol.ui.screens.patient.PatientOptionsScreen
+import com.bpdevop.mediccontrol.ui.screens.patient.PatientsScreen
 import com.bpdevop.mediccontrol.ui.screens.prescription.EditPrescriptionScreen
 import com.bpdevop.mediccontrol.ui.screens.prescription.PrescriptionScreen
 import com.bpdevop.mediccontrol.ui.screens.radiology.EditRadiologyScreen
@@ -106,6 +107,19 @@ fun AppNavGraph(
             PatientOptionsScreen(patientId = patientId, onOptionSelected = { route ->
                 navController.navigate(route)
             })
+        }
+
+        // Pantalla de historial médico
+        composable(
+            route = "${Screen.MedicalHistory.route}/{patientId}",
+            arguments = listOf(navArgument("patientId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val patientId = backStackEntry.arguments?.getString("patientId")
+            patientId?.let {
+                PatientMedicalHistoryScreen(
+                    patientId = it,
+                )
+            }
         }
 
         // Pantalla de Vacunas

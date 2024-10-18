@@ -3,6 +3,7 @@ package com.bpdevop.mediccontrol.data.repository
 import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.data.model.OxygenSaturation
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -36,6 +37,23 @@ class OxygenSaturationRepository @Inject constructor(
         }.getOrElse {
             UiState.Error(it.message ?: "Error al obtener el historial de saturación de oxígeno")
         }
+
+    suspend fun getLastOxygenSaturation(patientId: String): UiState<OxygenSaturation?> =
+        runCatching {
+            val snapshot = firestore.collection("patients")
+                .document(patientId)
+                .collection("oxygen_saturation")
+                .orderBy("date", Query.Direction.DESCENDING)
+                .limit(1)
+                .get()
+                .await()
+
+            val oxygenSaturation = snapshot.documents.firstOrNull()?.toObject(OxygenSaturation::class.java)
+            UiState.Success(oxygenSaturation)
+        }.getOrElse {
+            UiState.Error(it.message ?: "Error al obtener la última saturación de oxígeno")
+        }
+
 
     suspend fun updateOxygenSaturation(patientId: String, oxygenSaturation: OxygenSaturation): UiState<String> =
         runCatching {

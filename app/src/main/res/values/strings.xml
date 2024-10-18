@@ -22,6 +22,7 @@
     <string name="menu_patients">Patients</string>
     <string name="menu_add_patient">Add Patient</string>
     <string name="menu_patient_detail">Patient Details</string>
+    <string name="menu_medical_history">Medical History</string>
     <string name="menu_vaccination">Vaccination</string>
     <string name="menu_edit_vaccination">Edit Vaccine</string>
     <string name="menu_allergy">Allergies</string>

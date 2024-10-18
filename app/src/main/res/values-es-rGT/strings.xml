@@ -22,6 +22,7 @@
     <string name="menu_patients">Pacientes</string>
     <string name="menu_add_patient">Agregar Paciente</string>
     <string name="menu_patient_detail">Detalles del Paciente</string>
+    <string name="menu_medical_history">Historial médico</string>
     <string name="menu_vaccination">Vacunas</string>
     <string name="menu_edit_vaccination">Editar Vacuna</string>
     <string name="menu_allergy">Alergias</string>

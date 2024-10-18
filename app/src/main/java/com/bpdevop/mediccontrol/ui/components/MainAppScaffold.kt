@@ -147,6 +147,7 @@ fun rememberTopBarState(currentRoute: String?, selectedItem: NavigationItem?): P
         currentRoute == Screen.Export.route -> stringResource(id = Screen.Export.titleResId)
         currentRoute == Screen.Settings.route -> stringResource(id = Screen.Settings.titleResId)
         currentRoute == Screen.About.route -> stringResource(id = Screen.About.titleResId)
+        currentRoute?.startsWith(Screen.MedicalHistory.route) == true -> stringResource(id = Screen.MedicalHistory.titleResId)
         currentRoute?.startsWith(Screen.Vaccination.route) == true -> stringResource(id = Screen.Vaccination.titleResId)
         currentRoute?.startsWith(Screen.EditVaccination.route) == true -> stringResource(id = Screen.EditVaccination.titleResId)
         currentRoute?.startsWith(Screen.Allergy.route) == true -> stringResource(id = Screen.Allergy.titleResId)

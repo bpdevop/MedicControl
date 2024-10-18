@@ -3,8 +3,11 @@ package com.bpdevop.mediccontrol.data.repository
 import android.net.Uri
 import com.bpdevop.mediccontrol.core.utils.UiState
 import com.bpdevop.mediccontrol.data.model.Prescription
+import com.bpdevop.mediccontrol.data.model.PrescriptionItem
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
 import javax.inject.Inject
@@ -67,6 +70,26 @@ class PrescriptionRepository @Inject constructor(
         }.getOrElse {
             UiState.Error(it.message ?: "Error fetching prescription")
         }
+
+    // Método para obtener el resumen de prescripciones de un paciente
+    fun getPrescriptionSummaryForPatient(patientId: String): Flow<UiState<List<PrescriptionItem>>> = flow {
+        try {
+            val snapshot = firestore.collection("patients")
+                .document(patientId)
+                .collection("prescriptions")
+                .get()
+                .await()
+
+            // Obtenemos solo la lista de medicamentos dentro de cada prescripción
+            val prescriptionSummary = snapshot.toObjects(Prescription::class.java)
+                .flatMap { it.medications } // Obtenemos solo los medicamentos (PrescriptionItem)
+
+            emit(UiState.Success(prescriptionSummary))
+        } catch (e: Exception) {
+            emit(UiState.Error(e.message ?: "Error retrieving prescription summary"))
+        }
+    }
+
 
     // Actualizar una receta
     suspend fun updatePrescription(patientId: String, prescription: Prescription, newDocumentUris: List<Uri>?, existingDocumentUrls: List<String>): UiState<String> =

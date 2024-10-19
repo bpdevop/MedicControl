@@ -1,28 +1,40 @@
-# Nombre del Proyecto
+# MedicControl
 
-[![Project Status](https://img.shields.io/badge/status-active-brightgreen.svg)]()
+[![Project Status](https://img.shields.io/badge/status-brightgreen.svg)](https://github.com/bpdevop/MedicControl)
 
-## Descripción
+MedicControl es una aplicación diseñada para ayudar a médicos independientes a gestionar de manera eficiente los historiales médicos de sus pacientes. La aplicación permite el registro, consulta y generación de reportes médicos, automatizando tareas administrativas y facilitando el cumplimiento de las normativas del Ministerio de Salud Pública y Asistencia Social (MSPAS). MedicControl está desarrollado utilizando **Jetpack Compose**, **Firebase** y **Clean Architecture** para asegurar una estructura sólida y escalable.
 
-Este proyecto es parte de mi tesis de grado para la [Nombre de la Universidad]. El objetivo del proyecto es desarrollar una aplicación que facilite la sistematización digital del historial médico-clínico de los pacientes.
+## Características principales
 
-### Características principales:
+- **Gestión de pacientes**: Registro, edición y eliminación de pacientes.
+- **Generación de informes**: Reportes solicitados por el MSPAS de forma automatizada.
+- **Historial médico**: Almacenamiento y acceso seguro a los historiales médicos de cada paciente.
+- **Exportación de recetas**: Funcionalidad para generar y exportar recetas en formato PDF.
+- **Autenticación**: Gestión de usuarios y sesiones mediante Firebase Authentication.
+- **Compatibilidad multiplataforma**: Disponible para dispositivos Android.
 
-- Gestión de historial médico.
-- Seguimiento de prescripciones, pruebas de laboratorio, y signos vitales.
-- Resumen de datos de salud críticos, como presión arterial, glucosa en sangre y saturación de oxígeno.
-- Basado en arquitectura de software limpia y tecnologías modernas.
+## Tecnologías utilizadas
 
-## Requisitos del sistema
+- **Kotlin**: Lenguaje principal del proyecto.
+- **Jetpack Compose**: Framework de UI para construir interfaces modernas y declarativas.
+- **Firebase Firestore**: Base de datos en la nube para almacenar los datos de los pacientes.
+- **Firebase Authentication**: Autenticación segura para la gestión de usuarios.
+- **Hilt**: Inyección de dependencias para mejorar la modularidad y el mantenimiento del código.
+- **Material Design 3**: Para garantizar una interfaz amigable y consistente.
 
-- **Lenguaje**: Kotlin
-- **Plataforma**: Android
-- **Dependencias**: Firebase, Hilt, Jetpack Compose
+## Arquitectura
 
-## Instalación
+El proyecto sigue el patrón **Clean Architecture**, que permite una separación clara entre las capas de presentación, dominio y datos, facilitando la escalabilidad y el mantenimiento.
 
-Para instalar y ejecutar el proyecto localmente, sigue estos pasos:
+- **Presentación**: Jetpack Compose para la UI.
+- **Dominio**: Lógica de negocio y casos de uso.
+- **Datos**: Repositorios que interactúan con Firebase Firestore y otras fuentes de datos.
 
-1. Clona este repositorio:
-   ```bash
-   git clone https://github.com/tu_usuario/nombre-del-proyecto.git
+![Diagrama de Arquitectura](ruta/a/la/imagen-de-arquitectura.png)
+
+## Requisitos
+
+- **Android Studio 4.2+**
+- **JDK 11+**
+- **Gradle 7.0+**
+- **Firebase Account**: Para la configuración de Firestore y Authentication.
